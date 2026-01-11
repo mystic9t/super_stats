@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:packages": "bun run --filter \"*\" build",
+    "build": "bun run build:packages && next build",
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit"
