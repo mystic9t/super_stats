@@ -6,7 +6,8 @@
     "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false,
     "paths": {},
-    "noEmit": false
+    "noEmit": false,
+    "declaration": true
   },
   "include": [
     "src/**/*"
