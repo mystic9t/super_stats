@@ -15,6 +15,12 @@ Super Stats is a **Next.js Full Stack Monorepo** managed with **Bun Workspaces**
   - `shared-utils`: Core logic (Zodiac/Numerology calculators).
   - `api-client`: Type-safe fetch wrapper for internal APIs.
 
+## Git Workflow & Branching
+
+- **`master`**: Production branch. Linked to the live environment. Only stable, reviewed code should be merged here.
+- **`dev`**: Main development branch. All new features and fixes should be merged here first.
+- **Vercel Previews**: Every push to `dev` (or any feature branch) will automatically generate a **Preview Deployment** on Vercel, allowing you to test changes before they go to production.
+
 ## Monorepo Workflow
 
 ### 1. Linking & Path Mappings
