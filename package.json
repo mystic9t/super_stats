@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build:packages": "bun run --filter \"*\" build",
+    "build:packages": "bun run --filter @super-stats/shared-types build && bun run --filter @super-stats/shared-utils build && bun run --filter @super-stats/api-client build",
     "build": "bun run build:packages && next build",
     "start": "next start",
     "lint": "eslint",
