@@ -1,6 +1,8 @@
 export * from './zodiac/calculator';
 export * from './storage';
 export * from './numerology-data';
+export * from './tarot-data';
+export * from './tarot';
 
 // Basic Numerology Utils
 export const calculateLifePathNumber = (date: Date): number => {
