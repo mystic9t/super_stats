@@ -52,3 +52,33 @@ export interface NumerologyPrediction {
   lifePathMeaning: string;
   destinyMeaning: string;
 }
+
+// Tarot Types
+export type TarotPosition = 'situation' | 'challenge' | 'outcome';
+
+export interface TarotCard {
+  id: number;
+  name: string;
+  shortName: string;
+  uprightMeaning: string;
+  reversedMeaning: string;
+  description: string;
+  imageUrl: string;
+}
+
+export interface DrawnCard {
+  card: TarotCard;
+  position: TarotPosition;
+  isReversed: boolean;
+}
+
+export interface TarotReading {
+  cards: [DrawnCard, DrawnCard, DrawnCard];
+  date: string; // YYYY-MM-DD format
+  summary: string; // Combined narrative
+}
+
+export interface TarotState {
+  lastReading: TarotReading | null;
+  lastDrawDate: string | null; // YYYY-MM-DD format
+}
