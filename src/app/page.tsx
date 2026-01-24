@@ -151,7 +151,7 @@ function Dashboard({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
             {/* Prediction Button */}
             <Button
               size="lg"
@@ -165,18 +165,18 @@ function Dashboard({
               }}
               variant={activeSection === 'prediction' ? 'default' : 'outline'}
               disabled={loading}
-              className={`flex-1 font-semibold py-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'prediction'
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'prediction'
                 ? 'bg-slate-900 hover:bg-slate-800 text-white'
                 : 'bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white'
                 }`}
             >
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 animate-spin" /> Divining...
+                <span className="flex items-center gap-2 justify-center">
+                  <Sparkles className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> <span className="hidden sm:inline">Divining...</span><span className="sm:hidden">Divining</span>
                 </span>
               ) : (
-                <span className="flex items-center gap-2">
-                  <Star className="h-5 w-5" /> {activeSection === 'prediction' ? 'Hide Prediction' : 'Daily Prediction'}
+                <span className="flex items-center gap-2 justify-center">
+                  <Star className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">{activeSection === 'prediction' ? 'Hide Prediction' : 'Daily Prediction'}</span><span className="sm:hidden">{activeSection === 'prediction' ? 'Hide' : 'Predict'}</span>
                 </span>
               )}
             </Button>
@@ -194,22 +194,22 @@ function Dashboard({
               }}
               variant={activeSection === 'tarot' ? 'default' : 'outline'}
               disabled={tarotLoading}
-              className={`flex-1 font-semibold py-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'tarot'
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'tarot'
                 ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white'
                 : 'bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white'
                 }`}
             >
               {tarotLoading ? (
-                <span className="flex items-center gap-2">
-                  <Moon className="h-5 w-5 animate-pulse" /> Drawing...
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5 animate-pulse" /> <span className="hidden sm:inline">Drawing...</span><span className="sm:hidden">Drawing</span>
                 </span>
               ) : !canDrawTarot && !tarotReading ? (
-                <span className="flex items-center gap-2">
-                  <Moon className="h-5 w-5" /> View Tarot
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">View Tarot</span><span className="sm:hidden">Tarot</span>
                 </span>
               ) : (
-                <span className="flex items-center gap-2">
-                  <Moon className="h-5 w-5" /> {activeSection === 'tarot' ? 'Hide Tarot' : 'Daily Tarot'}
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">{activeSection === 'tarot' ? 'Hide Tarot' : 'Daily Tarot'}</span><span className="sm:hidden">{activeSection === 'tarot' ? 'Hide' : 'Tarot'}</span>
                 </span>
               )}
             </Button>
