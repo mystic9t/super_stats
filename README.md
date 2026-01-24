@@ -4,23 +4,60 @@ A modern, full-stack astrology and numerology web application built with Next.js
 
 ## Architecture
 
-This project is organized as a monorepo using **Bun Workspaces**. It consolidates the frontend and backend into a single Next.js application while sharing core logic through local packages.
+This project is organized as a monorepo using **Bun Workspaces** with a refactored, feature-based architecture. It consolidates the frontend and backend into a single Next.js application while sharing core logic through local packages.
 
 ### Project Structure
 
 ```text
 super-stats/
-├── src/                  # Next.js Full Stack App (Pages, API, Components)
-│   ├── app/              # App Router & API Routes
-│   ├── components/       # Shared UI Components (shadcn/ui)
-│   └── lib/              # Client-side utilities
-├── packages/             # Shared Local Packages
-│   ├── shared-types/     # Common TypeScript interfaces
-│   ├── shared-utils/     # Shared logic (Zodiac, Numerology, Tarot calculators)
-│   └── api-client/       # Type-safe API client wrapper
-├── public/               # Static assets & images
-└── next.config.ts        # Next.js configuration
+├── src/
+│   ├── app/                    # App Router & API Routes
+│   │   ├── page.tsx            # Main entry point (108 lines - simplified)
+│   │   ├── layout.tsx
+│   │   ├── globals.css
+│   │   └── api/                # Backend routes
+│   │       ├── predictions/
+│   │       └── numerology/
+│   ├── features/               # Feature-based components
+│   │   ├── numerology/
+│   │   │   └── components/
+│   │   │       └── NumerologyCard.tsx
+│   │   ├── dashboard/
+│   │   │   └── components/
+│   │   │       └── Dashboard.tsx
+│   │   └── auth/
+│   │       └── components/
+│   │           └── OnboardingForm.tsx
+│   ├── components/             # Shared UI Components (shadcn/ui, TarotCard, etc.)
+│   ├── hooks/                  # Custom React hooks
+│   │   ├── useUserProfile.ts
+│   │   ├── useDailyPrediction.ts
+│   │   ├── useTarotReading.ts
+│   │   └── useLocalStorage.ts
+│   ├── services/               # Business logic & API integration
+│   │   ├── profileService.ts
+│   │   ├── predictionService.ts
+│   │   └── tarotService.ts
+│   ├── types/                  # TypeScript interfaces
+│   │   └── index.ts
+│   └── lib/                    # Client-side utilities
+├── packages/                   # Shared Local Packages
+│   ├── shared-types/           # Common TypeScript interfaces
+│   ├── shared-utils/           # Shared logic (Zodiac, Numerology, Tarot calculators)
+│   └── api-client/             # Type-safe API client wrapper
+├── public/                     # Static assets & images
+└── next.config.ts              # Next.js configuration
 ```
+
+### Architecture Improvements
+
+**Before**: Monolithic `page.tsx` with inline components (481 lines)  
+**After**: Clean component composition with services and hooks (108 lines)
+
+- **Feature-Based Organization**: Related components grouped by domain
+- **Custom Hooks**: Reusable state management logic (`useUserProfile`, `useDailyPrediction`, `useTarotReading`, `useLocalStorage`)
+- **Service Layer**: Centralized business logic with error handling
+- **Type Safety**: Comprehensive TypeScript interfaces for all components and services
 
 ## Tech Stack
 
@@ -93,6 +130,14 @@ bun run build
 - **Smooth Animations**: Tailwind CSS animations and transitions
 - **Toast Notifications**: User feedback via Sonner toasts
 - **Accessible Components**: shadcn/ui components built on Radix UI
+
+### 🏗️ Code Quality Features
+
+- **Feature-Based Architecture**: Clear separation of concerns with domain-organized components
+- **Custom Hooks**: Reusable state management and API logic
+- **Service Layer**: Centralized business logic with consistent error handling
+- **Type Safety**: Comprehensive TypeScript interfaces throughout the codebase
+- **Clean Composition**: Simplified main page component (77% reduction: 481 → 108 lines)
 
 ### 📊 Observability
 

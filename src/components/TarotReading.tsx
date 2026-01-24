@@ -3,13 +3,16 @@
 import { TarotReading as TarotReadingType } from '@super-stats/shared-types';
 import { TarotCard } from './TarotCard';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sparkles, RotateCw } from 'lucide-react';
 
 interface TarotReadingProps {
     reading: TarotReadingType;
+    onRefresh?: () => void;
+    isRefreshing?: boolean;
 }
 
-export function TarotReading({ reading }: TarotReadingProps) {
+export function TarotReading({ reading, onRefresh, isRefreshing }: TarotReadingProps) {
     const [situation, challenge, outcome] = reading.cards;
 
     return (
@@ -30,19 +33,35 @@ export function TarotReading({ reading }: TarotReadingProps) {
             </div>
 
             <CardHeader className="relative z-10 text-center pb-2">
-                <CardTitle className="flex items-center justify-center gap-2 text-amber-400">
-                    <Sparkles className="h-5 w-5" />
-                    <span className="text-xl font-bold">Your Daily Tarot Reading</span>
-                    <Sparkles className="h-5 w-5" />
-                </CardTitle>
-                <CardDescription className="text-slate-400">
-                    Reading for {new Date(reading.date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}
-                </CardDescription>
+                <div className="flex items-center justify-center gap-2">
+                    <Sparkles className="h-5 w-5 text-amber-400" />
+                    <CardTitle className="text-amber-400">
+                        <span className="text-xl font-bold">Your Daily Tarot Reading</span>
+                    </CardTitle>
+                    <Sparkles className="h-5 w-5 text-amber-400" />
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                    <CardDescription className="text-slate-400">
+                        Reading for {new Date(reading.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </CardDescription>
+                    {onRefresh && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={onRefresh}
+                            disabled={isRefreshing}
+                            className="text-amber-400 hover:text-amber-500 hover:bg-amber-50/10"
+                            title="Redraw cards"
+                        >
+                            <RotateCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        </Button>
+                    )}
+                </div>
             </CardHeader>
 
             <CardContent className="relative z-10 space-y-6 sm:space-y-8 pb-6 sm:pb-8 px-3 sm:px-8">

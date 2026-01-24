@@ -37,10 +37,13 @@ class ApiClient {
 
   async getDailyPrediction(
     sign: ZodiacSign,
-    day: "yesterday" | "today" | "tomorrow" = "today",
+    date: string = "",
   ): Promise<DailyPrediction> {
+    // Date should be in YYYY-MM-DD format, defaults to today
+    const dateParam = date || new Date().toISOString().split('T')[0];
+    
     const response = await this.request<ApiResponse<DailyPrediction>>(
-      `/api/predictions?sign=${sign}&day=${day}`,
+      `/api/predictions?sign=${sign}&date=${dateParam}`,
     );
 
     if (!response.success || !response.data) {
