@@ -1,18 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { UserProfile, DailyPrediction, ZodiacSign, NumerologyPrediction } from '@super-stats/shared-types';
+import { UserProfile, DailyPrediction, ZodiacSign, NumerologyPrediction, TarotReading as TarotReadingType } from '@super-stats/shared-types';
 import { apiClient } from '@super-stats/api-client';
-import { getUserProfile, saveUserProfile, clearUserProfile } from '@super-stats/shared-utils';
+import { getUserProfile, saveUserProfile, clearUserProfile, canDrawToday, performTarotDraw, getLastReading } from '@super-stats/shared-utils';
 import { Toaster, toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator, Sparkles, User, Settings, Loader2, RotateCcw, Calendar, Star } from 'lucide-react';
+import { Calculator, Sparkles, User, Settings, Loader2, RotateCcw, Calendar, Star, Moon } from 'lucide-react';
 import { calculateSunSign, calculateLifePathNumber, calculateDestinyNumber } from '@super-stats/shared-utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Pencil } from 'lucide-react';
+import { TarotReading } from '@/components/TarotReading';
 
 // --- UI Components (Inline for speed, ideally separate) ---
 
@@ -98,7 +99,11 @@ function Dashboard({
   prediction,
   loading,
   onGetPrediction,
-  onEdit
+  onEdit,
+  tarotReading,
+  tarotLoading,
+  canDrawTarot,
+  onGetTarot
 }: {
   profile: UserProfile;
   onClear: () => void;
@@ -106,7 +111,23 @@ function Dashboard({
   loading: boolean;
   onGetPrediction: () => void;
   onEdit: () => void;
+  tarotReading: TarotReadingType | null;
+  tarotLoading: boolean;
+  canDrawTarot: boolean;
+  onGetTarot: () => void;
 }) {
+
+
+  const [activeSection, setActiveSection] = useState<'prediction' | 'tarot' | null>(null);
+
+  // Auto-switch to newly loaded content
+  useEffect(() => {
+    if (prediction && !activeSection) setActiveSection('prediction');
+  }, [prediction]);
+
+  useEffect(() => {
+    if (tarotReading && activeSection !== 'tarot') setActiveSection('tarot');
+  }, [tarotReading]);
 
   return (
     <div className="container mx-auto max-w-2xl p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -130,30 +151,83 @@ function Dashboard({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            {/* Prediction Button */}
             <Button
               size="lg"
-              onClick={onGetPrediction}
+              onClick={() => {
+                if (prediction && activeSection === 'prediction') {
+                  setActiveSection(null); // Toggle off if already active
+                } else {
+                  onGetPrediction();
+                  setActiveSection('prediction');
+                }
+              }}
+              variant={activeSection === 'prediction' ? 'default' : 'outline'}
               disabled={loading}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'prediction'
+                ? 'bg-slate-900 hover:bg-slate-800 text-white'
+                : 'bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white'
+                }`}
             >
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 animate-spin" /> Divining...
+                <span className="flex items-center gap-2 justify-center">
+                  <Sparkles className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> <span className="hidden sm:inline">Divining...</span><span className="sm:hidden">Divining</span>
                 </span>
               ) : (
-                <span className="flex items-center gap-2">
-                  <Star className="h-5 w-5" /> Get Daily Prediction
+                <span className="flex items-center gap-2 justify-center">
+                  <Star className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">{activeSection === 'prediction' ? 'Hide Prediction' : 'Daily Prediction'}</span><span className="sm:hidden">{activeSection === 'prediction' ? 'Hide' : 'Predict'}</span>
+                </span>
+              )}
+            </Button>
+
+            {/* Tarot Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (tarotReading && activeSection === 'tarot') {
+                  setActiveSection(null); // Toggle off
+                } else {
+                  onGetTarot();
+                  setActiveSection('tarot');
+                }
+              }}
+              variant={activeSection === 'tarot' ? 'default' : 'outline'}
+              disabled={tarotLoading}
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${activeSection === 'tarot'
+                ? 'bg-gradient-to-r from-indigo-900 to-purple-900 text-white'
+                : 'bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white'
+                }`}
+            >
+              {tarotLoading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5 animate-pulse" /> <span className="hidden sm:inline">Drawing...</span><span className="sm:hidden">Drawing</span>
+                </span>
+              ) : !canDrawTarot && !tarotReading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">View Tarot</span><span className="sm:hidden">Tarot</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" /> <span className="hidden sm:inline">{activeSection === 'tarot' ? 'Hide Tarot' : 'Daily Tarot'}</span><span className="sm:hidden">{activeSection === 'tarot' ? 'Hide' : 'Tarot'}</span>
                 </span>
               )}
             </Button>
           </div>
+
+          {!canDrawTarot && tarotReading && activeSection !== 'tarot' && (
+            <p className="text-xs text-center text-slate-500 mt-2">
+              Tarot reading ready to view.
+            </p>
+          )}
+
         </CardContent>
       </Card>
 
-      {
-        prediction && (
-          <>
+      {/* Content Area - Collapsible Sections */}
+      <div className="space-y-6">
+        {prediction && activeSection === 'prediction' && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-6">
             <Card className="border-none shadow-2xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                 <Sparkles className="h-32 w-32" />
@@ -182,9 +256,15 @@ function Dashboard({
             </Card>
 
             <NumerologyCard profile={profile} />
-          </>
-        )
-      }
+          </div>
+        )}
+
+        {tarotReading && activeSection === 'tarot' && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <TarotReading reading={tarotReading} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -272,11 +352,29 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
+  // Tarot state
+  const [tarotReading, setTarotReading] = useState<TarotReadingType | null>(null);
+  const [tarotLoading, setTarotLoading] = useState(false);
+  const [canDrawTarot, setCanDrawTarot] = useState(true);
+
   useEffect(() => {
     setIsClient(true);
     const saved = getUserProfile();
-    if (saved) setProfile(saved);
+    if (saved) {
+      setProfile(saved);
+      // Check if user can draw today, but DON'T auto-load the reading
+      // We only load if they click "View Today's Reading"
+      setCanDrawTarot(canDrawToday(saved));
+    }
   }, []);
+
+  // Update lockout state when profile changes
+  useEffect(() => {
+    if (profile) {
+      setTarotReading(null); // Clear previous reading when profile changes
+      setCanDrawTarot(canDrawToday(profile));
+    }
+  }, [profile?.name, profile?.dateOfBirth]);
 
   const handleSaveProfile = (newProfile: UserProfile) => {
     setProfile(newProfile);
@@ -289,6 +387,7 @@ export default function Home() {
     clearUserProfile();
     setProfile(null);
     setPrediction(null);
+    setTarotReading(null);
     toast.info("Profile cleared");
   };
 
@@ -305,6 +404,36 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGetTarot = () => {
+    if (!profile) return;
+
+    if (!canDrawTarot) {
+      // Logic for "View Today's Reading"
+      const storedReading = getLastReading(profile);
+      if (storedReading) {
+        setTarotReading(storedReading);
+        toast.info("Welcome back to your reading.");
+      } else {
+        toast.error("Reading not found. Try clearing profile.");
+      }
+      return;
+    }
+
+    setTarotLoading(true);
+    // Simulate a brief delay for dramatic effect
+    setTimeout(() => {
+      const reading = performTarotDraw(profile);
+      if (reading) {
+        setTarotReading(reading);
+        setCanDrawTarot(false);
+        toast.success("The cards have spoken!");
+      } else {
+        toast.error("Unable to draw cards. Try again later.");
+      }
+      setTarotLoading(false);
+    }, 1500);
   };
 
   if (!isClient) return null; // Prevent hydration mismatch
@@ -331,6 +460,10 @@ export default function Home() {
               loading={loading}
               onGetPrediction={handleGetPrediction}
               onEdit={() => setIsEditing(true)}
+              tarotReading={tarotReading}
+              tarotLoading={tarotLoading}
+              canDrawTarot={canDrawTarot}
+              onGetTarot={handleGetTarot}
             />
           ) : (
             <Onboarding
@@ -344,3 +477,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -27,16 +27,27 @@ export async function GET(request: Request) {
 
         // Map external API response to our DailyPrediction interface
         // External API returns: { data: { date: string, horoscope_data: string }, ... }
+        // Generate deterministic elements based on date and sign
+        const seedStr = `${data.data.date}-${sign}`;
+        let hash = 0;
+        for (let i = 0; i < seedStr.length; i++) {
+            hash = seedStr.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const seed = Math.abs(hash);
+
+        const colors = ["Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink", "White", "Gold", "Silver", "Indigo", "Emerald", "Turquoise", "Ruby"];
+        const compatibility = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+
         const prediction: DailyPrediction = {
             current_date: data.data.date,
             description: data.data.horoscope_data,
-            // Mock missing fields
-            compatibility: 'Taurus', // Placeholder
-            lucky_number: 42, // Placeholder
-            lucky_time: '12:00 PM', // Placeholder
-            color: 'Blue', // Placeholder
-            mood: 'Optimistic', // Placeholder
-            date_range: [data.data.date], // Simplification
+            // Dynamic deterministic fields
+            compatibility: compatibility[seed % compatibility.length],
+            lucky_number: (seed % 99) + 1,
+            lucky_time: '12:00 PM', // Keep as placeholder for now or randomize similarly if needed
+            color: colors[seed % colors.length],
+            mood: 'Optimistic', // Keep placeholder
+            date_range: [data.data.date],
         };
 
         return NextResponse.json({
