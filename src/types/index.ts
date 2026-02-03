@@ -4,7 +4,7 @@ import {
   WeeklyPrediction,
   MonthlyPrediction,
   TarotReading,
-  NumerologyPrediction,
+  NumerologyReading,
   PredictionPeriod,
 } from "@super-stats/shared-types";
 
@@ -16,6 +16,7 @@ export interface NumerologyCardProps {
 export interface DashboardProps {
   profile: UserProfile;
   onClear: () => void;
+  onEdit: () => void;
   // Daily prediction
   prediction: DailyPrediction | null;
   loading: boolean;
@@ -34,8 +35,12 @@ export interface DashboardProps {
   // Period selection
   predictionPeriod: PredictionPeriod;
   onPeriodChange: (period: PredictionPeriod) => void;
+  // Numerology
+  numerologyReading: NumerologyReading | null;
+  numerologyLoading: boolean;
+  onGetNumerology: () => void;
+  onRefreshNumerology: () => void;
   // Tarot
-  onEdit: () => void;
   tarotReading: TarotReading | null;
   tarotLoading: boolean;
   canDrawTarot: boolean;

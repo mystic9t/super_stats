@@ -65,6 +65,24 @@ export interface HealthCheckResponse {
   status: string;
 }
 
+export interface NumerologyNumber {
+  number: number;
+  title: string;
+  meaning: string;
+  description: string;
+}
+
+export interface NumerologyReading {
+  lifePath: NumerologyNumber;
+  destiny: NumerologyNumber;
+  soulUrge: NumerologyNumber;
+  personality: NumerologyNumber;
+  birthday: NumerologyNumber;
+  personalYear: NumerologyNumber;
+  currentYear: number;
+}
+
+// Legacy interface for backward compatibility
 export interface NumerologyPrediction {
   lifePath: number;
   destiny: number;
