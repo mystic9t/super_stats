@@ -4,7 +4,7 @@ import { type DailyPrediction } from '@super-stats/shared-types';
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const sign = searchParams.get('sign');
-    const day = searchParams.get('day') || 'today';
+    const date = searchParams.get('date');
 
     if (!sign) {
         return NextResponse.json(
@@ -13,10 +13,17 @@ export async function GET(request: Request) {
         );
     }
 
+    if (!date) {
+        return NextResponse.json(
+            { success: false, error: 'Date is required in YYYY-MM-DD format', timestamp: new Date() },
+            { status: 400 }
+        );
+    }
+
     try {
-        // External API call
+        // External API call with explicit date
         const response = await fetch(
-            `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign.toLowerCase()}&day=${day}`
+            `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign.toLowerCase()}&date=${date}`
         );
 
         if (!response.ok) {
@@ -43,7 +50,7 @@ export async function GET(request: Request) {
             description: data.data.horoscope_data,
             // Dynamic deterministic fields
             compatibility: compatibility[seed % compatibility.length],
-            lucky_number: (seed % 99) + 1,
+            lucky_number: (seed % 9) + 1,
             lucky_time: '12:00 PM', // Keep as placeholder for now or randomize similarly if needed
             color: colors[seed % colors.length],
             mood: 'Optimistic', // Keep placeholder
