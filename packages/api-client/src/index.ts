@@ -1,11 +1,12 @@
 import {
   ZodiacSign,
   DailyPrediction,
+  WeeklyPrediction,
+  MonthlyPrediction,
   ApiResponse,
   HealthCheckResponse,
   NumerologyPrediction,
 } from "@super-stats/shared-types";
-
 
 class ApiClient {
   private baseUrl: string;
@@ -37,10 +38,13 @@ class ApiClient {
 
   async getDailyPrediction(
     sign: ZodiacSign,
-    day: "yesterday" | "today" | "tomorrow" = "today",
+    date: string = "",
   ): Promise<DailyPrediction> {
+    // Date should be in YYYY-MM-DD format, defaults to today
+    const dateParam = date || new Date().toISOString().split("T")[0];
+
     const response = await this.request<ApiResponse<DailyPrediction>>(
-      `/api/predictions?sign=${sign}&day=${day}`,
+      `/api/predictions?sign=${sign}&date=${dateParam}`,
     );
 
     if (!response.success || !response.data) {
@@ -50,13 +54,42 @@ class ApiClient {
     return response.data;
   }
 
-  async getNumerologyPrediction(lifePath: number, destiny: number): Promise<NumerologyPrediction> {
-    const response = await this.request<ApiResponse<NumerologyPrediction>>(
-      `/api/numerology?lifePath=${lifePath}&destiny=${destiny}`
+  async getWeeklyPrediction(sign: ZodiacSign): Promise<WeeklyPrediction> {
+    const response = await this.request<ApiResponse<WeeklyPrediction>>(
+      `/api/predictions/weekly?sign=${sign}`,
     );
 
     if (!response.success || !response.data) {
-      throw new Error(response.error || "Failed to fetch numerology prediction");
+      throw new Error(response.error || "Failed to fetch weekly prediction");
+    }
+
+    return response.data;
+  }
+
+  async getMonthlyPrediction(sign: ZodiacSign): Promise<MonthlyPrediction> {
+    const response = await this.request<ApiResponse<MonthlyPrediction>>(
+      `/api/predictions/monthly?sign=${sign}`,
+    );
+
+    if (!response.success || !response.data) {
+      throw new Error(response.error || "Failed to fetch monthly prediction");
+    }
+
+    return response.data;
+  }
+
+  async getNumerologyPrediction(
+    lifePath: number,
+    destiny: number,
+  ): Promise<NumerologyPrediction> {
+    const response = await this.request<ApiResponse<NumerologyPrediction>>(
+      `/api/numerology?lifePath=${lifePath}&destiny=${destiny}`,
+    );
+
+    if (!response.success || !response.data) {
+      throw new Error(
+        response.error || "Failed to fetch numerology prediction",
+      );
     }
     return response.data;
   }
