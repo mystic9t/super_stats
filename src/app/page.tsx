@@ -7,6 +7,7 @@ import {
   useDailyPrediction,
   useWeeklyPrediction,
   useMonthlyPrediction,
+  useNumerology,
   useTarotReading,
 } from "@/hooks";
 import { tarotService } from "@/services";
@@ -52,6 +53,13 @@ export default function Home() {
     refreshCards,
     clear: clearTarot,
   } = useTarotReading();
+  const {
+    reading: numerologyReading,
+    isLoading: numerologyLoading,
+    fetchReading: fetchNumerology,
+    refreshReading: refreshNumerology,
+    clear: clearNumerology,
+  } = useNumerology();
 
   useEffect(() => {
     setIsClient(true);
@@ -68,6 +76,7 @@ export default function Home() {
     clearPrediction();
     clearWeeklyPrediction();
     clearMonthlyPrediction();
+    clearNumerology();
     clearTarot();
     toast.info("Profile cleared");
   };
@@ -129,6 +138,26 @@ export default function Home() {
       toast.success("Monthly prediction refreshed!");
     } catch (err) {
       toast.error("Failed to refresh monthly prediction.");
+    }
+  };
+
+  const handleGetNumerology = async () => {
+    if (!profile) return;
+    try {
+      await fetchNumerology(profile);
+      toast.success("Your cosmic numbers revealed!");
+    } catch (err) {
+      toast.error("Failed to calculate numerology.");
+    }
+  };
+
+  const handleRefreshNumerology = async () => {
+    if (!profile) return;
+    try {
+      await refreshNumerology(profile);
+      toast.success("Numerology refreshed!");
+    } catch (err) {
+      toast.error("Failed to refresh numerology.");
     }
   };
 
@@ -196,6 +225,10 @@ export default function Home() {
               predictionPeriod={predictionPeriod}
               onPeriodChange={setPredictionPeriod}
               onEdit={() => setIsEditing(true)}
+              numerologyReading={numerologyReading}
+              numerologyLoading={numerologyLoading}
+              onGetNumerology={handleGetNumerology}
+              onRefreshNumerology={handleRefreshNumerology}
               tarotReading={tarotReading}
               tarotLoading={tarotLoading}
               canDrawTarot={canDrawTarot}
