@@ -1,16 +1,16 @@
 export enum ZodiacSign {
-  ARIES = 'aries',
-  TAURUS = 'taurus',
-  GEMINI = 'gemini',
-  CANCER = 'cancer',
-  LEO = 'leo',
-  VIRGO = 'virgo',
-  LIBRA = 'libra',
-  SCORPIO = 'scorpio',
-  SAGITTARIUS = 'sagittarius',
-  CAPRICORN = 'capricorn',
-  AQUARIUS = 'aquarius',
-  PISCES = 'pisces'
+  ARIES = "aries",
+  TAURUS = "taurus",
+  GEMINI = "gemini",
+  CANCER = "cancer",
+  LEO = "leo",
+  VIRGO = "virgo",
+  LIBRA = "libra",
+  SCORPIO = "scorpio",
+  SAGITTARIUS = "sagittarius",
+  CAPRICORN = "capricorn",
+  AQUARIUS = "aquarius",
+  PISCES = "pisces",
 }
 
 export interface UserProfile {
@@ -30,6 +30,25 @@ export interface DailyPrediction {
   description: string;
 }
 
+export interface WeeklyPrediction {
+  week: string;
+  description: string;
+  compatibility: string;
+  lucky_number: number;
+  color: string;
+  mood: string;
+}
+
+export interface MonthlyPrediction {
+  month: string;
+  description: string;
+  standout_days: string;
+  challenging_days: string;
+  compatibility: string;
+  lucky_number: number;
+  color: string;
+}
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -39,7 +58,7 @@ export interface ApiResponse<T = unknown> {
 
 export interface PredictionRequest {
   sign: ZodiacSign;
-  day?: 'yesterday' | 'today' | 'tomorrow';
+  day?: "yesterday" | "today" | "tomorrow";
 }
 
 export interface HealthCheckResponse {
@@ -54,7 +73,7 @@ export interface NumerologyPrediction {
 }
 
 // Tarot Types
-export type TarotPosition = 'situation' | 'challenge' | 'outcome';
+export type TarotPosition = "situation" | "challenge" | "outcome";
 
 export interface TarotCard {
   id: number;
@@ -82,3 +101,5 @@ export interface TarotState {
   lastReading: TarotReading | null;
   lastDrawDate: string | null; // YYYY-MM-DD format
 }
+
+export type PredictionPeriod = "daily" | "weekly" | "monthly";
