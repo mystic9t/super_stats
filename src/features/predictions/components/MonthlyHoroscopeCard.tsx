@@ -52,22 +52,9 @@ export function MonthlyHoroscopeCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-6 relative z-10">
-        {/* Horoscope Sections with Date Headers */}
-        <div className="space-y-6">
-          {prediction.sections.map((section, index) => (
-            <div
-              key={index}
-              className="border-l-4 border-purple-300 dark:border-purple-600 pl-4"
-            >
-              <h3 className="text-lg font-bold text-purple-700 dark:text-purple-300 mb-2">
-                {section.date}
-              </h3>
-              <p className="text-base leading-relaxed text-slate-700 dark:text-slate-300">
-                {section.text}
-              </p>
-            </div>
-          ))}
-        </div>
+        <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300 italic font-medium">
+          "{prediction.description}"
+        </p>
 
         {/* Standout Days - Badge Chips */}
         {standoutDays.length > 0 && (
