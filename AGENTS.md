@@ -21,6 +21,34 @@ Super Stats is a **Next.js Full Stack Monorepo** managed with **Bun Workspaces**
 - **`dev`**: Main development branch. All new features and fixes should be merged here first.
 - **Vercel Previews**: Every push to `dev` (or any feature branch) will automatically generate a **Preview Deployment** on Vercel, allowing you to test changes before they go to production.
 
+### ⚠️ PR Approval & Merging - MUST ASK FOR CONFIRMATION
+
+**Before approving, merging, or creating pull requests, you MUST:**
+
+1. **Ask the user for explicit confirmation** - Do not assume approval is desired
+2. **Summarize the changes** - Clearly describe what the PR contains
+3. **Highlight potential risks** - Point out any breaking changes, dependencies, or side effects
+4. **Wait for user response** - Never proceed without clear user approval
+
+**Example workflow:**
+
+```plaintext
+✅ CORRECT:
+"I've prepared the following changes:
+- Feature X implementation
+- Bug fix for Y
+
+Potential impacts:
+- Breaking change in API endpoint
+
+Should I create the PR?"
+
+❌ INCORRECT:
+"Creating and merging the PR now..."
+```
+
+Never auto-merge or auto-approve PRs without explicit user confirmation.
+
 ## Monorepo Workflow
 
 ### 1. Linking & Path Mappings
