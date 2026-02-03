@@ -17,22 +17,23 @@ import {
   Moon,
   Calendar,
   RotateCw,
-  CalendarDays,
+  Calculator,
 } from "lucide-react";
-import { NumerologyCard } from "@/features/numerology/components/NumerologyCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
 import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
+import { NumerologySection } from "@/features/numerology/components/NumerologySection";
 import { TarotReading } from "@/components/TarotReading";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@super-stats/shared-types";
 
 /**
  * Dashboard Component
- * Main dashboard displaying predictions and tarot readings
+ * Main dashboard displaying predictions, numerology, and tarot readings
  */
 export function Dashboard({
   profile,
   onClear,
+  onEdit,
   // Daily prediction
   prediction,
   loading,
@@ -51,8 +52,12 @@ export function Dashboard({
   // Period selection
   predictionPeriod,
   onPeriodChange,
+  // Numerology
+  numerologyReading,
+  numerologyLoading,
+  onGetNumerology,
+  onRefreshNumerology,
   // Tarot
-  onEdit,
   tarotReading,
   tarotLoading,
   canDrawTarot,
@@ -60,7 +65,7 @@ export function Dashboard({
   onRefreshTarot,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
-    "prediction" | "tarot" | null
+    "prediction" | "numerology" | "tarot" | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -72,7 +77,9 @@ export function Dashboard({
   }, [prediction, hasInteracted]);
 
   // Handle manual section changes
-  const handleSectionChange = (section: "prediction" | "tarot" | null) => {
+  const handleSectionChange = (
+    section: "prediction" | "numerology" | "tarot" | null,
+  ) => {
     setActiveSection(section);
     setHasInteracted(true);
   };
@@ -146,7 +153,7 @@ export function Dashboard({
         </CardHeader>
         <CardContent>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            {/* Prediction Button */}
+            {/* Horoscope Button */}
             <Button
               size="lg"
               onClick={() => {
@@ -187,11 +194,51 @@ export function Dashboard({
                   <Star className="h-4 sm:h-5 w-4 sm:w-5" />
                   <span className="hidden sm:inline">
                     {activeSection === "prediction"
-                      ? "Hide Prediction"
+                      ? "Hide Horoscope"
                       : "Horoscope"}
                   </span>
                   <span className="sm:hidden">
                     {activeSection === "prediction" ? "Hide" : "Horoscope"}
+                  </span>
+                </span>
+              )}
+            </Button>
+
+            {/* Numerology Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "numerology") {
+                  handleSectionChange(null);
+                } else {
+                  onGetNumerology();
+                  handleSectionChange("numerology");
+                }
+              }}
+              variant={activeSection === "numerology" ? "default" : "outline"}
+              disabled={numerologyLoading}
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                activeSection === "numerology"
+                  ? "bg-violet-700 hover:bg-violet-800 text-white"
+                  : "bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white"
+              }`}
+            >
+              {numerologyLoading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Calculator className="h-4 sm:h-5 w-4 sm:w-5 animate-pulse" />
+                  <span className="hidden sm:inline">Calculating...</span>
+                  <span className="sm:hidden">Calc...</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 justify-center">
+                  <Calculator className="h-4 sm:h-5 w-4 sm:w-5" />
+                  <span className="hidden sm:inline">
+                    {activeSection === "numerology"
+                      ? "Hide Numerology"
+                      : "Numerology"}
+                  </span>
+                  <span className="sm:hidden">
+                    {activeSection === "numerology" ? "Hide" : "Numerology"}
                   </span>
                 </span>
               )}
@@ -344,11 +391,17 @@ export function Dashboard({
                 isRefreshing={monthlyLoading}
               />
             )}
+          </div>
+        )}
 
-            {/* Numerology Card - Only show for daily predictions */}
-            {predictionPeriod === "daily" && prediction && (
-              <NumerologyCard profile={profile} />
-            )}
+        {/* Numerology Section */}
+        {activeSection === "numerology" && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <NumerologySection
+              reading={numerologyReading}
+              onRefresh={onRefreshNumerology}
+              isRefreshing={numerologyLoading}
+            />
           </div>
         )}
 
