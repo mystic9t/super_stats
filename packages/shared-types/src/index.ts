@@ -39,9 +39,15 @@ export interface WeeklyPrediction {
   mood: string;
 }
 
+export interface HoroscopeSection {
+  date: string;
+  text: string;
+}
+
 export interface MonthlyPrediction {
   month: string;
   description: string;
+  sections: HoroscopeSection[];
   standout_days: string;
   challenging_days: string;
   compatibility: string;
