@@ -1,21 +1,57 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Toaster, toast } from 'sonner';
-import { useUserProfile, useDailyPrediction, useTarotReading } from '@/hooks';
-import { tarotService } from '@/services';
-import { Dashboard } from '@/features/dashboard/components/Dashboard';
-import { OnboardingForm } from '@/features/auth/components/OnboardingForm';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { useState, useEffect } from "react";
+import { Toaster, toast } from "sonner";
+import {
+  useUserProfile,
+  useDailyPrediction,
+  useWeeklyPrediction,
+  useMonthlyPrediction,
+  useTarotReading,
+} from "@/hooks";
+import { tarotService } from "@/services";
+import { Dashboard } from "@/features/dashboard/components/Dashboard";
+import { OnboardingForm } from "@/features/auth/components/OnboardingForm";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { PredictionPeriod } from "@super-stats/shared-types";
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [predictionPeriod, setPredictionPeriod] =
+    useState<PredictionPeriod>("daily");
 
   // Use custom hooks for state management
   const { profile, setProfile, clearProfile } = useUserProfile();
-  const { prediction, isLoading: predictionLoading, fetchPrediction, refreshPrediction, clear: clearPrediction } = useDailyPrediction();
-  const { reading: tarotReading, isDrawing: tarotLoading, canDraw: canDrawTarot, drawCards, refreshCards, clear: clearTarot } = useTarotReading();
+  const {
+    prediction,
+    isLoading: predictionLoading,
+    fetchPrediction,
+    refreshPrediction,
+    clear: clearPrediction,
+  } = useDailyPrediction();
+  const {
+    prediction: weeklyPrediction,
+    isLoading: weeklyLoading,
+    fetchPrediction: fetchWeeklyPrediction,
+    refreshPrediction: refreshWeeklyPrediction,
+    clear: clearWeeklyPrediction,
+  } = useWeeklyPrediction();
+  const {
+    prediction: monthlyPrediction,
+    isLoading: monthlyLoading,
+    fetchPrediction: fetchMonthlyPrediction,
+    refreshPrediction: refreshMonthlyPrediction,
+    clear: clearMonthlyPrediction,
+  } = useMonthlyPrediction();
+  const {
+    reading: tarotReading,
+    isDrawing: tarotLoading,
+    canDraw: canDrawTarot,
+    drawCards,
+    refreshCards,
+    clear: clearTarot,
+  } = useTarotReading();
 
   useEffect(() => {
     setIsClient(true);
@@ -24,23 +60,25 @@ export default function Home() {
   const handleSaveProfile = async (newProfile: any) => {
     setProfile(newProfile);
     setIsEditing(false);
-    toast.success(profile ? 'Profile updated!' : 'Welcome aboard!');
+    toast.success(profile ? "Profile updated!" : "Welcome aboard!");
   };
 
   const handleClear = () => {
     clearProfile();
     clearPrediction();
+    clearWeeklyPrediction();
+    clearMonthlyPrediction();
     clearTarot();
-    toast.info('Profile cleared');
+    toast.info("Profile cleared");
   };
 
   const handleGetPrediction = async () => {
     if (!profile) return;
     try {
       await fetchPrediction(profile.sunSign);
-      toast.success('Stars aligned!');
+      toast.success("Stars aligned!");
     } catch (err) {
-      toast.error('Cloudy skies... try again later.');
+      toast.error("Cloudy skies... try again later.");
     }
   };
 
@@ -48,9 +86,49 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshPrediction(profile.sunSign);
-      toast.success('Prediction refreshed!');
+      toast.success("Prediction refreshed!");
     } catch (err) {
-      toast.error('Failed to refresh prediction.');
+      toast.error("Failed to refresh prediction.");
+    }
+  };
+
+  const handleGetWeeklyPrediction = async () => {
+    if (!profile) return;
+    try {
+      await fetchWeeklyPrediction(profile.sunSign);
+      toast.success("Weekly stars aligned!");
+    } catch (err) {
+      toast.error("Cloudy skies for the week... try again later.");
+    }
+  };
+
+  const handleRefreshWeeklyPrediction = async () => {
+    if (!profile) return;
+    try {
+      await refreshWeeklyPrediction(profile.sunSign);
+      toast.success("Weekly prediction refreshed!");
+    } catch (err) {
+      toast.error("Failed to refresh weekly prediction.");
+    }
+  };
+
+  const handleGetMonthlyPrediction = async () => {
+    if (!profile) return;
+    try {
+      await fetchMonthlyPrediction(profile.sunSign);
+      toast.success("Monthly forecast ready!");
+    } catch (err) {
+      toast.error("Cloudy skies for the month... try again later.");
+    }
+  };
+
+  const handleRefreshMonthlyPrediction = async () => {
+    if (!profile) return;
+    try {
+      await refreshMonthlyPrediction(profile.sunSign);
+      toast.success("Monthly prediction refreshed!");
+    } catch (err) {
+      toast.error("Failed to refresh monthly prediction.");
     }
   };
 
@@ -58,9 +136,9 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshCards(profile);
-      toast.success('Cards redrawn!');
+      toast.success("Cards redrawn!");
     } catch (err) {
-      toast.error('Failed to redraw cards.');
+      toast.error("Failed to redraw cards.");
     }
   };
 
@@ -71,16 +149,16 @@ export default function Home() {
       // User has already drawn today, show stored reading
       const lastResult = tarotService.getLastReading(profile);
       if (lastResult.success) {
-        toast.info('Welcome back to your reading.');
+        toast.info("Welcome back to your reading.");
       } else {
-        toast.error('Reading not found. Try clearing profile.');
+        toast.error("Reading not found. Try clearing profile.");
       }
       return;
     }
 
     // Draw new tarot reading
     await drawCards(profile);
-    toast.success('The cards have spoken!');
+    toast.success("The cards have spoken!");
   };
 
   if (!isClient) return null;
@@ -107,6 +185,16 @@ export default function Home() {
               loading={predictionLoading}
               onGetPrediction={handleGetPrediction}
               onRefreshPrediction={handleRefreshPrediction}
+              weeklyPrediction={weeklyPrediction}
+              weeklyLoading={weeklyLoading}
+              onGetWeeklyPrediction={handleGetWeeklyPrediction}
+              onRefreshWeeklyPrediction={handleRefreshWeeklyPrediction}
+              monthlyPrediction={monthlyPrediction}
+              monthlyLoading={monthlyLoading}
+              onGetMonthlyPrediction={handleGetMonthlyPrediction}
+              onRefreshMonthlyPrediction={handleRefreshMonthlyPrediction}
+              predictionPeriod={predictionPeriod}
+              onPeriodChange={setPredictionPeriod}
               onEdit={() => setIsEditing(true)}
               tarotReading={tarotReading}
               tarotLoading={tarotLoading}
@@ -126,4 +214,3 @@ export default function Home() {
     </div>
   );
 }
-

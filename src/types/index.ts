@@ -1,4 +1,12 @@
-import { UserProfile, DailyPrediction, TarotReading, NumerologyPrediction } from '@super-stats/shared-types';
+import {
+  UserProfile,
+  DailyPrediction,
+  WeeklyPrediction,
+  MonthlyPrediction,
+  TarotReading,
+  NumerologyPrediction,
+  PredictionPeriod,
+} from "@super-stats/shared-types";
 
 // Component Props Interfaces
 export interface NumerologyCardProps {
@@ -8,10 +16,25 @@ export interface NumerologyCardProps {
 export interface DashboardProps {
   profile: UserProfile;
   onClear: () => void;
+  // Daily prediction
   prediction: DailyPrediction | null;
   loading: boolean;
   onGetPrediction: () => void;
   onRefreshPrediction: () => void;
+  // Weekly prediction
+  weeklyPrediction: WeeklyPrediction | null;
+  weeklyLoading: boolean;
+  onGetWeeklyPrediction: () => void;
+  onRefreshWeeklyPrediction: () => void;
+  // Monthly prediction
+  monthlyPrediction: MonthlyPrediction | null;
+  monthlyLoading: boolean;
+  onGetMonthlyPrediction: () => void;
+  onRefreshMonthlyPrediction: () => void;
+  // Period selection
+  predictionPeriod: PredictionPeriod;
+  onPeriodChange: (period: PredictionPeriod) => void;
+  // Tarot
   onEdit: () => void;
   tarotReading: TarotReading | null;
   tarotLoading: boolean;
