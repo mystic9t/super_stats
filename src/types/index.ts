@@ -6,7 +6,7 @@ import {
   TarotReading,
   NumerologyReading,
   PredictionPeriod,
-} from "@super-stats/shared-types";
+} from "@vibes/shared-types";
 
 // Component Props Interfaces
 export interface NumerologyCardProps {

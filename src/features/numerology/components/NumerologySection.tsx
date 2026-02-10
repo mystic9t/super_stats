@@ -10,7 +10,7 @@ import {
   ChevronUp,
   Sparkles,
 } from "lucide-react";
-import { NumerologyReading, NumerologyNumber } from "@super-stats/shared-types";
+import { NumerologyReading, NumerologyNumber } from "@vibes/shared-types";
 
 interface NumerologySectionProps {
   reading: NumerologyReading | null;

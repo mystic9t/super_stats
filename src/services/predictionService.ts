@@ -3,8 +3,8 @@ import {
   WeeklyPrediction,
   MonthlyPrediction,
   ZodiacSign,
-} from "@super-stats/shared-types";
-import { apiClient } from "@super-stats/api-client";
+} from "@vibes/shared-types";
+import { apiClient } from "@vibes/api-client";
 import { ServiceResponse } from "@/types";
 
 class PredictionService {

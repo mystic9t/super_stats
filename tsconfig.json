@@ -26,13 +26,13 @@
       "@/*": [
         "./src/*"
       ],
-      "@super-stats/shared-types": [
+      "@vibes/shared-types": [
         "./packages/shared-types/src/index.ts"
       ],
-      "@super-stats/shared-utils": [
+      "@vibes/shared-utils": [
         "./packages/shared-utils/src/index.ts"
       ],
-      "@super-stats/api-client": [
+      "@vibes/api-client": [
         "./packages/api-client/src/index.ts"
       ]
     }

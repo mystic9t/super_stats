@@ -1,5 +1,5 @@
-import { TarotReading, UserProfile } from '@super-stats/shared-types';
-import { canDrawToday, performTarotDraw, getLastReading } from '@super-stats/shared-utils';
+import { TarotReading, UserProfile } from '@vibes/shared-types';
+import { canDrawToday, performTarotDraw, getLastReading } from '@vibes/shared-utils';
 import { ServiceResponse } from '@/types';
 
 class TarotService {

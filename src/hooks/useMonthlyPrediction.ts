@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MonthlyPrediction, ZodiacSign } from "@super-stats/shared-types";
+import { MonthlyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { predictionService } from "@/services";
 
 interface UseMonthlyPredictionReturn {

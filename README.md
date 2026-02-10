@@ -1,4 +1,4 @@
-# Super Stats 🌟
+# Vibes 🌟
 
 A modern, full-stack astrology and numerology web application built with Next.js and Bun. Get personalized cosmic insights including horoscopes, numerology readings, and tarot divination.
 
@@ -9,7 +9,7 @@ This project is organized as a monorepo using **Bun Workspaces** with a refactor
 ### Project Structure
 
 ```text
-super-stats/
+vibes/
 ├── src/
 │   ├── app/                    # App Router & API Routes
 │   │   ├── page.tsx            # Main entry point (108 lines - simplified)

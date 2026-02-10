@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { UserProfile } from '@super-stats/shared-types';
-import { calculateSunSign } from '@super-stats/shared-utils';
+import { UserProfile } from '@vibes/shared-types';
+import { calculateSunSign } from '@vibes/shared-utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,7 +49,7 @@ export function OnboardingForm({ onSave, initialData, onCancel }: OnboardingForm
             <Calculator className="h-8 w-8 text-indigo-600" />
           </div>
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-            Super Stats
+            Vibes
           </CardTitle>
           <CardDescription className="text-lg">Unlock your cosmic potential</CardDescription>
         </CardHeader>

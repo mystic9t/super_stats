@@ -24,7 +24,7 @@ import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyH
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
 import { TarotReading } from "@/components/TarotReading";
 import { DashboardProps } from "@/types";
-import { PredictionPeriod } from "@super-stats/shared-types";
+import { PredictionPeriod } from "@vibes/shared-types";
 
 /**
  * Dashboard Component

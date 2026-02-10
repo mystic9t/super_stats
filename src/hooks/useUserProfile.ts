@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserProfile } from '@super-stats/shared-types';
+import { UserProfile } from '@vibes/shared-types';
 import { profileService } from '@/services';
 
 interface UseUserProfileReturn {

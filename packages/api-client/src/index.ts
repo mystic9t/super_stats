@@ -6,7 +6,7 @@ import {
   ApiResponse,
   HealthCheckResponse,
   NumerologyPrediction,
-} from "@super-stats/shared-types";
+} from "@vibes/shared-types";
 
 class ApiClient {
   private baseUrl: string;
