@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NumerologyReading, UserProfile } from "@super-stats/shared-types";
+import { NumerologyReading, UserProfile } from "@vibes/shared-types";
 
 interface UseNumerologyReturn {
   reading: NumerologyReading | null;

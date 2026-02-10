@@ -1,7 +1,7 @@
-import { UserProfile } from '@super-stats/shared-types';
+import { UserProfile } from '@vibes/shared-types';
 
 export const STORAGE_KEYS = {
-  USER_PROFILE: 'super-stats-user-profile',
+  USER_PROFILE: 'vibes-user-profile',
 } as const;
 
 export function saveUserProfile(profile: UserProfile): void {

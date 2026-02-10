@@ -1,10 +1,10 @@
 # Agent Guidance (agent.md)
 
-This document provides technical context and workflows for AI agents and CLI tools working on the **Super Stats** monorepo.
+This document provides technical context and workflows for AI agents and CLI tools working on the **Vibes** monorepo.
 
 ## Project Architecture
 
-Super Stats is a **Next.js Full Stack Monorepo** managed with **Bun Workspaces**.
+Vibes is a **Next.js Full Stack Monorepo** managed with **Bun Workspaces**.
 
 - **`/src`**: The primary Next.js application (App Router).
   - `/app/api`: Backend logic and proxy routes.
@@ -53,7 +53,7 @@ Never auto-merge or auto-approve PRs without explicit user confirmation.
 
 ### 1. Linking & Path Mappings
 
-The root `tsconfig.json` defines `paths` that point `@super-stats/*` directly to the `src/index.ts` of each package. This allows for **live hot-reloading** of shared logic during Next.js development.
+The root `tsconfig.json` defines `paths` that point `@vibes/*` directly to the `src/index.ts` of each package. This allows for **live hot-reloading** of shared logic during Next.js development.
 
 ### 2. Package Compilation
 

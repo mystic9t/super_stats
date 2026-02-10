@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { UserProfile, NumerologyPrediction } from '@super-stats/shared-types';
-import { calculateLifePathNumber, calculateDestinyNumber } from '@super-stats/shared-utils';
+import { UserProfile, NumerologyPrediction } from '@vibes/shared-types';
+import { calculateLifePathNumber, calculateDestinyNumber } from '@vibes/shared-utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calculator, Loader2 } from 'lucide-react';
 import { NumerologyCardProps } from '@/types';

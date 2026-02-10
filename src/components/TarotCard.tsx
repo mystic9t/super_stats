@@ -1,7 +1,7 @@
 'use client';
 
-import { DrawnCard } from '@super-stats/shared-types';
-import { getPositionDescription } from '@super-stats/shared-utils';
+import { DrawnCard } from '@vibes/shared-types';
+import { getPositionDescription } from '@vibes/shared-utils';
 
 interface TarotCardProps {
     drawnCard: DrawnCard;

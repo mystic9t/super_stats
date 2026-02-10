@@ -14,7 +14,7 @@ import { tarotService } from "@/services";
 import { Dashboard } from "@/features/dashboard/components/Dashboard";
 import { OnboardingForm } from "@/features/auth/components/OnboardingForm";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { PredictionPeriod } from "@super-stats/shared-types";
+import { PredictionPeriod } from "@vibes/shared-types";
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
