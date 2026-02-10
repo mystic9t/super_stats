@@ -1,4 +1,4 @@
-import { TarotCard } from '@super-stats/shared-types';
+import { TarotCard } from '@vibes/shared-types';
 
 // KV Store for Major Arcana cards
 // Images from public domain Rider-Waite deck at sacred-texts.com

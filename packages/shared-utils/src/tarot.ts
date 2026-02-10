@@ -1,7 +1,7 @@
-import { TarotCard, DrawnCard, TarotReading, TarotState, TarotPosition } from '@super-stats/shared-types';
+import { TarotCard, DrawnCard, TarotReading, TarotState, TarotPosition } from '@vibes/shared-types';
 import { MAJOR_ARCANA_KV, getAllCardIds, POSITION_DESCRIPTIONS } from './tarot-data';
 
-const TAROT_STORAGE_KEY = 'super_stats_tarot';
+const TAROT_STORAGE_KEY = 'vibes_tarot';
 const REVERSAL_CHANCE = 0.3; // 30% chance for a card to be reversed
 
 /**
@@ -82,7 +82,7 @@ export const generateReadingSummary = (cards: [DrawnCard, DrawnCard, DrawnCard])
     return `${situationIntro}. ${challengeTransition}. ${outcomeConclusion}`;
 };
 
-import { UserProfile } from '@super-stats/shared-types';
+import { UserProfile } from '@vibes/shared-types';
 
 /**
  * Generate a unique storage key for the user

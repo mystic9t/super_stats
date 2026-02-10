@@ -16,7 +16,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Super Stats",
+  title: "Vibes",
   description: "Your daily cosmic insights",
 };
 

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, RotateCw, Star, AlertTriangle } from "lucide-react";
-import { MonthlyPrediction } from "@super-stats/shared-types";
+import { MonthlyPrediction } from "@vibes/shared-types";
 
 interface MonthlyHoroscopeCardProps {
   prediction: MonthlyPrediction;

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, RotateCw, Sparkles } from "lucide-react";
-import { WeeklyPrediction } from "@super-stats/shared-types";
+import { WeeklyPrediction } from "@vibes/shared-types";
 
 interface WeeklyHoroscopeCardProps {
   prediction: WeeklyPrediction;

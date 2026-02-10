@@ -1,5 +1,5 @@
 {
-  "name": "@super-stats/shared-types",
+  "name": "@vibes/shared-types",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",

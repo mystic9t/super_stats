@@ -1,5 +1,5 @@
-import { UserProfile } from '@super-stats/shared-types';
-import { getUserProfile, saveUserProfile, clearUserProfile } from '@super-stats/shared-utils';
+import { UserProfile } from '@vibes/shared-types';
+import { getUserProfile, saveUserProfile, clearUserProfile } from '@vibes/shared-utils';
 import { ServiceResponse } from '@/types';
 
 class ProfileService {

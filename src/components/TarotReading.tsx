@@ -1,6 +1,6 @@
 'use client';
 
-import { TarotReading as TarotReadingType } from '@super-stats/shared-types';
+import { TarotReading as TarotReadingType } from '@vibes/shared-types';
 import { TarotCard } from './TarotCard';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
