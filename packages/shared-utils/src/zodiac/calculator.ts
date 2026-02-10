@@ -1,4 +1,4 @@
-import { ZodiacSign } from '@super-stats/shared-types';
+import { ZodiacSign } from '@vibes/shared-types';
 
 export const ZODIAC_DATE_RANGES = [
   { sign: ZodiacSign.CAPRICORN, start: { month: 12, day: 22 }, end: { month: 1, day: 19 } },

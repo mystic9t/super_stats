@@ -1,10 +1,10 @@
 {
-  "name": "super-stats",
+  "name": "vibes",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build:packages": "bun run --filter @super-stats/shared-types build && bun run --filter @super-stats/shared-utils build && bun run --filter @super-stats/api-client build",
+    "build:packages": "bun run --filter @vibes/shared-types build && bun run --filter @vibes/shared-utils build && bun run --filter @vibes/api-client build",
     "build": "bun run build:packages && next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,9 +13,9 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
-    "@super-stats/api-client": "workspace:*",
-    "@super-stats/shared-types": "workspace:*",
-    "@super-stats/shared-utils": "workspace:*",
+    "@vibes/api-client": "workspace:*",
+    "@vibes/shared-types": "workspace:*",
+    "@vibes/shared-utils": "workspace:*",
     "@vercel/analytics": "^1.6.1",
     "@vercel/speed-insights": "^1.3.1",
     "class-variance-authority": "^0.7.1",

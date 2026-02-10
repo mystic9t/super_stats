@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { TarotReading, UserProfile } from '@super-stats/shared-types';
+import { TarotReading, UserProfile } from '@vibes/shared-types';
 import { tarotService } from '@/services';
 
 interface UseTarotReadingReturn {

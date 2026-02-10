@@ -7,11 +7,11 @@
       "dependencies": {
         "@radix-ui/react-label": "^2.1.8",
         "@radix-ui/react-slot": "^1.2.4",
-        "@super-stats/api-client": "workspace:*",
-        "@super-stats/shared-types": "workspace:*",
-        "@super-stats/shared-utils": "workspace:*",
         "@vercel/analytics": "^1.6.1",
         "@vercel/speed-insights": "^1.3.1",
+        "@vibes/api-client": "workspace:*",
+        "@vibes/shared-types": "workspace:*",
+        "@vibes/shared-utils": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
@@ -37,27 +37,27 @@
       },
     },
     "packages/api-client": {
-      "name": "@super-stats/api-client",
+      "name": "@vibes/api-client",
       "version": "0.1.0",
       "dependencies": {
-        "@super-stats/shared-types": "workspace:*",
+        "@vibes/shared-types": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.7.3",
       },
     },
     "packages/shared-types": {
-      "name": "@super-stats/shared-types",
+      "name": "@vibes/shared-types",
       "version": "0.1.0",
       "devDependencies": {
         "typescript": "^5.7.3",
       },
     },
     "packages/shared-utils": {
-      "name": "@super-stats/shared-utils",
+      "name": "@vibes/shared-utils",
       "version": "0.1.0",
       "dependencies": {
-        "@super-stats/shared-types": "workspace:*",
+        "@vibes/shared-types": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.7.3",
@@ -235,12 +235,6 @@
 
     "@rtsao/scc": ["@rtsao/scc@1.1.0", "", {}, "sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g=="],
 
-    "@super-stats/api-client": ["@super-stats/api-client@workspace:packages/api-client"],
-
-    "@super-stats/shared-types": ["@super-stats/shared-types@workspace:packages/shared-types"],
-
-    "@super-stats/shared-utils": ["@super-stats/shared-utils@workspace:packages/shared-utils"],
-
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 
     "@tailwindcss/node": ["@tailwindcss/node@4.1.18", "", { "dependencies": { "@jridgewell/remapping": "^2.3.4", "enhanced-resolve": "^5.18.3", "jiti": "^2.6.1", "lightningcss": "1.30.2", "magic-string": "^0.30.21", "source-map-js": "^1.2.1", "tailwindcss": "4.1.18" } }, "sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ=="],
@@ -348,6 +342,12 @@
     "@vercel/analytics": ["@vercel/analytics@1.6.1", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-oH9He/bEM+6oKlv3chWuOOcp8Y6fo6/PSro8hEkgCW3pu9/OiCXiUpRUogDh3Fs3LH2sosDrx8CxeOLBEE+afg=="],
 
     "@vercel/speed-insights": ["@vercel/speed-insights@1.3.1", "", { "peerDependencies": { "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-PbEr7FrMkUrGYvlcLHGkXdCkxnylCWePx7lPxxq36DNdfo9mcUjLOmqOyPDHAOgnfqgGGdmE3XI9L/4+5fr+vQ=="],
+
+    "@vibes/api-client": ["@vibes/api-client@workspace:packages/api-client"],
+
+    "@vibes/shared-types": ["@vibes/shared-types@workspace:packages/shared-types"],
+
+    "@vibes/shared-utils": ["@vibes/shared-utils@workspace:packages/shared-utils"],
 
     "acorn": ["acorn@8.15.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg=="],
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { type MonthlyPrediction } from "@super-stats/shared-types";
+import { type MonthlyPrediction } from "@vibes/shared-types";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

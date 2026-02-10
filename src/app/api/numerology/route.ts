@@ -3,7 +3,7 @@ import {
   ApiResponse,
   NumerologyReading,
   NumerologyNumber,
-} from "@super-stats/shared-types";
+} from "@vibes/shared-types";
 import {
   getMeaning,
   calculateLifePathNumber,
@@ -12,7 +12,7 @@ import {
   calculatePersonalityNumber,
   calculateBirthdayNumber,
   calculatePersonalYearNumber,
-} from "@super-stats/shared-utils";
+} from "@vibes/shared-utils";
 
 export const runtime = "edge";
 
