@@ -22,6 +22,7 @@ import {
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
 import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
+import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
@@ -63,9 +64,15 @@ export function Dashboard({
   canDrawTarot,
   onGetTarot,
   onRefreshTarot,
+  // Chinese Zodiac
+  chineseZodiacReading,
+  chineseZodiacLoading,
+  chineseZodiacYear,
+  onGetChineseZodiac,
+  onRefreshChineseZodiac,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
-    "prediction" | "numerology" | "tarot" | null
+    "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -78,7 +85,7 @@ export function Dashboard({
 
   // Handle manual section changes
   const handleSectionChange = (
-    section: "prediction" | "numerology" | "tarot" | null,
+    section: "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null,
   ) => {
     setActiveSection(section);
     setHasInteracted(true);
@@ -257,6 +264,13 @@ export function Dashboard({
           </Button>
         </div>
 
+        {/* Chinese Zodiac Section */}
+        {activeSection === "chinese-zodiac" && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <ChineseZodiacCard profile={profile} />
+          </div>
+        )}
+
         {/* Content Area */}
         <div className="space-y-6">
           {/* Horoscope Section */}
@@ -330,12 +344,126 @@ export function Dashboard({
                 />
               )}
 
+<<<<<<< HEAD
               {predictionPeriod === "monthly" && monthlyPrediction && (
                 <MonthlyHoroscopeCard
                   prediction={monthlyPrediction}
                   onRefresh={onRefreshMonthlyPrediction}
                   isRefreshing={monthlyLoading}
                 />
+=======
+            {/* Tarot Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "tarot") {
+                  handleSectionChange(null);
+                } else {
+                  onGetTarot();
+                  handleSectionChange("tarot");
+                }
+              }}
+              variant={activeSection === "tarot" ? "default" : "outline"}
+              disabled={tarotLoading}
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                activeSection === "tarot"
+                  ? "bg-gradient-to-r from-indigo-900 to-purple-900 text-white"
+                  : "bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white"
+              }`}
+            >
+              {tarotLoading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5 animate-pulse" />
+                  <span className="hidden sm:inline">Drawing...</span>
+                  <span className="sm:hidden">Drawing</span>
+                </span>
+              ) : !canDrawTarot && !tarotReading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" />
+                  <span className="hidden sm:inline">View Tarot</span>
+                  <span className="sm:hidden">Tarot</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 justify-center">
+                  <Moon className="h-4 sm:h-5 w-4 sm:w-5" />
+                  <span className="hidden sm:inline">
+                    {activeSection === "tarot" ? "Hide Tarot" : "Daily Tarot"}
+                  </span>
+                  <span className="sm:hidden">
+                    {activeSection === "tarot" ? "Hide" : "Tarot"}
+                  </span>
+                </span>
+              )}
+            </Button>
+
+            {/* Chinese Zodiac Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "chinese-zodiac") {
+                  handleSectionChange(null);
+                } else {
+                  onGetChineseZodiac();
+                  handleSectionChange("chinese-zodiac");
+                }
+              }}
+              variant={activeSection === "chinese-zodiac" ? "default" : "outline"}
+              disabled={chineseZodiacLoading}
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                activeSection === "chinese-zodiac"
+                  ? "bg-gradient-to-r from-red-700 to-orange-700 text-white"
+                  : "bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white"
+              }`}
+            >
+              {chineseZodiacLoading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <span className="text-lg animate-spin">🐉</span>
+                  <span className="hidden sm:inline">Loading...</span>
+                  <span className="sm:hidden">Loading</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 justify-center">
+                  <span className="text-lg">🐉</span>
+                  <span className="hidden sm:inline">
+                    {activeSection === "chinese-zodiac" ? "Hide Chinese" : "Chinese"}
+                  </span>
+                  <span className="sm:hidden">
+                    {activeSection === "chinese-zodiac" ? "Hide" : "Chinese"}
+                  </span>
+                </span>
+              )}
+            </Button>
+          </div>
+
+          {!canDrawTarot && tarotReading && activeSection !== "tarot" && (
+            <p className="text-xs text-center text-slate-500 mt-2">
+              Tarot reading ready to view.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Content Area - Collapsible Sections */}
+      <div className="space-y-6">
+        {activeSection === "prediction" && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-6">
+            {/* Period Selection Segmented Control */}
+            <div className="flex p-1 bg-white/50 dark:bg-zinc-800/50 rounded-xl backdrop-blur-sm">
+              {(["daily", "weekly", "monthly"] as PredictionPeriod[]).map(
+                (period) => (
+                  <button
+                    key={period}
+                    onClick={() => handlePeriodChange(period)}
+                    className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                      predictionPeriod === period
+                        ? "bg-slate-900 text-white shadow-md"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {period.charAt(0).toUpperCase() + period.slice(1)}
+                  </button>
+                ),
+>>>>>>> origin/visual-rebrand
               )}
             </div>
           )}
@@ -362,7 +490,6 @@ export function Dashboard({
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }

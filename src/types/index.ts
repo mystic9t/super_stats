@@ -5,6 +5,7 @@ import {
   MonthlyPrediction,
   TarotReading,
   NumerologyReading,
+  ChineseZodiacReading,
   PredictionPeriod,
 } from "@vibes/shared-types";
 
@@ -46,6 +47,12 @@ export interface DashboardProps {
   canDrawTarot: boolean;
   onGetTarot: () => void;
   onRefreshTarot: () => void;
+  // Chinese Zodiac
+  chineseZodiacReading: ChineseZodiacReading | null;
+  chineseZodiacLoading: boolean;
+  chineseZodiacYear: string | null;
+  onGetChineseZodiac: () => void;
+  onRefreshChineseZodiac: () => void;
 }
 
 export interface OnboardingFormProps {

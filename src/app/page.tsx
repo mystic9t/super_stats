@@ -9,6 +9,7 @@ import {
   useMonthlyPrediction,
   useNumerology,
   useTarotReading,
+  useChineseZodiac,
 } from "@/hooks";
 import { tarotService } from "@/services";
 import { Header } from "@/components/Header";
@@ -60,6 +61,14 @@ export default function Home() {
     refreshReading: refreshNumerology,
     clear: clearNumerology,
   } = useNumerology();
+  const {
+    reading: chineseZodiacReading,
+    chineseYear: chineseZodiacYear,
+    isLoading: chineseZodiacLoading,
+    fetchReading: fetchChineseZodiac,
+    refreshReading: refreshChineseZodiac,
+    clear: clearChineseZodiac,
+  } = useChineseZodiac();
 
   useEffect(() => {
     setIsClient(true);
@@ -78,6 +87,7 @@ export default function Home() {
     clearMonthlyPrediction();
     clearNumerology();
     clearTarot();
+    clearChineseZodiac();
     toast.info("🌙 Profile cleared, fresh start!");
   };
 
@@ -190,6 +200,26 @@ export default function Home() {
     toast.success("🎴 The cards have spoken!");
   };
 
+  const handleGetChineseZodiac = async () => {
+    if (!profile) return;
+    try {
+      await fetchChineseZodiac(profile);
+      toast.success("Chinese zodiac revealed!");
+    } catch (err) {
+      toast.error("Failed to fetch Chinese zodiac.");
+    }
+  };
+
+  const handleRefreshChineseZodiac = async () => {
+    if (!profile) return;
+    try {
+      await refreshChineseZodiac(profile);
+      toast.success("Chinese zodiac refreshed!");
+    } catch (err) {
+      toast.error("Failed to refresh Chinese zodiac.");
+    }
+  };
+
   if (!isClient) return null;
 
   return (
@@ -235,6 +265,11 @@ export default function Home() {
             canDrawTarot={canDrawTarot}
             onGetTarot={handleGetTarot}
             onRefreshTarot={handleRefreshTarot}
+            chineseZodiacReading={chineseZodiacReading}
+            chineseZodiacLoading={chineseZodiacLoading}
+            chineseZodiacYear={chineseZodiacYear}
+            onGetChineseZodiac={handleGetChineseZodiac}
+            onRefreshChineseZodiac={handleRefreshChineseZodiac}
           />
         ) : (
           <OnboardingForm
