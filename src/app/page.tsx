@@ -11,9 +11,9 @@ import {
   useTarotReading,
 } from "@/hooks";
 import { tarotService } from "@/services";
+import { Header } from "@/components/Header";
 import { Dashboard } from "@/features/dashboard/components/Dashboard";
 import { OnboardingForm } from "@/features/auth/components/OnboardingForm";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { PredictionPeriod } from "@vibes/shared-types";
 
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
   const handleSaveProfile = async (newProfile: any) => {
     setProfile(newProfile);
     setIsEditing(false);
-    toast.success(profile ? "Profile updated!" : "Welcome aboard!");
+    toast.success(profile ? "✨ Profile updated!" : "🌟 Welcome to Vibes!");
   };
 
   const handleClear = () => {
@@ -78,16 +78,16 @@ export default function Home() {
     clearMonthlyPrediction();
     clearNumerology();
     clearTarot();
-    toast.info("Profile cleared");
+    toast.info("🌙 Profile cleared, fresh start!");
   };
 
   const handleGetPrediction = async () => {
     if (!profile) return;
     try {
       await fetchPrediction(profile.sunSign);
-      toast.success("Stars aligned!");
+      toast.success("⭐ Stars aligned!");
     } catch (err) {
-      toast.error("Cloudy skies... try again later.");
+      toast.error("☁️ Cloudy skies... try again later.");
     }
   };
 
@@ -95,7 +95,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshPrediction(profile.sunSign);
-      toast.success("Prediction refreshed!");
+      toast.success("🔄 Prediction refreshed!");
     } catch (err) {
       toast.error("Failed to refresh prediction.");
     }
@@ -105,7 +105,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await fetchWeeklyPrediction(profile.sunSign);
-      toast.success("Weekly stars aligned!");
+      toast.success("📅 Weekly forecast ready!");
     } catch (err) {
       toast.error("Cloudy skies for the week... try again later.");
     }
@@ -115,7 +115,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshWeeklyPrediction(profile.sunSign);
-      toast.success("Weekly prediction refreshed!");
+      toast.success("🔄 Weekly prediction refreshed!");
     } catch (err) {
       toast.error("Failed to refresh weekly prediction.");
     }
@@ -125,7 +125,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await fetchMonthlyPrediction(profile.sunSign);
-      toast.success("Monthly forecast ready!");
+      toast.success("📊 Monthly forecast ready!");
     } catch (err) {
       toast.error("Cloudy skies for the month... try again later.");
     }
@@ -135,7 +135,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshMonthlyPrediction(profile.sunSign);
-      toast.success("Monthly prediction refreshed!");
+      toast.success("🔄 Monthly prediction refreshed!");
     } catch (err) {
       toast.error("Failed to refresh monthly prediction.");
     }
@@ -145,7 +145,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await fetchNumerology(profile);
-      toast.success("Your cosmic numbers revealed!");
+      toast.success("🔢 Your cosmic numbers revealed!");
     } catch (err) {
       toast.error("Failed to calculate numerology.");
     }
@@ -155,7 +155,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshNumerology(profile);
-      toast.success("Numerology refreshed!");
+      toast.success("🔄 Numerology refreshed!");
     } catch (err) {
       toast.error("Failed to refresh numerology.");
     }
@@ -165,7 +165,7 @@ export default function Home() {
     if (!profile) return;
     try {
       await refreshCards(profile);
-      toast.success("Cards redrawn!");
+      toast.success("🃏 Cards redrawn!");
     } catch (err) {
       toast.error("Failed to redraw cards.");
     }
@@ -178,7 +178,7 @@ export default function Home() {
       // User has already drawn today, show stored reading
       const lastResult = tarotService.getLastReading(profile);
       if (lastResult.success) {
-        toast.info("Welcome back to your reading.");
+        toast.info("🌙 Welcome back to your reading.");
       } else {
         toast.error("Reading not found. Try clearing profile.");
       }
@@ -187,62 +187,62 @@ export default function Home() {
 
     // Draw new tarot reading
     await drawCards(profile);
-    toast.success("The cards have spoken!");
+    toast.success("🎴 The cards have spoken!");
   };
 
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-950">
-      <div
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-90 transition-opacity duration-700 dark:opacity-60"
-        style={{ backgroundImage: "url('/images/starry-night-stylized.png')" }}
-      />
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Subtle cosmic background - different for light/dark */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      </div>
 
-      <div className="relative z-10 p-4">
-        <div className="absolute top-4 right-4 z-50">
-          <ThemeToggle />
-        </div>
+      {/* Header */}
+      <Header />
 
-        <div className="pt-12">
-          <Toaster position="top-center" richColors theme="system" />
-          {profile && !isEditing ? (
-            <Dashboard
-              profile={profile}
-              onClear={handleClear}
-              prediction={prediction}
-              loading={predictionLoading}
-              onGetPrediction={handleGetPrediction}
-              onRefreshPrediction={handleRefreshPrediction}
-              weeklyPrediction={weeklyPrediction}
-              weeklyLoading={weeklyLoading}
-              onGetWeeklyPrediction={handleGetWeeklyPrediction}
-              onRefreshWeeklyPrediction={handleRefreshWeeklyPrediction}
-              monthlyPrediction={monthlyPrediction}
-              monthlyLoading={monthlyLoading}
-              onGetMonthlyPrediction={handleGetMonthlyPrediction}
-              onRefreshMonthlyPrediction={handleRefreshMonthlyPrediction}
-              predictionPeriod={predictionPeriod}
-              onPeriodChange={setPredictionPeriod}
-              onEdit={() => setIsEditing(true)}
-              numerologyReading={numerologyReading}
-              numerologyLoading={numerologyLoading}
-              onGetNumerology={handleGetNumerology}
-              onRefreshNumerology={handleRefreshNumerology}
-              tarotReading={tarotReading}
-              tarotLoading={tarotLoading}
-              canDrawTarot={canDrawTarot}
-              onGetTarot={handleGetTarot}
-              onRefreshTarot={handleRefreshTarot}
-            />
-          ) : (
-            <OnboardingForm
-              onSave={handleSaveProfile}
-              initialData={profile}
-              onCancel={profile ? () => setIsEditing(false) : undefined}
-            />
-          )}
-        </div>
+      {/* Main Content */}
+      <div className="relative z-10">
+        <Toaster position="top-center" richColors theme="dark" />
+        
+        {profile && !isEditing ? (
+          <Dashboard
+            profile={profile}
+            onClear={handleClear}
+            prediction={prediction}
+            loading={predictionLoading}
+            onGetPrediction={handleGetPrediction}
+            onRefreshPrediction={handleRefreshPrediction}
+            weeklyPrediction={weeklyPrediction}
+            weeklyLoading={weeklyLoading}
+            onGetWeeklyPrediction={handleGetWeeklyPrediction}
+            onRefreshWeeklyPrediction={handleRefreshWeeklyPrediction}
+            monthlyPrediction={monthlyPrediction}
+            monthlyLoading={monthlyLoading}
+            onGetMonthlyPrediction={handleGetMonthlyPrediction}
+            onRefreshMonthlyPrediction={handleRefreshMonthlyPrediction}
+            predictionPeriod={predictionPeriod}
+            onPeriodChange={setPredictionPeriod}
+            onEdit={() => setIsEditing(true)}
+            numerologyReading={numerologyReading}
+            numerologyLoading={numerologyLoading}
+            onGetNumerology={handleGetNumerology}
+            onRefreshNumerology={handleRefreshNumerology}
+            tarotReading={tarotReading}
+            tarotLoading={tarotLoading}
+            canDrawTarot={canDrawTarot}
+            onGetTarot={handleGetTarot}
+            onRefreshTarot={handleRefreshTarot}
+          />
+        ) : (
+          <OnboardingForm
+            onSave={handleSaveProfile}
+            initialData={profile}
+            onCancel={profile ? () => setIsEditing(false) : undefined}
+          />
+        )}
       </div>
     </div>
   );
