@@ -44,22 +44,28 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
   }, [profile.dateOfBirth]);
 
   return (
-    <Card className="border-none shadow-2xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative min-h-[500px]">
+    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
       <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
         {reading?.symbolEmoji}
       </div>
 
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <span className="text-3xl">{reading?.symbolEmoji}</span>
-          <span className="text-lg">{reading?.title}</span>
-        </CardTitle>
-        <CardDescription>
-          Chinese Zodiac: <span className="font-semibold text-orange-600">{chineseYear}</span>
-        </CardDescription>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{reading?.symbolEmoji}</span>
+            <div>
+              <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                {reading?.title}
+              </CardTitle>
+              <CardDescription className="text-xs mt-1">
+                Year: <span className="font-semibold text-accent">{chineseYear}</span>
+              </CardDescription>
+            </div>
+          </div>
+        </div>
       </CardHeader>
 
-      <CardContent className="space-y-6 relative z-10">
+      <CardContent className="space-y-5 relative z-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
@@ -68,51 +74,32 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
         ) : reading ? (
           <div className="space-y-4">
             {/* Description */}
-            <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-orange-100 dark:border-zinc-700">
-              <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-                {reading.description}
-              </p>
-            </div>
-
-            {/* Traits */}
-            <div>
-              <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">
-                Key Traits
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {reading.traits.map((trait) => (
-                  <span
-                    key={trait}
-                    className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs font-medium"
-                  >
-                    {trait}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <p className="text-base leading-relaxed text-foreground italic">
+              "{reading.description}"
+            </p>
 
             {/* Lucky Numbers and Colors */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-orange-100 dark:border-zinc-700">
-                <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                   Lucky Numbers
                 </p>
                 <div className="flex gap-2">
                   {reading.luckyNumbers.map((num) => (
-                    <span key={num} className="text-lg font-bold text-orange-600 dark:text-orange-300">
+                    <span key={num} className="text-xl font-bold text-accent">
                       {num}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-orange-100 dark:border-zinc-700">
-                <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                   Lucky Colors
                 </p>
                 <div className="flex gap-2 flex-wrap">
                   {reading.luckyColors.map((color) => (
-                    <span key={color} className="text-xs font-semibold text-orange-600 dark:text-orange-300">
+                    <span key={color} className="text-xs font-semibold text-accent">
                       {color}
                     </span>
                   ))}
@@ -120,29 +107,46 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
               </div>
             </div>
 
-            {/* Compatibility */}
-            <div>
-              <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">
-                Compatible Signs
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {reading.compatibility.map((sign) => (
-                  <span
-                    key={sign}
-                    className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-medium"
-                  >
-                    {sign}
-                  </span>
-                ))}
+            {/* Traits & Compatible Signs */}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Traits
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {reading.traits.map((trait) => (
+                    <span
+                      key={trait}
+                      className="px-2 py-1 bg-primary/20 text-primary text-xs font-medium rounded"
+                    >
+                      {trait}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Compatible
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {reading.compatibility.map((sign) => (
+                    <span
+                      key={sign}
+                      className="px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded"
+                    >
+                      {sign}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Element */}
-            <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-orange-100 dark:border-zinc-700">
-              <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">
+            <div className="p-3 rounded-lg bg-muted/50 border border-border">
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
                 Element
               </p>
-              <p className="font-medium text-slate-700 dark:text-slate-300">{reading.element}</p>
+              <p className="font-semibold text-foreground">{reading.element}</p>
             </div>
           </div>
         ) : (

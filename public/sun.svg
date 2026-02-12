@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Golden Sun -->
+  <defs>
+    <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb700;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sun rays -->
+  <g stroke="#f59e0b" stroke-width="3" stroke-linecap="round">
+    <line x1="50" y1="5" x2="50" y2="15" />
+    <line x1="50" y1="85" x2="50" y2="95" />
+    <line x1="5" y1="50" x2="15" y2="50" />
+    <line x1="85" y1="50" x2="95" y2="50" />
+    <line x1="15" y1="15" x2="22" y2="22" />
+    <line x1="78" y1="78" x2="85" y2="85" />
+    <line x1="85" y1="15" x2="78" y2="22" />
+    <line x1="22" y1="78" x2="15" y2="85" />
+  </g>
+  
+  <!-- Sun circle -->
+  <circle cx="50" cy="50" r="30" fill="url(#sunGradient)" />
+</svg>
