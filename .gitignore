@@ -22,4 +22,8 @@ uv.lock
 .vercel
 .env*.local
 
-.agent
+# Local Dev Skills
+.agent/
+.github/
+.opencode/
+.claude/
