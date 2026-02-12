@@ -129,7 +129,10 @@ export function Dashboard({
       {/* Animated background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div
+          className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-float"
+          style={{ animationDelay: "2s" }}
+        />
       </div>
 
       <div className="container mx-auto max-w-4xl p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -196,15 +199,13 @@ export function Dashboard({
             disabled={isPredictionLoading()}
             className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
               activeSection === "prediction"
-                ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
               <Star className="h-5 w-5" />
-              <span>
-                {isPredictionLoading() ? "Divining..." : "Horoscope"}
-              </span>
+              <span>{isPredictionLoading() ? "Divining..." : "Horoscope"}</span>
             </div>
           </Button>
 
@@ -223,15 +224,13 @@ export function Dashboard({
             disabled={numerologyLoading}
             className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
               activeSection === "numerology"
-                ? "bg-gradient-to-r from-accent to-primary text-background shadow-lg shadow-accent/50 scale-105"
+                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
                 : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
               <Calculator className="h-5 w-5" />
-              <span>
-                {numerologyLoading ? "Calc..." : "Numerology"}
-              </span>
+              <span>{numerologyLoading ? "Calc..." : "Numerology"}</span>
             </div>
           </Button>
 
@@ -256,9 +255,7 @@ export function Dashboard({
           >
             <div className="flex items-center justify-center gap-2">
               <Moon className="h-5 w-5" />
-              <span>
-                {tarotLoading ? "Drawing..." : "Tarot"}
-              </span>
+              <span>{tarotLoading ? "Drawing..." : "Tarot"}</span>
             </div>
           </Button>
 
@@ -277,15 +274,13 @@ export function Dashboard({
             disabled={chineseZodiacLoading}
             className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
               activeSection === "chinese-zodiac"
-                ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
               <Star className="h-5 w-5" />
-              <span>
-                {chineseZodiacLoading ? "Divining..." : "Zodiac"}
-              </span>
+              <span>{chineseZodiacLoading ? "Divining..." : "Zodiac"}</span>
             </div>
           </Button>
         </div>
@@ -322,7 +317,10 @@ export function Dashboard({
                       <div className="flex items-center gap-3">
                         <Calendar className="h-6 w-6 text-accent" />
                         <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                          {new Date(prediction.current_date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                          {new Date(prediction.current_date).toLocaleDateString(
+                            "en-US",
+                            { weekday: "long", month: "short", day: "numeric" },
+                          )}
                         </CardTitle>
                       </div>
                       <Button
@@ -332,7 +330,9 @@ export function Dashboard({
                         disabled={loading}
                         className="text-accent hover:text-primary hover:bg-primary/10"
                       >
-                        <RotateCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                        <RotateCw
+                          className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                        />
                       </Button>
                     </div>
                   </CardHeader>
@@ -342,12 +342,20 @@ export function Dashboard({
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Lucky Number</p>
-                        <p className="text-3xl font-bold text-accent">{prediction.lucky_number}</p>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                          Lucky Number
+                        </p>
+                        <p className="text-3xl font-bold text-accent">
+                          {prediction.lucky_number}
+                        </p>
                       </div>
                       <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Power Color</p>
-                        <p className="text-3xl font-bold text-accent">{prediction.color}</p>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                          Power Color
+                        </p>
+                        <p className="text-3xl font-bold text-accent">
+                          {prediction.color}
+                        </p>
                       </div>
                     </div>
                   </CardContent>

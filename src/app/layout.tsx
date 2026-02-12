@@ -19,9 +19,6 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Vibes",
   description: "Your daily cosmic insights",
-  icons: {
-    icon: "/sun.svg",
-  },
 };
 
 export default function RootLayout({
@@ -31,9 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body
-        className="antialiased"
-      >
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
