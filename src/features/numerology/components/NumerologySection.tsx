@@ -58,38 +58,44 @@ export function NumerologySection({
     if (!numberData) return null;
 
     const isExpanded = expandedSections[key];
+    const colorMap: Record<SectionKey, string> = {
+      lifePath: "text-accent",
+      destiny: "text-primary",
+      soulUrge: "text-accent",
+      personality: "text-amber-500",
+      birthday: "text-cyan-400",
+      personalYear: "text-accent",
+    };
 
     return (
-      <div
-        className={`border-b border-violet-100 dark:border-zinc-700 last:border-0 ${colorClass}`}
-      >
+      <div className="border-b border-border last:border-0">
         <button
           onClick={() => toggleSection(key)}
-          className="w-full flex items-center justify-between p-4 hover:bg-violet-50/50 dark:hover:bg-zinc-800/50 transition-colors"
+          className="w-full flex items-center justify-between p-4 hover:bg-primary/5 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <span className="text-3xl font-bold text-violet-600 dark:text-violet-400 min-w-[3rem]">
+            <span className={`text-4xl font-bold min-w-[3rem] ${colorMap[key]}`}>
               {numberData.number}
             </span>
             <div className="text-left">
-              <p className="font-semibold text-slate-800 dark:text-slate-200">
+              <p className="font-bold text-foreground">
                 {numberData.title}
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-muted-foreground">
                 {numberData.description}
               </p>
             </div>
           </div>
           {isExpanded ? (
-            <ChevronUp className="h-5 w-5 text-violet-500" />
+            <ChevronUp className="h-5 w-5 text-primary" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-violet-500" />
+            <ChevronDown className="h-5 w-5 text-primary" />
           )}
         </button>
 
         {isExpanded && (
-          <div className="px-4 pb-4 animate-in slide-in-from-top-2 duration-200">
-            <p className="text-slate-700 dark:text-slate-300 leading-relaxed pl-[3.5rem]">
+          <div className="px-4 pb-4 animate-in slide-in-from-top-2 duration-200 bg-primary/5">
+            <p className="text-foreground leading-relaxed pl-[3.5rem]">
               {numberData.meaning}
             </p>
           </div>
@@ -100,20 +106,19 @@ export function NumerologySection({
 
   if (!reading) {
     return (
-      <Card className="border-none shadow-2xl bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-          <Calculator className="h-32 w-32" />
-        </div>
+      <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-violet-500" />
-            <span className="text-lg">Numerology Insights</span>
+          <CardTitle className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
+              <Calculator className="h-6 w-6 text-primary" />
+            </div>
+            <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Numerology Insights</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
-          <Sparkles className="h-12 w-12 text-violet-400 animate-pulse" />
-          <p className="text-slate-500 dark:text-slate-400 text-center">
-            Click the button below to reveal your cosmic numbers
+          <Sparkles className="h-12 w-12 text-primary animate-float" />
+          <p className="text-muted-foreground text-center">
+            👆 Click the Numerology button to reveal your cosmic numbers
           </p>
         </CardContent>
       </Card>
@@ -121,22 +126,21 @@ export function NumerologySection({
   }
 
   return (
-    <Card className="border-none shadow-2xl bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative">
-      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-        <Calculator className="h-32 w-32" />
-      </div>
+    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-violet-500" />
-            <span className="text-lg">Your Numerology Reading</span>
+          <CardTitle className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
+              <Calculator className="h-6 w-6 text-primary" />
+            </div>
+            <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Your Numerology Reading</span>
           </CardTitle>
           <Button
             size="sm"
             variant="ghost"
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="text-violet-500 hover:text-violet-600 hover:bg-violet-50/10"
+            className="text-primary hover:text-accent hover:bg-accent/10"
             title="Refresh numerology reading"
           >
             <RotateCw
@@ -146,7 +150,7 @@ export function NumerologySection({
         </div>
       </CardHeader>
       <CardContent className="relative z-10">
-        <div className="divide-y divide-violet-100 dark:divide-zinc-700">
+        <div className="divide-y divide-border">
           {renderSection("lifePath", reading.lifePath, "")}
           {renderSection("destiny", reading.destiny, "")}
           {renderSection("soulUrge", reading.soulUrge, "")}
@@ -155,8 +159,8 @@ export function NumerologySection({
           {renderSection("personalYear", reading.personalYear, "")}
         </div>
 
-        <p className="mt-4 text-xs text-center text-slate-400 dark:text-slate-500">
-          Based on your name and birthdate for {reading.currentYear}
+        <p className="mt-4 text-xs text-center text-muted-foreground">
+          ✨ Based on your name and birthdate for {reading.currentYear}
         </p>
       </CardContent>
     </Card>

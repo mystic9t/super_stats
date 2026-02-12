@@ -121,3 +121,39 @@ export interface TarotState {
 }
 
 export type PredictionPeriod = "daily" | "weekly" | "monthly";
+
+// Chinese Zodiac Types
+export enum ChineseZodiacSign {
+  RAT = "rat",
+  OX = "ox",
+  TIGER = "tiger",
+  RABBIT = "rabbit",
+  DRAGON = "dragon",
+  SNAKE = "snake",
+  HORSE = "horse",
+  GOAT = "goat",
+  MONKEY = "monkey",
+  ROOSTER = "rooster",
+  DOG = "dog",
+  PIG = "pig",
+}
+
+export interface ChineseZodiacProfile {
+  sign: ChineseZodiacSign;
+  year: number;
+  element: string; // Wood, Fire, Earth, Metal, Water
+  chineseYear: string;
+}
+
+export interface ChineseZodiacReading {
+  sign: ChineseZodiacSign;
+  title: string;
+  description: string;
+  traits: string[];
+  compatibility: string[];
+  luckyNumbers: number[];
+  luckyColors: string[];
+  element: string;
+  symbolEmoji: string;
+  yearRange: string;
+}
