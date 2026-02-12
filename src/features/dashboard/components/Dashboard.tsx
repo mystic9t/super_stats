@@ -22,6 +22,7 @@ import {
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
 import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
+import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
@@ -63,9 +64,15 @@ export function Dashboard({
   canDrawTarot,
   onGetTarot,
   onRefreshTarot,
+  // Chinese Zodiac
+  chineseZodiacReading,
+  chineseZodiacLoading,
+  chineseZodiacYear,
+  onGetChineseZodiac,
+  onRefreshChineseZodiac,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
-    "prediction" | "numerology" | "tarot" | null
+    "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -78,7 +85,7 @@ export function Dashboard({
 
   // Handle manual section changes
   const handleSectionChange = (
-    section: "prediction" | "numerology" | "tarot" | null,
+    section: "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null,
   ) => {
     setActiveSection(section);
     setHasInteracted(true);
@@ -287,6 +294,44 @@ export function Dashboard({
                 </span>
               )}
             </Button>
+
+            {/* Chinese Zodiac Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "chinese-zodiac") {
+                  handleSectionChange(null);
+                } else {
+                  onGetChineseZodiac();
+                  handleSectionChange("chinese-zodiac");
+                }
+              }}
+              variant={activeSection === "chinese-zodiac" ? "default" : "outline"}
+              disabled={chineseZodiacLoading}
+              className={`sm:flex-1 w-full font-semibold py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                activeSection === "chinese-zodiac"
+                  ? "bg-gradient-to-r from-red-700 to-orange-700 text-white"
+                  : "bg-white/50 hover:bg-white/80 text-slate-900 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 dark:text-white"
+              }`}
+            >
+              {chineseZodiacLoading ? (
+                <span className="flex items-center gap-2 justify-center">
+                  <span className="text-lg animate-spin">🐉</span>
+                  <span className="hidden sm:inline">Loading...</span>
+                  <span className="sm:hidden">Loading</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 justify-center">
+                  <span className="text-lg">🐉</span>
+                  <span className="hidden sm:inline">
+                    {activeSection === "chinese-zodiac" ? "Hide Chinese" : "Chinese"}
+                  </span>
+                  <span className="sm:hidden">
+                    {activeSection === "chinese-zodiac" ? "Hide" : "Chinese"}
+                  </span>
+                </span>
+              )}
+            </Button>
           </div>
 
           {!canDrawTarot && tarotReading && activeSection !== "tarot" && (
@@ -412,6 +457,39 @@ export function Dashboard({
               onRefresh={onRefreshTarot}
               isRefreshing={tarotLoading}
             />
+          </div>
+        )}
+
+        {/* Chinese Zodiac Section */}
+        {activeSection === "chinese-zodiac" && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Chinese Zodiac
+                </h3>
+                {chineseZodiacYear && (
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Year: {chineseZodiacYear}
+                  </p>
+                )}
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onRefreshChineseZodiac}
+                disabled={chineseZodiacLoading}
+                className="text-orange-500 hover:text-orange-600 hover:bg-orange-50/10"
+                title="Refresh Chinese zodiac"
+              >
+                <RotateCw
+                  className={`h-4 w-4 ${chineseZodiacLoading ? "animate-spin" : ""}`}
+                />
+              </Button>
+            </div>
+            {chineseZodiacReading && (
+              <ChineseZodiacCard profile={profile} />
+            )}
           </div>
         )}
       </div>
