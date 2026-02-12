@@ -66,7 +66,7 @@ export function TarotReading({
             style={{ animationDelay: "0.1s" }}
           />
         </div>
-        <div className="flex items-center justify-between mt-3 px-4">
+        <div className="flex items-center justify-between mt-1 px-4">
           <CardDescription className="text-muted-foreground">
             ✨{" "}
             {new Date(reading.date).toLocaleDateString("en-US", {
@@ -94,9 +94,9 @@ export function TarotReading({
         </div>
       </CardHeader>
 
-      <CardContent className="relative z-10 space-y-6 pb-8 px-4">
+      <CardContent className="relative z-10 space-y-4 pb-6 px-4">
         {/* Card Spread Labels */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 pt-4">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
               Situation
