@@ -141,31 +141,50 @@ html.dark {
     font-weight: 700;
   }
 
-  /* Custom scrollbar - subtle and theme-aligned */
+  /* Custom scrollbar - golden amber theme */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(251, 191, 36, 0.1);
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--muted-foreground);
+    background: linear-gradient(180deg, #f59e0b, #fbbf24);
     border-radius: 3px;
-    opacity: 0.3;
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.3);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
-    opacity: 0.6;
+    background: linear-gradient(180deg, #fbbf24, #f59e0b);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  }
+
+  ::-webkit-scrollbar-button {
+    background: linear-gradient(180deg, #fbbf24, #f59e0b);
+    height: 8px;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-button:hover {
+    background: linear-gradient(180deg, #f59e0b, #fbbf24);
+  }
+
+  ::-webkit-scrollbar-button:vertical:start {
+    background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  }
+
+  ::-webkit-scrollbar-button:vertical:end {
+    background: linear-gradient(0deg, #fbbf24, #f59e0b);
   }
 
   /* Firefox scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--muted-foreground) transparent;
+    scrollbar-color: #f59e0b rgba(251, 191, 36, 0.1);
   }
 
   /* Custom animations */
