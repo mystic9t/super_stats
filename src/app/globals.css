@@ -163,3 +163,34 @@ html.dark {
     animation: spin-slow 3s linear infinite;
   }
 }
+
+/* Sonner Toast Styling */
+[data-sonner-toaster] {
+  bottom: 1.5rem !important;
+  right: 1.5rem !important;
+}
+
+[data-sonner-toast] {
+  padding: 0.625rem 1rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.5rem !important;
+  background: linear-gradient(to right, oklch(0.269 0 0), #f59e0b) !important;
+  color: oklch(0.985 0 0) !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  background: linear-gradient(to right, oklch(0.269 0 0), #f59e0b) !important;
+  color: oklch(0.985 0 0) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background: linear-gradient(to right, oklch(0.269 0 0), #f59e0b) !important;
+  color: oklch(0.985 0 0) !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  background: linear-gradient(to right, oklch(0.269 0 0), #f59e0b) !important;
+  color: oklch(0.985 0 0) !important;
+}
+
+

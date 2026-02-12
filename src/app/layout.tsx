@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { FaviconSwitcher } from "@/components/favicon-switcher";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -18,6 +19,9 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Vibes",
   description: "Your daily cosmic insights",
+  icons: {
+    icon: "/sun.svg",
+  },
 };
 
 export default function RootLayout({
@@ -36,6 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <FaviconSwitcher />
           {children}
           <Analytics />
           <SpeedInsights />

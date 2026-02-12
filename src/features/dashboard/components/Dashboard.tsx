@@ -125,9 +125,9 @@ export function Dashboard({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[calc(100vh-120px)]">
       {/* Animated background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
       </div>
@@ -171,8 +171,7 @@ export function Dashboard({
         </Card>
 
         {/* Action Buttons - Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Horoscope Button */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Button
             size="lg"
             onClick={() => {
@@ -262,14 +261,34 @@ export function Dashboard({
               </span>
             </div>
           </Button>
-        </div>
 
-        {/* Chinese Zodiac Section */}
-        {activeSection === "chinese-zodiac" && (
-          <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-            <ChineseZodiacCard profile={profile} />
-          </div>
-        )}
+          {/* Chinese Zodiac Button */}
+          <Button
+            size="lg"
+            onClick={() => {
+              if (activeSection === "chinese-zodiac") {
+                handleSectionChange(null);
+              } else {
+                onGetChineseZodiac();
+                handleSectionChange("chinese-zodiac");
+              }
+            }}
+            variant={activeSection === "chinese-zodiac" ? "default" : "outline"}
+            disabled={chineseZodiacLoading}
+            className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+              activeSection === "chinese-zodiac"
+                ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50 scale-105"
+                : "bg-muted border-2 border-border text-foreground hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Star className="h-5 w-5" />
+              <span>
+                {chineseZodiacLoading ? "Divining..." : "Zodiac"}
+              </span>
+            </div>
+          </Button>
+        </div>
 
         {/* Content Area */}
         <div className="space-y-6">

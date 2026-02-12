@@ -51,9 +51,10 @@ Never auto-merge or auto-approve PRs without explicit user confirmation.
 
 ## Agent Output & Summaries
 
-**Agents should NOT generate summaries or recap documents unless explicitly requested by the user.** 
+**Agents should NOT generate summaries or recap documents unless explicitly requested by the user.**
 
 This keeps the workflow lean and focused. Only provide summaries when:
+
 - The user explicitly asks for one ("summarize the changes", "give me a summary")
 - A summary is functionally necessary to move forward (e.g., confirming PR contents before approval)
 

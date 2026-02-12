@@ -223,9 +223,9 @@ export default function Home() {
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="h-screen overflow-hidden bg-background text-foreground flex flex-col">
       {/* Subtle cosmic background - different for light/dark */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
       </div>
@@ -234,8 +234,8 @@ export default function Home() {
       <Header />
 
       {/* Main Content */}
-      <div className="relative z-10">
-        <Toaster position="top-center" richColors theme="dark" />
+      <div className="relative flex-1 overflow-y-auto">
+        <Toaster position="bottom-right" richColors theme="dark" duration={500} />
         
         {profile && !isEditing ? (
           <Dashboard
