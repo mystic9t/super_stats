@@ -157,7 +157,7 @@ export function Dashboard({
                   variant="ghost"
                   size="icon"
                   onClick={onEdit}
-                  className="text-accent hover:text-primary hover:bg-primary/10 transition-colors"
+                  className="text-accent hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
                   title="Edit profile"
                 >
                   <Pencil className="h-5 w-5" />
@@ -202,7 +202,7 @@ export function Dashboard({
               className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
                 activeSection === "prediction"
                   ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -229,7 +229,7 @@ export function Dashboard({
               className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
                 activeSection === "numerology"
                   ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -254,7 +254,7 @@ export function Dashboard({
               className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
                 activeSection === "tarot"
                   ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -281,7 +281,7 @@ export function Dashboard({
               className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
                 activeSection === "chinese-zodiac"
                   ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
               }`}
             >
               <div className="flex items-center justify-center gap-2">
