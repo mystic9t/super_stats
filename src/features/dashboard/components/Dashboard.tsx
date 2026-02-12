@@ -293,7 +293,7 @@ export function Dashboard({
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto mt-6 space-y-6 min-h-0">
+        <div className="flex-1 overflow-y-auto mt-6 space-y-6 min-h-0 pr-2">
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-6">
