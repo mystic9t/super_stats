@@ -125,7 +125,7 @@ export function Dashboard({
   };
 
   return (
-    <div className="min-h-[calc(100vh-120px)]">
+    <div className="flex flex-col h-full">
       {/* Animated background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl animate-float" />
@@ -135,158 +135,165 @@ export function Dashboard({
         />
       </div>
 
-      <div className="container mx-auto max-w-4xl p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {/* User Profile Card */}
-        <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <div className="flex flex-col space-y-2">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
-                Welcome, {profile.name}! ✨
-              </CardTitle>
-              <CardDescription className="flex items-center gap-2">
-                <span className="text-muted-foreground">Sun Sign:</span>
-                <span className="px-3 py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-border font-semibold text-accent capitalize text-sm">
-                  ♈ {profile.sunSign}
-                </span>
-              </CardDescription>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onEdit}
-                className="text-accent hover:text-primary hover:bg-primary/10 transition-colors"
-                title="Edit profile"
-              >
-                <Pencil className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClear}
-                className="text-accent hover:text-accent/80 hover:bg-accent/10 transition-colors"
-                title="Clear profile"
-              >
-                <RotateCcw className="h-5 w-5" />
-              </Button>
-            </div>
-          </CardHeader>
-        </Card>
+      <div className="flex flex-col flex-1 min-h-0 container mx-auto max-w-4xl p-4">
+        {/* Fixed Top Section - Profile & Buttons */}
+        <div className="flex-none space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {/* User Profile Card */}
+          <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <div className="flex flex-col space-y-2">
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
+                  Welcome, {profile.name}! ✨
+                </CardTitle>
+                <CardDescription className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Sun Sign:</span>
+                  <span className="px-3 py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-border font-semibold text-accent capitalize text-sm">
+                    ♈ {profile.sunSign}
+                  </span>
+                </CardDescription>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onEdit}
+                  className="text-accent hover:text-primary hover:bg-primary/10 transition-colors"
+                  title="Edit profile"
+                >
+                  <Pencil className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClear}
+                  className="text-accent hover:text-accent/80 hover:bg-accent/10 transition-colors"
+                  title="Clear profile"
+                >
+                  <RotateCcw className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+          </Card>
 
-        {/* Action Buttons - Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Button
-            size="lg"
-            onClick={() => {
-              if (activeSection === "prediction") {
-                handleSectionChange(null);
-              } else {
-                switch (predictionPeriod) {
-                  case "daily":
-                    onGetPrediction();
-                    break;
-                  case "weekly":
-                    onGetWeeklyPrediction();
-                    break;
-                  case "monthly":
-                    onGetMonthlyPrediction();
-                    break;
+          {/* Action Buttons - Grid Layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "prediction") {
+                  handleSectionChange(null);
+                } else {
+                  switch (predictionPeriod) {
+                    case "daily":
+                      onGetPrediction();
+                      break;
+                    case "weekly":
+                      onGetWeeklyPrediction();
+                      break;
+                    case "monthly":
+                      onGetMonthlyPrediction();
+                      break;
+                  }
+                  handleSectionChange("prediction");
                 }
-                handleSectionChange("prediction");
-              }
-            }}
-            variant={activeSection === "prediction" ? "default" : "outline"}
-            disabled={isPredictionLoading()}
-            className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-              activeSection === "prediction"
-                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Star className="h-5 w-5" />
-              <span>{isPredictionLoading() ? "Divining..." : "Horoscope"}</span>
-            </div>
-          </Button>
+              }}
+              variant={activeSection === "prediction" ? "default" : "outline"}
+              disabled={isPredictionLoading()}
+              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+                activeSection === "prediction"
+                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Star className="h-5 w-5" />
+                <span>
+                  {isPredictionLoading() ? "Divining..." : "Horoscope"}
+                </span>
+              </div>
+            </Button>
 
-          {/* Numerology Button */}
-          <Button
-            size="lg"
-            onClick={() => {
-              if (activeSection === "numerology") {
-                handleSectionChange(null);
-              } else {
-                onGetNumerology();
-                handleSectionChange("numerology");
-              }
-            }}
-            variant={activeSection === "numerology" ? "default" : "outline"}
-            disabled={numerologyLoading}
-            className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-              activeSection === "numerology"
-                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Calculator className="h-5 w-5" />
-              <span>{numerologyLoading ? "Calc..." : "Numerology"}</span>
-            </div>
-          </Button>
+            {/* Numerology Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "numerology") {
+                  handleSectionChange(null);
+                } else {
+                  onGetNumerology();
+                  handleSectionChange("numerology");
+                }
+              }}
+              variant={activeSection === "numerology" ? "default" : "outline"}
+              disabled={numerologyLoading}
+              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+                activeSection === "numerology"
+                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Calculator className="h-5 w-5" />
+                <span>{numerologyLoading ? "Calc..." : "Numerology"}</span>
+              </div>
+            </Button>
 
-          {/* Tarot Button */}
-          <Button
-            size="lg"
-            onClick={() => {
-              if (activeSection === "tarot") {
-                handleSectionChange(null);
-              } else {
-                onGetTarot();
-                handleSectionChange("tarot");
-              }
-            }}
-            variant={activeSection === "tarot" ? "default" : "outline"}
-            disabled={tarotLoading}
-            className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-              activeSection === "tarot"
-                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Moon className="h-5 w-5" />
-              <span>{tarotLoading ? "Drawing..." : "Tarot"}</span>
-            </div>
-          </Button>
+            {/* Tarot Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "tarot") {
+                  handleSectionChange(null);
+                } else {
+                  onGetTarot();
+                  handleSectionChange("tarot");
+                }
+              }}
+              variant={activeSection === "tarot" ? "default" : "outline"}
+              disabled={tarotLoading}
+              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+                activeSection === "tarot"
+                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Moon className="h-5 w-5" />
+                <span>{tarotLoading ? "Drawing..." : "Tarot"}</span>
+              </div>
+            </Button>
 
-          {/* Chinese Zodiac Button */}
-          <Button
-            size="lg"
-            onClick={() => {
-              if (activeSection === "chinese-zodiac") {
-                handleSectionChange(null);
-              } else {
-                onGetChineseZodiac();
-                handleSectionChange("chinese-zodiac");
+            {/* Chinese Zodiac Button */}
+            <Button
+              size="lg"
+              onClick={() => {
+                if (activeSection === "chinese-zodiac") {
+                  handleSectionChange(null);
+                } else {
+                  onGetChineseZodiac();
+                  handleSectionChange("chinese-zodiac");
+                }
+              }}
+              variant={
+                activeSection === "chinese-zodiac" ? "default" : "outline"
               }
-            }}
-            variant={activeSection === "chinese-zodiac" ? "default" : "outline"}
-            disabled={chineseZodiacLoading}
-            className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-              activeSection === "chinese-zodiac"
-                ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Star className="h-5 w-5" />
-              <span>{chineseZodiacLoading ? "Divining..." : "Zodiac"}</span>
-            </div>
-          </Button>
+              disabled={chineseZodiacLoading}
+              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+                activeSection === "chinese-zodiac"
+                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                  : "bg-muted border-2 border-border text-foreground hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Star className="h-5 w-5" />
+                <span>{chineseZodiacLoading ? "Divining..." : "Zodiac"}</span>
+              </div>
+            </Button>
+          </div>
         </div>
 
-        {/* Content Area */}
-        <div className="space-y-6">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto mt-6 space-y-6 min-h-0">
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-6">
