@@ -340,7 +340,7 @@ export function Dashboard({
 
               {/* Dropdown Menu */}
               {showMobileMenu && (
-                <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-[140px]">
+                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 w-40 max-w-[calc(100vw-2rem)]">
                   {(activeSection ? inactiveSections : sections.slice(1)).map(
                     (section) => {
                       const Icon = section.icon;
