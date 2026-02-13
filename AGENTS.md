@@ -58,6 +58,14 @@ This keeps the workflow lean and focused. Only provide summaries when:
 - The user explicitly asks for one ("summarize the changes", "give me a summary")
 - A summary is functionally necessary to move forward (e.g., confirming PR contents before approval)
 
+## Git Staging & Commits
+
+**Agents should NOT automatically stage or commit changes unless explicitly instructed by the user.**
+
+- Wait for explicit instruction like "stage these changes" or "commit this"
+- Do not run `git add` or `git commit` commands without user approval
+- After making edits, simply stop and wait for further instructions
+
 ## Monorepo Workflow
 
 ### 1. Linking & Path Mappings
@@ -85,12 +93,13 @@ Each package has its own `tsconfig.json` that overrides `paths` to `{}`. This en
 
 ## CLI Tools & Commands
 
-| Command | Scope | Description |
-| :--- | :--- | :--- |
-| `bun dev` | Root | Starts Next.js dev server (Live Source) |
-| `bun run type-check` | Root | Runs `tsc --noEmit` on the whole repo |
-| `bun run build` | Package | Compiles a package to `./dist` |
-| `bun install` | Root | Installs all dependencies across workspaces |
+| Command              | Scope   | Description                                 |
+| :------------------- | :------ | :------------------------------------------ |
+| `bun dev`            | Root    | Starts Next.js dev server (Live Source)     |
+| `bun run type-check` | Root    | Runs `tsc --noEmit` on the whole repo       |
+| `bun run build`      | Package | Compiles a package to `./dist`              |
+| `bun install`        | Root    | Installs all dependencies across workspaces |
 
 ---
-*Note: This file should be kept up-to-date as the architecture evolves.*
+
+_Note: This file should be kept up-to-date as the architecture evolves._

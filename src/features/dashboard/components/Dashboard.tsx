@@ -217,12 +217,12 @@ export function Dashboard({
 
       <div className="flex flex-col flex-1 min-h-0 container mx-auto max-w-4xl p-4">
         {/* Fixed Top Section - Profile & Buttons */}
-        <div className="flex-none space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex-none space-y-3 sm:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* User Profile Card */}
           <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-4 pt-3 sm:pt-6 px-3 sm:px-6">
               <div className="flex flex-col space-y-1 sm:space-y-2">
-                <CardTitle className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
+                <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
                   Welcome, {profile.name}! ✨
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2 text-xs sm:text-sm">
@@ -286,7 +286,7 @@ export function Dashboard({
           </div>
 
           {/* Action Buttons - Mobile Single Row Layout */}
-          <div className="flex sm:hidden gap-2">
+          <div className="flex sm:hidden gap-3">
             {/* Active Button - Takes 3/4 width */}
             {activeSectionData ? (
               <Button
@@ -294,7 +294,7 @@ export function Dashboard({
                 onClick={activeSectionData.onClick}
                 variant="default"
                 disabled={activeSectionData.isLoading}
-                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
               >
                 <div className="flex items-center justify-center gap-2">
                   <activeSectionData.icon className="h-4 w-4" />
@@ -375,10 +375,10 @@ export function Dashboard({
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto mt-6 space-y-6 min-h-0 pr-2 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto mt-3 sm:mt-6 space-y-4 sm:space-y-6 min-h-0 pr-2 custom-scrollbar">
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-6">
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4 sm:space-y-6">
               {/* Period Selector */}
               <div className="flex gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
                 {(["daily", "weekly", "monthly"] as PredictionPeriod[]).map(
