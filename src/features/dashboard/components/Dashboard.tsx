@@ -18,6 +18,7 @@ import {
   Calendar,
   RotateCw,
   Calculator,
+  ChevronDown,
 } from "lucide-react";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
 import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
@@ -75,6 +76,7 @@ export function Dashboard({
     "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Auto-switch to newly loaded content only on first load
   useEffect(() => {
@@ -89,6 +91,7 @@ export function Dashboard({
   ) => {
     setActiveSection(section);
     setHasInteracted(true);
+    setShowMobileMenu(false);
   };
 
   // Handle period change with automatic fetch
@@ -123,6 +126,83 @@ export function Dashboard({
         return loading;
     }
   };
+
+  // Define all sections
+  const sections = [
+    {
+      id: "prediction" as const,
+      label: "Horoscope",
+      loadingLabel: "Divining...",
+      icon: Star,
+      onClick: () => {
+        if (activeSection === "prediction") {
+          handleSectionChange(null);
+        } else {
+          switch (predictionPeriod) {
+            case "daily":
+              onGetPrediction();
+              break;
+            case "weekly":
+              onGetWeeklyPrediction();
+              break;
+            case "monthly":
+              onGetMonthlyPrediction();
+              break;
+          }
+          handleSectionChange("prediction");
+        }
+      },
+      isLoading: isPredictionLoading(),
+    },
+    {
+      id: "numerology" as const,
+      label: "Numerology",
+      loadingLabel: "Calc...",
+      icon: Calculator,
+      onClick: () => {
+        if (activeSection === "numerology") {
+          handleSectionChange(null);
+        } else {
+          onGetNumerology();
+          handleSectionChange("numerology");
+        }
+      },
+      isLoading: numerologyLoading,
+    },
+    {
+      id: "tarot" as const,
+      label: "Tarot",
+      loadingLabel: "Drawing...",
+      icon: Moon,
+      onClick: () => {
+        if (activeSection === "tarot") {
+          handleSectionChange(null);
+        } else {
+          onGetTarot();
+          handleSectionChange("tarot");
+        }
+      },
+      isLoading: tarotLoading,
+    },
+    {
+      id: "chinese-zodiac" as const,
+      label: "Zodiac",
+      loadingLabel: "Divining...",
+      icon: Star,
+      onClick: () => {
+        if (activeSection === "chinese-zodiac") {
+          handleSectionChange(null);
+        } else {
+          onGetChineseZodiac();
+          handleSectionChange("chinese-zodiac");
+        }
+      },
+      isLoading: chineseZodiacLoading,
+    },
+  ];
+
+  const activeSectionData = sections.find((s) => s.id === activeSection);
+  const inactiveSections = sections.filter((s) => s.id !== activeSection);
 
   return (
     <div className="flex flex-col h-full">
@@ -175,120 +255,120 @@ export function Dashboard({
             </CardHeader>
           </Card>
 
-          {/* Action Buttons - Grid Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button
-              size="lg"
-              onClick={() => {
-                if (activeSection === "prediction") {
-                  handleSectionChange(null);
-                } else {
-                  switch (predictionPeriod) {
-                    case "daily":
-                      onGetPrediction();
-                      break;
-                    case "weekly":
-                      onGetWeeklyPrediction();
-                      break;
-                    case "monthly":
-                      onGetMonthlyPrediction();
-                      break;
-                  }
-                  handleSectionChange("prediction");
-                }
-              }}
-              variant={activeSection === "prediction" ? "default" : "outline"}
-              disabled={isPredictionLoading()}
-              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-                activeSection === "prediction"
-                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Star className="h-5 w-5" />
-                <span>
-                  {isPredictionLoading() ? "Divining..." : "Horoscope"}
-                </span>
-              </div>
-            </Button>
+          {/* Action Buttons - Desktop Grid Layout */}
+          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              return (
+                <Button
+                  key={section.id}
+                  size="lg"
+                  onClick={section.onClick}
+                  variant={activeSection === section.id ? "default" : "outline"}
+                  disabled={section.isLoading}
+                  className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
+                    activeSection === section.id
+                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon className="h-5 w-5" />
+                    <span>
+                      {section.isLoading ? section.loadingLabel : section.label}
+                    </span>
+                  </div>
+                </Button>
+              );
+            })}
+          </div>
 
-            {/* Numerology Button */}
-            <Button
-              size="lg"
-              onClick={() => {
-                if (activeSection === "numerology") {
-                  handleSectionChange(null);
-                } else {
-                  onGetNumerology();
-                  handleSectionChange("numerology");
-                }
-              }}
-              variant={activeSection === "numerology" ? "default" : "outline"}
-              disabled={numerologyLoading}
-              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-                activeSection === "numerology"
-                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Calculator className="h-5 w-5" />
-                <span>{numerologyLoading ? "Calc..." : "Numerology"}</span>
-              </div>
-            </Button>
+          {/* Action Buttons - Mobile Single Row Layout */}
+          <div className="flex sm:hidden gap-2">
+            {/* Active Button - Takes 3/4 width */}
+            {activeSectionData ? (
+              <Button
+                size="lg"
+                onClick={activeSectionData.onClick}
+                variant="default"
+                disabled={activeSectionData.isLoading}
+                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <activeSectionData.icon className="h-4 w-4" />
+                  <span>
+                    {activeSectionData.isLoading
+                      ? activeSectionData.loadingLabel
+                      : activeSectionData.label}
+                  </span>
+                </div>
+              </Button>
+            ) : (
+              <Button
+                size="lg"
+                onClick={() => handleSectionChange("prediction")}
+                variant="default"
+                disabled={isPredictionLoading()}
+                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Star className="h-4 w-4" />
+                  <span>
+                    {isPredictionLoading() ? "Divining..." : "Horoscope"}
+                  </span>
+                </div>
+              </Button>
+            )}
 
-            {/* Tarot Button */}
-            <Button
-              size="lg"
-              onClick={() => {
-                if (activeSection === "tarot") {
-                  handleSectionChange(null);
-                } else {
-                  onGetTarot();
-                  handleSectionChange("tarot");
-                }
-              }}
-              variant={activeSection === "tarot" ? "default" : "outline"}
-              disabled={tarotLoading}
-              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-                activeSection === "tarot"
-                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Moon className="h-5 w-5" />
-                <span>{tarotLoading ? "Drawing..." : "Tarot"}</span>
-              </div>
-            </Button>
+            {/* More Button - Takes 1/4 width */}
+            <div className="flex-1 relative">
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="w-full h-14 font-bold text-xs rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+              >
+                <div className="flex flex-col items-center gap-0.5">
+                  <span>More</span>
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform ${
+                      showMobileMenu ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              </Button>
 
-            {/* Chinese Zodiac Button */}
-            <Button
-              size="lg"
-              onClick={() => {
-                if (activeSection === "chinese-zodiac") {
-                  handleSectionChange(null);
-                } else {
-                  onGetChineseZodiac();
-                  handleSectionChange("chinese-zodiac");
-                }
-              }}
-              variant={
-                activeSection === "chinese-zodiac" ? "default" : "outline"
-              }
-              disabled={chineseZodiacLoading}
-              className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-                activeSection === "chinese-zodiac"
-                  ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                  : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Star className="h-5 w-5" />
-                <span>{chineseZodiacLoading ? "Divining..." : "Zodiac"}</span>
-              </div>
-            </Button>
+              {/* Dropdown Menu */}
+              {showMobileMenu && (
+                <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1">
+                  {(activeSection ? inactiveSections : sections.slice(1)).map(
+                    (section) => {
+                      const Icon = section.icon;
+                      return (
+                        <Button
+                          key={section.id}
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            section.onClick();
+                            setShowMobileMenu(false);
+                          }}
+                          disabled={section.isLoading}
+                          className="w-full justify-start gap-2 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-500"
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span className="text-xs">
+                            {section.isLoading
+                              ? section.loadingLabel
+                              : section.label}
+                          </span>
+                        </Button>
+                      );
+                    },
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
