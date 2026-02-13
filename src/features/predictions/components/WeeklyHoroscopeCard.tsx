@@ -17,22 +17,21 @@ export function WeeklyHoroscopeCard({
   isRefreshing,
 }: WeeklyHoroscopeCardProps) {
   return (
-    <Card className="border-none shadow-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative">
-      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-        <CalendarDays className="h-32 w-32" />
-      </div>
-      <CardHeader>
+    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="h-5 w-5 text-blue-500" />
-            <span className="text-lg">Week of {prediction.week}</span>
-          </CardTitle>
+          <div className="flex items-center gap-3">
+            <CalendarDays className="h-6 w-6 text-accent" />
+            <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Week of {prediction.week}
+            </CardTitle>
+          </div>
           <Button
             size="sm"
             variant="ghost"
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="text-blue-500 hover:text-blue-600 hover:bg-blue-50/10"
+            className="text-accent hover:text-primary hover:bg-primary/10"
             title="Refresh weekly prediction"
           >
             <RotateCw
@@ -41,44 +40,28 @@ export function WeeklyHoroscopeCard({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6 relative z-10">
-        <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300 italic font-medium">
+      <CardContent className="space-y-5">
+        <p className="text-base leading-relaxed text-foreground italic">
           "{prediction.description}"
         </p>
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Lucky Number
-            </p>
-            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {prediction.lucky_number}
-            </p>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Lucky Number</p>
+            <p className="text-3xl font-bold text-accent">{prediction.lucky_number}</p>
           </div>
-          <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Color
-            </p>
-            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {prediction.color}
-            </p>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Power Color</p>
+            <p className="text-3xl font-bold text-accent">{prediction.color}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Mood
-            </p>
-            <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-              {prediction.mood}
-            </p>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-accent/10 border border-border">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Vibe</p>
+            <p className="text-lg font-bold text-amber-500 capitalize">{prediction.mood}</p>
           </div>
-          <div className="p-4 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Compatibility
-            </p>
-            <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 capitalize">
-              {prediction.compatibility}
-            </p>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-400/10 to-primary/10 border border-border">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Connection</p>
+            <p className="text-lg font-bold text-cyan-400 capitalize">{prediction.compatibility}</p>
           </div>
         </div>
       </CardContent>

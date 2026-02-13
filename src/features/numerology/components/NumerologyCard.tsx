@@ -38,47 +38,46 @@ export function NumerologyCard({ profile }: NumerologyCardProps) {
   }, [profile.name, profile.dateOfBirth]);
 
   return (
-    <Card className="border-none shadow-2xl bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-zinc-900 dark:to-zinc-800 overflow-hidden relative min-h-[400px]">
-      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-        <Calculator className="h-32 w-32" />
-      </div>
+    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative min-h-[400px]">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-violet-500" />
-          <span className="text-lg">Numerology Insights</span>
+        <CardTitle className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
+            <Calculator className="h-6 w-6 text-primary" />
+          </div>
+          <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Numerology Insights</span>
         </CardTitle>
-        <CardDescription>
-          Your cosmic blueprint based on {profile.name} and {new Date(profile.dateOfBirth).toLocaleDateString()}
+        <CardDescription className="text-muted-foreground">
+          Your cosmic blueprint revealed ✨
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 relative z-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-            <p className="text-sm text-muted-foreground">Consulting the numbers...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Consulting the cosmic numbers...</p>
           </div>
         ) : prediction ? (
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="p-5 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-violet-100 dark:border-zinc-700">
-              <div className="flex justify-between items-start mb-2">
-                <p className="text-sm font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
+            <div className="p-5 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
+              <div className="flex justify-between items-start mb-3">
+                <p className="text-xs font-bold text-primary uppercase tracking-wider">
                   Life Path Number
                 </p>
-                <span className="text-4xl font-bold text-slate-800 dark:text-white">{prediction.lifePath}</span>
+                <span className="text-5xl font-bold text-accent">{prediction.lifePath}</span>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              <p className="text-sm text-foreground leading-relaxed font-medium">
                 {prediction.lifePathMeaning}
               </p>
             </div>
 
-            <div className="p-5 bg-white/50 dark:bg-black/20 rounded-xl backdrop-blur-sm border border-pink-100 dark:border-zinc-700">
-              <div className="flex justify-between items-start mb-2">
-                <p className="text-sm font-semibold text-pink-600 dark:text-pink-400 uppercase tracking-wider">
+            <div className="p-5 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
+              <div className="flex justify-between items-start mb-3">
+                <p className="text-xs font-bold text-accent uppercase tracking-wider">
                   Destiny Number
                 </p>
-                <span className="text-4xl font-bold text-slate-800 dark:text-white">{prediction.destiny}</span>
+                <span className="text-5xl font-bold text-accent">{prediction.destiny}</span>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              <p className="text-sm text-foreground leading-relaxed font-medium">
                 {prediction.destinyMeaning}
               </p>
             </div>
