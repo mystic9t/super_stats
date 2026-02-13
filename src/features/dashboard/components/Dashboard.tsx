@@ -340,7 +340,7 @@ export function Dashboard({
 
               {/* Dropdown Menu */}
               {showMobileMenu && (
-                <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1">
+                <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-[140px]">
                   {(activeSection ? inactiveSections : sections.slice(1)).map(
                     (section) => {
                       const Icon = section.icon;
@@ -354,10 +354,10 @@ export function Dashboard({
                             setShowMobileMenu(false);
                           }}
                           disabled={section.isLoading}
-                          className="w-full justify-start gap-2 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-500"
+                          className="w-full justify-start gap-2 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-500 px-2"
                         >
-                          <Icon className="h-4 w-4" />
-                          <span className="text-xs">
+                          <Icon className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-xs truncate overflow-hidden">
                             {section.isLoading
                               ? section.loadingLabel
                               : section.label}
