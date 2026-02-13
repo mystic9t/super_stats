@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator } from 'lucide-react';
+import { Sparkles, Star } from 'lucide-react';
 import { OnboardingFormProps } from '@/types';
 
 /**
@@ -42,21 +42,39 @@ export function OnboardingForm({ onSave, initialData, onCancel }: OnboardingForm
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl bg-white/80 backdrop-blur-xl dark:bg-zinc-900/80">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto bg-indigo-100 p-3 rounded-full w-fit mb-4">
-            <Calculator className="h-8 w-8 text-indigo-600" />
+    <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary opacity-10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent opacity-10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl animate-pulse" />
+      </div>
+
+      <Card className="w-full max-w-md border border-border shadow-2xl bg-card/95 backdrop-blur-xl relative z-10">
+        <CardHeader className="text-center space-y-4 pb-8">
+          {/* Animated icon */}
+          <div className="mx-auto relative w-16 h-16">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-lg opacity-75 blur animate-glow" />
+            <div className="relative bg-card rounded-lg border border-border flex items-center justify-center h-full">
+              <Sparkles className="h-8 w-8 text-accent animate-float" />
+            </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-            Vibes
-          </CardTitle>
-          <CardDescription className="text-lg">Unlock your cosmic potential</CardDescription>
+
+          <div className="space-y-1">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
+              Vibes
+            </CardTitle>
+            <CardDescription className="text-base text-muted-foreground">
+              ✨ Unlock your cosmic destiny ✨
+            </CardDescription>
+          </div>
         </CardHeader>
+
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-base">
+              <Label htmlFor="name" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Star className="w-4 h-4 text-accent" />
                 Your Name
               </Label>
               <Input
@@ -64,13 +82,15 @@ export function OnboardingForm({ onSave, initialData, onCancel }: OnboardingForm
                 placeholder="Star Gazer"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-12 text-lg bg-white/50"
+                className="h-11 text-base bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
                 required
                 disabled={isSubmitting}
               />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="dob" className="text-base">
+              <Label htmlFor="dob" className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Star className="w-4 h-4 text-accent" />
                 Date of Birth
               </Label>
               <Input
@@ -78,22 +98,24 @@ export function OnboardingForm({ onSave, initialData, onCancel }: OnboardingForm
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className="h-12 text-lg bg-white/50"
+                className="h-11 text-base bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
                 required
                 disabled={isSubmitting}
               />
             </div>
+
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 shadow-lg transition-transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-11 text-base font-bold bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg shadow-primary/50 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 text-background border-0"
             >
               {isSubmitting
-                ? 'Saving...'
+                ? 'Unlocking...'
                 : initialData
-                  ? 'Update Profile'
-                  : 'Get Started'}
+                  ? 'Update Destiny'
+                  : 'Begin Journey'}
             </Button>
+
             {onCancel && (
               <Button
                 type="button"

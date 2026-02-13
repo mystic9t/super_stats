@@ -1,6 +1,11 @@
-import { TarotReading, UserProfile } from '@vibes/shared-types';
-import { canDrawToday, performTarotDraw, getLastReading } from '@vibes/shared-utils';
-import { ServiceResponse } from '@/types';
+import { TarotReading, UserProfile } from "@vibes/shared-types";
+import {
+  canDrawToday,
+  performTarotDraw,
+  forcePerformTarotDraw,
+  getLastReading,
+} from "@vibes/shared-utils";
+import { ServiceResponse } from "@/types";
 
 class TarotService {
   /**
@@ -20,18 +25,22 @@ class TarotService {
         if (reading) {
           return { success: true, data: reading };
         }
-        return { success: false, error: 'Already drawn today. No previous reading found.' };
+        return {
+          success: false,
+          error: "Already drawn today. No previous reading found.",
+        };
       }
 
       const reading = performTarotDraw(profile);
       if (!reading) {
-        return { success: false, error: 'Failed to draw cards' };
+        return { success: false, error: "Failed to draw cards" };
       }
 
       return { success: true, data: reading };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to draw tarot cards';
-      console.error('Tarot Service Error:', message);
+      const message =
+        error instanceof Error ? error.message : "Failed to draw tarot cards";
+      console.error("Tarot Service Error:", message);
       return { success: false, error: message };
     }
   }
@@ -43,15 +52,16 @@ class TarotService {
   forceRedrawTarotCards(profile: UserProfile): ServiceResponse<TarotReading> {
     try {
       // Force a new draw regardless of 24hr limit
-      const reading = performTarotDraw(profile);
+      const reading = forcePerformTarotDraw(profile);
       if (!reading) {
-        return { success: false, error: 'Failed to redraw cards' };
+        return { success: false, error: "Failed to redraw cards" };
       }
 
       return { success: true, data: reading };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to redraw tarot cards';
-      console.error('Tarot Service Error:', message);
+      const message =
+        error instanceof Error ? error.message : "Failed to redraw tarot cards";
+      console.error("Tarot Service Error:", message);
       return { success: false, error: message };
     }
   }
@@ -65,10 +75,11 @@ class TarotService {
       if (reading) {
         return { success: true, data: reading };
       }
-      return { success: false, error: 'No previous reading found' };
+      return { success: false, error: "No previous reading found" };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to fetch reading';
-      console.error('Tarot Service Error:', message);
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch reading";
+      console.error("Tarot Service Error:", message);
       return { success: false, error: message };
     }
   }
@@ -79,15 +90,18 @@ class TarotService {
   refreshTarotCards(profile: UserProfile): ServiceResponse<TarotReading> {
     try {
       // Force a new draw regardless of time limit
-      const reading = performTarotDraw(profile);
+      const reading = forcePerformTarotDraw(profile);
       if (!reading) {
-        return { success: false, error: 'Failed to refresh tarot cards' };
+        return { success: false, error: "Failed to refresh tarot cards" };
       }
 
       return { success: true, data: reading };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to refresh tarot cards';
-      console.error('Tarot Service Error:', message);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to refresh tarot cards";
+      console.error("Tarot Service Error:", message);
       return { success: false, error: message };
     }
   }
