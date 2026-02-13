@@ -220,36 +220,38 @@ export function Dashboard({
         <div className="flex-none space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* User Profile Card */}
           <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <div className="flex flex-col space-y-2">
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-4 pt-3 sm:pt-6 px-3 sm:px-6">
+              <div className="flex flex-col space-y-1 sm:space-y-2">
+                <CardTitle className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
                   Welcome, {profile.name}! ✨
                 </CardTitle>
-                <CardDescription className="flex items-center gap-2">
-                  <span className="text-muted-foreground">Sun Sign:</span>
-                  <span className="px-3 py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-border font-semibold text-accent capitalize text-sm">
+                <CardDescription className="flex items-center gap-2 text-xs sm:text-sm">
+                  <span className="text-muted-foreground hidden sm:inline">
+                    Sun Sign:
+                  </span>
+                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-border font-semibold text-accent capitalize text-xs sm:text-sm">
                     ♈ {profile.sunSign}
                   </span>
                 </CardDescription>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onEdit}
-                  className="text-accent hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
+                  className="text-accent hover:text-amber-400 hover:bg-amber-500/10 transition-colors h-8 w-8 sm:h-10 sm:w-10"
                   title="Edit profile"
                 >
-                  <Pencil className="h-5 w-5" />
+                  <Pencil className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onClear}
-                  className="text-accent hover:text-accent/80 hover:bg-accent/10 transition-colors"
+                  className="text-accent hover:text-accent/80 hover:bg-accent/10 transition-colors h-8 w-8 sm:h-10 sm:w-10"
                   title="Clear profile"
                 >
-                  <RotateCcw className="h-5 w-5" />
+                  <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </CardHeader>
