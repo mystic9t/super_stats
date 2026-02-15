@@ -302,7 +302,8 @@ export function Dashboard({
           </Card>
 
           {/* Action Buttons - Desktop Layout */}
-          {/* XL+: All 5 tabs equally sized */}
+
+          {/* XL: 5 tabs equally sized */}
           <div className="hidden xl:flex xl:flex-row gap-3">
             {sections.map((section) => {
               const Icon = section.icon;
@@ -330,8 +331,73 @@ export function Dashboard({
             })}
           </div>
 
-          {/* MD/LG: 3 tabs + More dropdown */}
-          <div className="hidden sm:flex xl:hidden gap-3">
+          {/* LG: 4 tabs + More */}
+          <div className="hidden lg:flex xl:hidden gap-3">
+            {sections.slice(0, 4).map((section) => {
+              const Icon = section.icon;
+              return (
+                <Button
+                  key={section.id}
+                  size="lg"
+                  onClick={section.onClick}
+                  variant={activeSection === section.id ? "default" : "outline"}
+                  disabled={section.isLoading}
+                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
+                    activeSection === section.id
+                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    <span>
+                      {section.isLoading ? section.loadingLabel : section.label}
+                    </span>
+                  </div>
+                </Button>
+              );
+            })}
+            <div className="relative flex-none">
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
+              >
+                <div className="flex items-center gap-1">
+                  <span>More</span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
+                  />
+                </div>
+              </Button>
+              {showMobileMenu && (
+                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
+                  {sections.slice(4).map((section) => {
+                    const Icon = section.icon;
+                    return (
+                      <Button
+                        key={section.id}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          section.onClick();
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                      >
+                        <Icon className="h-4 w-4 mr-2" />
+                        {section.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* MD: 3 tabs + More */}
+          <div className="hidden md:flex lg:hidden gap-3">
             {sections.slice(0, 3).map((section) => {
               const Icon = section.icon;
               return (
@@ -356,16 +422,12 @@ export function Dashboard({
                 </Button>
               );
             })}
-
-            {/* More dropdown for remaining tabs */}
             <div className="relative flex-none">
               <Button
                 size="lg"
                 variant="outline"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${
-                  showMobileMenu ? "border-amber-400" : ""
-                }`}
+                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
               >
                 <div className="flex items-center gap-1">
                   <span>More</span>
@@ -374,10 +436,74 @@ export function Dashboard({
                   />
                 </div>
               </Button>
-
               {showMobileMenu && (
                 <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
                   {sections.slice(3).map((section) => {
+                    const Icon = section.icon;
+                    return (
+                      <Button
+                        key={section.id}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          section.onClick();
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                      >
+                        <Icon className="h-4 w-4 mr-2" />
+                        {section.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* SM: 2 tabs + More */}
+          <div className="hidden sm:flex md:hidden gap-3">
+            {sections.slice(0, 2).map((section) => {
+              const Icon = section.icon;
+              return (
+                <Button
+                  key={section.id}
+                  size="lg"
+                  onClick={section.onClick}
+                  variant={activeSection === section.id ? "default" : "outline"}
+                  disabled={section.isLoading}
+                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
+                    activeSection === section.id
+                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    <span>
+                      {section.isLoading ? section.loadingLabel : section.label}
+                    </span>
+                  </div>
+                </Button>
+              );
+            })}
+            <div className="relative flex-none">
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
+              >
+                <div className="flex items-center gap-1">
+                  <span>More</span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
+                  />
+                </div>
+              </Button>
+              {showMobileMenu && (
+                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
+                  {sections.slice(2).map((section) => {
                     const Icon = section.icon;
                     return (
                       <Button
