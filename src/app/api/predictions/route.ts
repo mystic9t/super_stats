@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { type DailyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { generateDailyHoroscope } from "@vibes/shared-utils";
 
+interface DailyPredictionResponse {
+  success: boolean;
+  data?: DailyPrediction & { isFallback?: boolean };
+  error?: string;
+  timestamp: Date;
+  isFallback?: boolean;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const sign = searchParams.get("sign");
@@ -103,6 +111,7 @@ export async function GET(request: Request) {
           success: true,
           data: prediction,
           timestamp: new Date(),
+          isFallback: false,
         });
       }
     }
@@ -131,6 +140,7 @@ export async function GET(request: Request) {
       success: true,
       data: prediction,
       timestamp: new Date(),
+      isFallback: true,
     });
   } catch (error: unknown) {
     console.error("Prediction fetch error:", error);
