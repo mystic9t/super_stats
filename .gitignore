@@ -27,3 +27,6 @@ uv.lock
 .github/
 .opencode/
 .claude/
+
+# Raw tarot assets (source images)
+tarot_assets_raw/
