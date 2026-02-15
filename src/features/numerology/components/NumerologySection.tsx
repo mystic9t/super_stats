@@ -196,22 +196,38 @@ export function NumerologySection({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
-          <motion.div
-            animate={{
-              rotate: [0, 10, -10, 0],
-              y: [0, -5, 0],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <Sparkles className="h-12 w-12 text-primary" />
-          </motion.div>
-          <p className="text-muted-foreground text-center">
-            👆 Click the Numerology button to reveal your cosmic numbers
-          </p>
+          {isRefreshing ? (
+            <>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Calculator className="h-12 w-12 text-primary" />
+              </motion.div>
+              <p className="text-muted-foreground text-center">
+                Calculating your cosmic numbers...
+              </p>
+            </>
+          ) : (
+            <>
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                  y: [0, -5, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Sparkles className="h-12 w-12 text-primary" />
+              </motion.div>
+              <p className="text-muted-foreground text-center">
+                👆 Click the Numerology button to reveal your cosmic numbers
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
     );
