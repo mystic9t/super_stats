@@ -163,159 +163,178 @@ export function NumerologySection({
     );
   };
 
-  if (!reading) {
-    return (
-      <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute top-8 right-8 w-2 h-2 bg-primary rounded-full"
-            animate={{
-              opacity: [0.3, 0.8, 0.3],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </div>
-
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <motion.div
-              className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
-              whileHover={{ scale: 1.05 }}
-            >
-              <Calculator className="h-6 w-6 text-primary" />
-            </motion.div>
-            <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Numerology Insights
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
-          {isRefreshing ? (
-            <>
+  return (
+    <AnimatePresence mode="wait">
+      {!reading ? (
+        <motion.div
+          key="empty"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+            {/* Background decoration */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              >
-                <Calculator className="h-12 w-12 text-primary" />
-              </motion.div>
-              <p className="text-muted-foreground text-center">
-                Calculating your cosmic numbers...
-              </p>
-            </>
-          ) : (
-            <>
-              <motion.div
+                className="absolute top-8 right-8 w-2 h-2 bg-primary rounded-full"
                 animate={{
-                  rotate: [0, 10, -10, 0],
-                  y: [0, -5, 0],
+                  opacity: [0.3, 0.8, 0.3],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            </div>
+
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <motion.div
+                  className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <Calculator className="h-6 w-6 text-primary" />
+                </motion.div>
+                <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Numerology Insights
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
+              {isRefreshing ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <Calculator className="h-12 w-12 text-primary" />
+                  </motion.div>
+                  <p className="text-muted-foreground text-center">
+                    Calculating your cosmic numbers...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      y: [0, -5, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Sparkles className="h-12 w-12 text-primary" />
+                  </motion.div>
+                  <p className="text-muted-foreground text-center">
+                    👆 Click the Numerology button to reveal your cosmic numbers
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="content"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+            {/* Mystical background effects */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <motion.div
+                className="absolute top-12 right-12 w-1.5 h-1.5 bg-primary rounded-full"
+                animate={{
+                  opacity: [0.3, 1, 0.3],
+                  scale: [1, 1.3, 1],
+                }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.div
+                className="absolute top-24 right-6 w-1 h-1 bg-accent rounded-full"
+                animate={{
+                  opacity: [0.4, 0.9, 0.4],
+                  scale: [1, 1.4, 1],
                 }}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
                   ease: "easeInOut",
+                  delay: 0.8,
                 }}
+              />
+            </div>
+
+            <CardHeader className="relative z-10">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-3">
+                  <motion.div
+                    className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <Calculator className="h-6 w-6 text-primary" />
+                  </motion.div>
+                  <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    Your Numerology Reading
+                  </span>
+                </CardTitle>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={onRefresh}
+                  disabled={isRefreshing}
+                  className="text-primary hover:text-accent hover:bg-accent/10"
+                  title="Refresh numerology reading"
+                >
+                  <RotateCw
+                    className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                  />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <motion.div
+                className="divide-y divide-border"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
               >
-                <Sparkles className="h-12 w-12 text-primary" />
+                {renderSection("lifePath", reading.lifePath)}
+                {renderSection("destiny", reading.destiny)}
+                {renderSection("soulUrge", reading.soulUrge)}
+                {renderSection("personality", reading.personality)}
+                {renderSection("birthday", reading.birthday)}
+                {renderSection("personalYear", reading.personalYear)}
               </motion.div>
-              <p className="text-muted-foreground text-center">
-                👆 Click the Numerology button to reveal your cosmic numbers
-              </p>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
 
-  return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-      {/* Mystical background effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-12 right-12 w-1.5 h-1.5 bg-primary rounded-full"
-          animate={{
-            opacity: [0.3, 1, 0.3],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 2.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute top-24 right-6 w-1 h-1 bg-accent rounded-full"
-          animate={{
-            opacity: [0.4, 0.9, 0.4],
-            scale: [1, 1.4, 1],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.8,
-          }}
-        />
-      </div>
-
-      <CardHeader className="relative z-10">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-3">
-            <motion.div
-              className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <Calculator className="h-6 w-6 text-primary" />
-            </motion.div>
-            <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Your Numerology Reading
-            </span>
-          </CardTitle>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="text-primary hover:text-accent hover:bg-accent/10"
-            title="Refresh numerology reading"
-          >
-            <RotateCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="relative z-10">
-        <motion.div
-          className="divide-y divide-border"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {renderSection("lifePath", reading.lifePath)}
-          {renderSection("destiny", reading.destiny)}
-          {renderSection("soulUrge", reading.soulUrge)}
-          {renderSection("personality", reading.personality)}
-          {renderSection("birthday", reading.birthday)}
-          {renderSection("personalYear", reading.personalYear)}
+              <motion.p
+                className="mt-4 text-xs text-center text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                ✨ Based on your name and birthdate for {reading.currentYear}
+              </motion.p>
+            </CardContent>
+          </Card>
         </motion.div>
-
-        <motion.p
-          className="mt-4 text-xs text-center text-muted-foreground"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          ✨ Based on your name and birthdate for {reading.currentYear}
-        </motion.p>
-      </CardContent>
-    </Card>
+      )}
+    </AnimatePresence>
   );
 }
