@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -95,6 +95,9 @@ export function Dashboard({
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const hasMeasured = useRef(false);
 
   // Auto-switch to newly loaded content only on first load
   useEffect(() => {
@@ -253,6 +256,76 @@ export function Dashboard({
     ? [...birthChartSection, ...standardSections]
     : standardSections;
 
+  // Calculate how many tabs fit at >=75% of their natural width
+  const calculateVisibleTabs = useCallback(() => {
+    if (!tabsContainerRef.current || sections.length === 0)
+      return sections.length;
+
+    const container = tabsContainerRef.current;
+    const containerWidth = container.offsetWidth;
+    const tabElements = container.querySelectorAll('[data-tab="true"]');
+
+    if (tabElements.length === 0) return sections.length;
+
+    const firstTab = tabElements[0] as HTMLElement;
+    const naturalWidth = firstTab.offsetWidth;
+
+    const minTabWidth = naturalWidth * 0.75;
+    const moreButtonWidth = 100;
+    const gapWidth = 12;
+
+    let fittingCount = sections.length;
+
+    const allTabsNaturalWidth =
+      sections.length * naturalWidth + (sections.length - 1) * gapWidth;
+
+    if (allTabsNaturalWidth <= containerWidth) {
+      fittingCount = sections.length;
+    } else {
+      for (let i = sections.length - 1; i >= 1; i--) {
+        const widthNeeded =
+          i * minTabWidth + (i - 1) * gapWidth + moreButtonWidth + gapWidth;
+        if (widthNeeded <= containerWidth) {
+          fittingCount = i;
+          break;
+        }
+        fittingCount = 1;
+      }
+    }
+
+    return fittingCount;
+  }, [sections.length]);
+
+  // Measure and update visible tabs on resize
+  useEffect(() => {
+    if (sections.length === 0) return;
+
+    const handleResize = () => {
+      const count = calculateVisibleTabs();
+      setVisibleCount(count);
+    };
+
+    const timer = setTimeout(() => {
+      handleResize();
+      hasMeasured.current = true;
+    }, 50);
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (hasMeasured.current) {
+        handleResize();
+      }
+    });
+
+    if (tabsContainerRef.current) {
+      resizeObserver.observe(tabsContainerRef.current);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+    };
+  }, [calculateVisibleTabs, sections.length]);
+
   const activeSectionData = sections.find((s) => s.id === activeSection);
   const inactiveSections = sections.filter((s) => s.id !== activeSection);
 
@@ -302,63 +375,58 @@ export function Dashboard({
           </Card>
 
           {/* Action Buttons - Desktop Single Row Layout */}
-          <div className="hidden sm:flex sm:flex-row gap-3 lg:gap-4">
-            {/* Visible tabs - show all on xl, first 4 on lg/md */}
-            {(sections.length <= 4 ? sections : sections.slice(0, 4)).map(
-              (section) => {
-                const Icon = section.icon;
-                return (
-                  <Button
-                    key={section.id}
-                    size="lg"
-                    onClick={section.onClick}
-                    variant={
-                      activeSection === section.id ? "default" : "outline"
-                    }
-                    disabled={section.isLoading}
-                    className={`relative overflow-hidden group h-16 lg:h-20 font-bold text-sm lg:text-base rounded-xl lg:rounded-2xl flex-1 transition-all duration-300 ${
-                      activeSection === section.id
-                        ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                        : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-                    }`}
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <Icon className="h-4 w-4 lg:h-5 lg:w-5" />
-                      <span className="hidden sm:inline">
-                        {section.isLoading
-                          ? section.loadingLabel
-                          : section.label}
-                      </span>
-                    </div>
-                  </Button>
-                );
-              },
-            )}
+          <div
+            ref={tabsContainerRef}
+            className="hidden sm:flex sm:flex-row gap-3"
+          >
+            {sections.slice(0, visibleCount).map((section) => {
+              const Icon = section.icon;
+              return (
+                <Button
+                  key={section.id}
+                  data-tab="true"
+                  size="lg"
+                  onClick={section.onClick}
+                  variant={activeSection === section.id ? "default" : "outline"}
+                  disabled={section.isLoading}
+                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
+                    activeSection === section.id
+                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    <span>
+                      {section.isLoading ? section.loadingLabel : section.label}
+                    </span>
+                  </div>
+                </Button>
+              );
+            })}
 
-            {/* More dropdown for extra tabs (5th tab on screens smaller than xl) */}
-            {sections.length > 4 && (
+            {/* More dropdown for overflow tabs */}
+            {visibleCount < sections.length && (
               <div className="relative flex-none">
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className={`h-16 lg:h-20 font-bold text-sm lg:text-base rounded-xl lg:rounded-2xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${
+                  className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${
                     showMobileMenu ? "border-amber-400" : ""
                   }`}
                 >
                   <div className="flex items-center gap-1">
                     <span>More</span>
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${
-                        showMobileMenu ? "rotate-180" : ""
-                      }`}
+                      className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
                     />
                   </div>
                 </Button>
 
                 {showMobileMenu && (
                   <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
-                    {sections.slice(4).map((section) => {
+                    {sections.slice(visibleCount).map((section) => {
                       const Icon = section.icon;
                       return (
                         <Button
