@@ -29,6 +29,7 @@ export default function Home() {
   const {
     prediction,
     isLoading: predictionLoading,
+    error: predictionError,
     fetchPrediction,
     refreshPrediction,
     clear: clearPrediction,
@@ -36,6 +37,7 @@ export default function Home() {
   const {
     prediction: weeklyPrediction,
     isLoading: weeklyLoading,
+    error: weeklyError,
     fetchPrediction: fetchWeeklyPrediction,
     refreshPrediction: refreshWeeklyPrediction,
     clear: clearWeeklyPrediction,
@@ -276,10 +278,12 @@ export default function Home() {
             onClear={handleClear}
             prediction={prediction}
             loading={predictionLoading}
+            error={predictionError}
             onGetPrediction={handleGetPrediction}
             onRefreshPrediction={handleRefreshPrediction}
             weeklyPrediction={weeklyPrediction}
             weeklyLoading={weeklyLoading}
+            weeklyError={weeklyError}
             onGetWeeklyPrediction={handleGetWeeklyPrediction}
             onRefreshWeeklyPrediction={handleRefreshWeeklyPrediction}
             monthlyPrediction={monthlyPrediction}

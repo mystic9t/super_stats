@@ -14,15 +14,51 @@ export async function GET(request: Request) {
 
   try {
     // External API call for weekly horoscope
-    const response = await fetch(
-      `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/weekly?sign=${sign.toLowerCase()}`,
+    const externalUrl = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/weekly?sign=${sign.toLowerCase()}`;
+    console.log("[Weekly Prediction] Fetching from:", externalUrl);
+
+    const response = await fetch(externalUrl, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Vibes-App/1.0",
+      },
+    });
+
+    console.log(
+      "[Weekly Prediction] Response status:",
+      response.status,
+      response.statusText,
     );
 
     if (!response.ok) {
-      throw new Error(`External API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("[Weekly Prediction] Error response:", errorText);
+      throw new Error(
+        `External API error: ${response.status} ${response.statusText}`,
+      );
     }
 
     const data = await response.json();
+    console.log(
+      "[Weekly Prediction] Received data:",
+      JSON.stringify(data).substring(0, 200),
+    );
+
+    // Validate the response structure
+    if (!data?.data?.horoscope_data) {
+      console.error(
+        "[Weekly Prediction] Invalid data structure:",
+        JSON.stringify(data),
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid horoscope data received from external API",
+          timestamp: new Date(),
+        },
+        { status: 502 },
+      );
+    }
 
     // Map external API response to our WeeklyPrediction interface
     // External API returns: { data: { week: string, horoscope_data: string }, ... }
