@@ -157,3 +157,40 @@ export interface ChineseZodiacReading {
   symbolEmoji: string;
   yearRange: string;
 }
+
+// Moon Phase Types
+export enum MoonPhase {
+  NEW_MOON = "new-moon",
+  WAXING_CRESCENT = "waxing-crescent",
+  FIRST_QUARTER = "first-quarter",
+  WAXING_GIBBOUS = "waxing-gibbous",
+  FULL_MOON = "full-moon",
+  WANING_GIBBOUS = "waning-gibbous",
+  LAST_QUARTER = "last-quarter",
+  WANING_CRESCENT = "waning-crescent",
+}
+
+export interface MoonPhaseData {
+  phase: MoonPhase;
+  phaseName: string;
+  illumination: number; // 0-100%
+  age: number; // Days since new moon (0-29.5)
+  nextNewMoon: Date;
+  nextFullMoon: Date;
+  emoji: string;
+}
+
+export interface MoonRitual {
+  title: string;
+  description: string;
+  actions: string[];
+  zodiacFocus: ZodiacSign[];
+}
+
+export interface ZodiacMoonInfluence {
+  sign: ZodiacSign;
+  moonPhase: MoonPhase;
+  influence: string;
+  focus: string[];
+  avoid: string[];
+}

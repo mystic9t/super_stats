@@ -60,6 +60,14 @@ export interface DashboardProps {
   chineseZodiacYear: string | null;
   onGetChineseZodiac: () => void;
   onRefreshChineseZodiac: () => void;
+  // Moon Phase
+  moonPhaseData: import("@vibes/shared-types").MoonPhaseData | null;
+  moonZodiacSign: import("@vibes/shared-types").ZodiacSign | null;
+  moonPhaseRituals: import("@vibes/shared-types").MoonRitual[];
+  moonPhaseInfluence: import("@vibes/shared-types").ZodiacMoonInfluence | null;
+  moonPhaseLoading: boolean;
+  onGetMoonPhase: () => void;
+  onRefreshMoonPhase: () => void;
 }
 
 export interface OnboardingFormProps {

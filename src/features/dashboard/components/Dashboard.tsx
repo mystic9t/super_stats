@@ -18,6 +18,7 @@ import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyH
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
 import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
+import { MoonPhaseCard } from "@/features/moon-phase/components/MoonPhaseCard";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
@@ -68,9 +69,22 @@ export function Dashboard({
   chineseZodiacYear,
   onGetChineseZodiac,
   onRefreshChineseZodiac,
+  // Moon Phase
+  moonPhaseData,
+  moonZodiacSign,
+  moonPhaseRituals,
+  moonPhaseInfluence,
+  moonPhaseLoading,
+  onGetMoonPhase,
+  onRefreshMoonPhase,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
-    "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null
+    | "prediction"
+    | "numerology"
+    | "tarot"
+    | "chinese-zodiac"
+    | "moon-phase"
+    | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -84,7 +98,13 @@ export function Dashboard({
 
   // Handle manual section changes
   const handleSectionChange = (
-    section: "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null,
+    section:
+      | "prediction"
+      | "numerology"
+      | "tarot"
+      | "chinese-zodiac"
+      | "moon-phase"
+      | null,
   ) => {
     setActiveSection(section);
     setHasInteracted(true);
@@ -195,6 +215,21 @@ export function Dashboard({
         }
       },
       isLoading: chineseZodiacLoading,
+    },
+    {
+      id: "moon-phase" as const,
+      label: "Moon",
+      loadingLabel: "Calculating...",
+      icon: Moon,
+      onClick: () => {
+        if (activeSection === "moon-phase") {
+          handleSectionChange(null);
+        } else {
+          onGetMoonPhase();
+          handleSectionChange("moon-phase");
+        }
+      },
+      isLoading: moonPhaseLoading,
     },
   ];
 
@@ -503,6 +538,21 @@ export function Dashboard({
           {activeSection === "chinese-zodiac" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
               <ChineseZodiacCard profile={profile} />
+            </div>
+          )}
+
+          {/* Moon Phase Section */}
+          {activeSection === "moon-phase" && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <MoonPhaseCard
+                moonData={moonPhaseData}
+                moonZodiacSign={moonZodiacSign}
+                rituals={moonPhaseRituals}
+                influence={moonPhaseInfluence}
+                sunSign={profile.sunSign}
+                isLoading={moonPhaseLoading}
+                onRefresh={onRefreshMoonPhase}
+              />
             </div>
           )}
         </div>
