@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
-import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
 import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
@@ -42,11 +41,6 @@ export function Dashboard({
   weeklyLoading,
   onGetWeeklyPrediction,
   onRefreshWeeklyPrediction,
-  // Monthly prediction
-  monthlyPrediction,
-  monthlyLoading,
-  onGetMonthlyPrediction,
-  onRefreshMonthlyPrediction,
   // Period selection
   predictionPeriod,
   onPeriodChange,
@@ -124,9 +118,6 @@ export function Dashboard({
         case "weekly":
           if (!weeklyPrediction) onGetWeeklyPrediction();
           break;
-        case "monthly":
-          if (!monthlyPrediction) onGetMonthlyPrediction();
-          break;
         case "moon":
           onGetMoonPhase();
           break;
@@ -141,8 +132,6 @@ export function Dashboard({
         return loading;
       case "weekly":
         return weeklyLoading;
-      case "monthly":
-        return monthlyLoading;
       default:
         return loading;
     }
@@ -166,8 +155,8 @@ export function Dashboard({
             case "weekly":
               onGetWeeklyPrediction();
               break;
-            case "monthly":
-              onGetMonthlyPrediction();
+            case "moon":
+              onGetMoonPhase();
               break;
           }
           handleSectionChange("prediction");
@@ -392,23 +381,23 @@ export function Dashboard({
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4 sm:space-y-6">
-              {/* Period Selector - All 4 tabs in one row */}
+              {/* Period Selector - 3 tabs in one row */}
               <div className="flex gap-1 sm:gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
-                {(
-                  ["daily", "weekly", "monthly", "moon"] as PredictionPeriod[]
-                ).map((period) => (
-                  <button
-                    key={period}
-                    onClick={() => handlePeriodChange(period)}
-                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap ${
-                      predictionPeriod === period
-                        ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {period === "moon" ? "🌙 Moon" : period}
-                  </button>
-                ))}
+                {(["daily", "weekly", "moon"] as PredictionPeriod[]).map(
+                  (period) => (
+                    <button
+                      key={period}
+                      onClick={() => handlePeriodChange(period)}
+                      className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap ${
+                        predictionPeriod === period
+                          ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {period === "moon" ? "🌙 Moon" : period}
+                    </button>
+                  ),
+                )}
               </div>
 
               {/* Daily Prediction */}
@@ -421,22 +410,13 @@ export function Dashboard({
                 />
               )}
 
-              {/* Weekly & Monthly */}
+              {/* Weekly */}
               {predictionPeriod === "weekly" && weeklyPrediction && (
                 <WeeklyHoroscopeCard
                   prediction={weeklyPrediction}
                   sunSign={profile.sunSign}
                   onRefresh={onRefreshWeeklyPrediction}
                   isRefreshing={weeklyLoading}
-                />
-              )}
-
-              {predictionPeriod === "monthly" && monthlyPrediction && (
-                <MonthlyHoroscopeCard
-                  prediction={monthlyPrediction}
-                  sunSign={profile.sunSign}
-                  onRefresh={onRefreshMonthlyPrediction}
-                  isRefreshing={monthlyLoading}
                 />
               )}
             </div>
