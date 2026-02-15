@@ -13,10 +13,6 @@ interface UseWeeklyPredictionReturn {
 
 const CACHE_KEY_PREFIX = "weekly-prediction-cache";
 
-/**
- * Get the current week number and year for cache key
- * Format: YYYY-W## (e.g., 2026-W05)
- */
 function getCurrentWeekKey(): string {
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -25,16 +21,10 @@ function getCurrentWeekKey(): string {
   return `${now.getFullYear()}-W${weekNumber.toString().padStart(2, "0")}`;
 }
 
-/**
- * Get cache key for a weekly prediction (sign + week)
- */
 function getCacheKey(sign: ZodiacSign, weekKey: string): string {
   return `${CACHE_KEY_PREFIX}-${sign}-${weekKey}`;
 }
 
-/**
- * Get cached prediction from localStorage
- */
 function getCachedPrediction(
   sign: ZodiacSign,
   weekKey: string,
@@ -51,9 +41,6 @@ function getCachedPrediction(
   return null;
 }
 
-/**
- * Cache prediction to localStorage
- */
 function cachePrediction(
   sign: ZodiacSign,
   weekKey: string,
@@ -67,9 +54,6 @@ function cachePrediction(
   }
 }
 
-/**
- * Clear cached prediction
- */
 function clearCachedPrediction(sign: ZodiacSign, weekKey: string): void {
   try {
     const key = getCacheKey(sign, weekKey);
@@ -79,10 +63,6 @@ function clearCachedPrediction(sign: ZodiacSign, weekKey: string): void {
   }
 }
 
-/**
- * Hook to fetch and manage weekly predictions with frontend caching
- * Cache is automatically invalidated when the week changes
- */
 export function useWeeklyPrediction(): UseWeeklyPredictionReturn {
   const [prediction, setPrediction] = useState<WeeklyPrediction | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,10 +72,8 @@ export function useWeeklyPrediction(): UseWeeklyPredictionReturn {
     setIsLoading(true);
     setError(null);
 
-    // Get current week for cache key
     const weekKey = getCurrentWeekKey();
 
-    // Check cache first
     const cached = getCachedPrediction(sign, weekKey);
     if (cached) {
       setPrediction(cached);
@@ -103,11 +81,12 @@ export function useWeeklyPrediction(): UseWeeklyPredictionReturn {
       return;
     }
 
-    // Fetch from API if not cached
     const result = await predictionService.getWeeklyPrediction(sign);
     if (result.success && result.data) {
       setPrediction(result.data);
-      cachePrediction(sign, weekKey, result.data);
+      if (!result.isFallback) {
+        cachePrediction(sign, weekKey, result.data);
+      }
     } else {
       setError(result.error || "Failed to fetch weekly prediction");
     }
@@ -121,14 +100,14 @@ export function useWeeklyPrediction(): UseWeeklyPredictionReturn {
 
     const weekKey = getCurrentWeekKey();
 
-    // Clear cache to force fresh fetch
     clearCachedPrediction(sign, weekKey);
 
-    // Fetch fresh prediction from API
     const result = await predictionService.getWeeklyPrediction(sign);
     if (result.success && result.data) {
       setPrediction(result.data);
-      cachePrediction(sign, weekKey, result.data);
+      if (!result.isFallback) {
+        cachePrediction(sign, weekKey, result.data);
+      }
     } else {
       setError(result.error || "Failed to refresh weekly prediction");
     }

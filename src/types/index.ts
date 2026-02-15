@@ -21,11 +21,13 @@ export interface DashboardProps {
   // Daily prediction
   prediction: DailyPrediction | null;
   loading: boolean;
+  error: string | null;
   onGetPrediction: () => void;
   onRefreshPrediction: () => void;
   // Weekly prediction
   weeklyPrediction: WeeklyPrediction | null;
   weeklyLoading: boolean;
+  weeklyError: string | null;
   onGetWeeklyPrediction: () => void;
   onRefreshWeeklyPrediction: () => void;
   // Monthly prediction

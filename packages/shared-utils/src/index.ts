@@ -6,6 +6,7 @@ export * from "./tarot";
 export * from "./chinese-zodiac";
 export * from "./moon-phase";
 export * from "./moon-rituals";
+export * from "./horoscope-generator";
 
 // Basic Numerology Utils
 export const calculateLifePathNumber = (date: Date): number => {
