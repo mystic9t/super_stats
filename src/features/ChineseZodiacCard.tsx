@@ -1,20 +1,59 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { UserProfile, ChineseZodiacReading } from '@vibes/shared-types';
-import { calculateChineseZodiac, getChineseZodiacReading } from '@vibes/shared-utils';
+import { useEffect, useState } from "react";
+import { UserProfile, ChineseZodiacReading } from "@vibes/shared-types";
+import {
+  calculateChineseZodiac,
+  getChineseZodiacReading,
+} from "@vibes/shared-utils";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/card";
+import { Loader2, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ChineseZodiacCardProps {
   profile: UserProfile;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
+const tagVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut" as const,
+    },
+  },
+};
 
 /**
  * ChineseZodiacCard Component
@@ -23,18 +62,20 @@ interface ChineseZodiacCardProps {
 export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
   const [reading, setReading] = useState<ChineseZodiacReading | null>(null);
   const [loading, setLoading] = useState(false);
-  const [chineseYear, setChineseYear] = useState<string>('');
+  const [chineseYear, setChineseYear] = useState<string>("");
 
   useEffect(() => {
     const fetchChineseZodiac = async () => {
       setLoading(true);
       try {
-        const chineseProfile = calculateChineseZodiac(new Date(profile.dateOfBirth));
+        const chineseProfile = calculateChineseZodiac(
+          new Date(profile.dateOfBirth),
+        );
         const zodiacReading = getChineseZodiacReading(chineseProfile.sign);
         setReading(zodiacReading);
         setChineseYear(chineseProfile.chineseYear);
       } catch (error) {
-        console.error('Failed to fetch Chinese zodiac:', error);
+        console.error("Failed to fetch Chinese zodiac:", error);
       } finally {
         setLoading(false);
       }
@@ -45,20 +86,87 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
 
   return (
     <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
-        {reading?.symbolEmoji}
+      {/* Mystical background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating elements */}
+        <motion.div
+          className="absolute top-8 right-16 w-2 h-2 bg-orange-400 rounded-full"
+          animate={{
+            opacity: [0.3, 1, 0.3],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-20 right-8 w-1.5 h-1.5 bg-accent rounded-full"
+          animate={{
+            opacity: [0.5, 1, 0.5],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5,
+          }}
+        />
+        <motion.div
+          className="absolute bottom-32 left-12 w-1 h-1 bg-primary rounded-full"
+          animate={{
+            opacity: [0.4, 0.9, 0.4],
+            scale: [1, 1.4, 1],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+
+        {/* Decorative gradient orbs */}
+        <div className="absolute -top-20 -right-20 w-60 h-60 bg-orange-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-accent/5 rounded-full blur-3xl" />
       </div>
 
-      <CardHeader className="pb-4">
+      {/* Floating zodiac symbol */}
+      <motion.div
+        className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl"
+        animate={{
+          y: [0, -10, 0],
+          rotate: [0, 5, 0],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        {reading?.symbolEmoji}
+      </motion.div>
+
+      <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{reading?.symbolEmoji}</span>
+            <motion.span
+              className="text-2xl"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.6, type: "spring" }}
+            >
+              {reading?.symbolEmoji}
+            </motion.span>
             <div>
               <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {reading?.title}
               </CardTitle>
               <CardDescription className="text-xs mt-1">
-                Year: <span className="font-semibold text-accent">{chineseYear}</span>
+                Year:{" "}
+                <span className="font-semibold text-accent">{chineseYear}</span>
               </CardDescription>
             </div>
           </div>
@@ -67,90 +175,163 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
 
       <CardContent className="space-y-5 relative z-10">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-            <p className="text-sm text-muted-foreground">Reading the zodiac...</p>
-          </div>
-        ) : reading ? (
-          <div className="space-y-4">
-            {/* Description */}
-            <p className="text-base leading-relaxed text-foreground italic">
-              "{reading.description}"
+          <motion.div
+            className="flex flex-col items-center justify-center py-12 space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              <Loader2 className="h-8 w-8 text-orange-500" />
+            </motion.div>
+            <p className="text-sm text-muted-foreground">
+              Reading the zodiac...
             </p>
+          </motion.div>
+        ) : reading ? (
+          <motion.div
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Description */}
+            <motion.p
+              variants={itemVariants}
+              className="text-base leading-relaxed text-foreground italic"
+            >
+              "{reading.description}"
+            </motion.p>
 
             {/* Lucky Numbers and Colors */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-2 gap-4"
+            >
+              <motion.div
+                className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border relative overflow-hidden group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 text-primary" />
                   Lucky Numbers
                 </p>
                 <div className="flex gap-2">
-                  {reading.luckyNumbers.map((num) => (
-                    <span key={num} className="text-xl font-bold text-accent">
+                  {reading.luckyNumbers.map((num, index) => (
+                    <motion.span
+                      key={num}
+                      className="text-xl font-bold text-accent"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.3 + index * 0.1, type: "spring" }}
+                    >
                       {num}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
+              <motion.div
+                className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border relative overflow-hidden group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                   Lucky Colors
                 </p>
                 <div className="flex gap-2 flex-wrap">
-                  {reading.luckyColors.map((color) => (
-                    <span key={color} className="text-xs font-semibold text-accent">
+                  {reading.luckyColors.map((color, index) => (
+                    <motion.span
+                      key={color}
+                      className="text-xs font-semibold text-accent"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                    >
                       {color}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Traits & Compatible Signs */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-2 gap-4 text-sm"
+            >
               <div>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                   Traits
                 </p>
-                <div className="flex flex-wrap gap-1">
-                  {reading.traits.map((trait) => (
-                    <span
+                <motion.div
+                  className="flex flex-wrap gap-1"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {reading.traits.map((trait, index) => (
+                    <motion.span
                       key={trait}
-                      className="px-2 py-1 bg-primary/20 text-primary text-xs font-medium rounded"
+                      variants={tagVariants}
+                      whileHover={{ scale: 1.05 }}
+                      className="px-2 py-1 bg-primary/20 text-primary text-xs font-medium rounded cursor-default"
                     >
                       {trait}
-                    </span>
+                    </motion.span>
                   ))}
-                </div>
+                </motion.div>
               </div>
               <div>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                   Compatible
                 </p>
-                <div className="flex flex-wrap gap-1">
-                  {reading.compatibility.map((sign) => (
-                    <span
+                <motion.div
+                  className="flex flex-wrap gap-1"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {reading.compatibility.map((sign, index) => (
+                    <motion.span
                       key={sign}
-                      className="px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded"
+                      variants={tagVariants}
+                      whileHover={{ scale: 1.05 }}
+                      className="px-2 py-1 bg-accent/20 text-accent text-xs font-medium rounded cursor-default"
                     >
                       {sign}
-                    </span>
+                    </motion.span>
                   ))}
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Element */}
-            <div className="p-3 rounded-lg bg-muted/50 border border-border">
+            <motion.div
+              variants={itemVariants}
+              className="p-3 rounded-lg bg-muted/50 border border-border relative overflow-hidden group"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
                 Element
               </p>
               <p className="font-semibold text-foreground">{reading.element}</p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         ) : (
-          <div className="text-center text-muted-foreground">Unable to load zodiac reading.</div>
+          <motion.div
+            className="text-center text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            Unable to load zodiac reading.
+          </motion.div>
         )}
       </CardContent>
     </Card>

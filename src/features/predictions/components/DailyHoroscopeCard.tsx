@@ -2,16 +2,16 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, RotateCw, Sparkles, Star } from "lucide-react";
-import { WeeklyPrediction, ZodiacSign } from "@vibes/shared-types";
+import { RotateCw, Sparkles, Star, Calendar } from "lucide-react";
+import { DailyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
 import { motion } from "framer-motion";
 
-interface WeeklyHoroscopeCardProps {
-  prediction: WeeklyPrediction;
+interface DailyHoroscopeCardProps {
+  prediction: DailyPrediction;
   sunSign: ZodiacSign;
+  isLoading: boolean;
   onRefresh: () => void;
-  isRefreshing: boolean;
 }
 
 const containerVariants = {
@@ -37,12 +37,12 @@ const itemVariants = {
   },
 };
 
-export function WeeklyHoroscopeCard({
+export function DailyHoroscopeCard({
   prediction,
   sunSign,
+  isLoading,
   onRefresh,
-  isRefreshing,
-}: WeeklyHoroscopeCardProps) {
+}: DailyHoroscopeCardProps) {
   const zodiacSymbol = getZodiacSymbol(sunSign);
   const zodiacName = getZodiacDisplay(sunSign);
 
@@ -127,8 +127,12 @@ export function WeeklyHoroscopeCard({
                 {zodiacName}
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                <CalendarDays className="h-3 w-3" />
-                Week of {prediction.week}
+                <Calendar className="h-3 w-3" />
+                {new Date(prediction.current_date).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
+                })}
               </p>
             </div>
           </div>
@@ -136,12 +140,11 @@ export function WeeklyHoroscopeCard({
             size="sm"
             variant="ghost"
             onClick={onRefresh}
-            disabled={isRefreshing}
+            disabled={isLoading}
             className="text-accent hover:text-primary hover:bg-primary/10"
-            title="Refresh weekly prediction"
           >
             <RotateCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
             />
           </Button>
         </div>
@@ -216,57 +219,6 @@ export function WeeklyHoroscopeCard({
                   {prediction.color}
                 </motion.p>
               </motion.div>
-            </motion.div>
-          </motion.div>
-
-          {/* Mood & Compatibility */}
-          <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-2 gap-4"
-          >
-            <motion.div
-              className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-accent/10 border border-border relative overflow-hidden"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.p
-                className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                Vibe
-              </motion.p>
-              <motion.p
-                className="text-lg font-bold text-amber-500 capitalize"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                {prediction.mood}
-              </motion.p>
-            </motion.div>
-            <motion.div
-              className="p-4 rounded-xl bg-gradient-to-br from-cyan-400/10 to-primary/10 border border-border relative overflow-hidden"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.p
-                className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                Connection
-              </motion.p>
-              <motion.p
-                className="text-lg font-bold text-cyan-400 capitalize"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                {prediction.compatibility}
-              </motion.p>
             </motion.div>
           </motion.div>
         </motion.div>

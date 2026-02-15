@@ -13,6 +13,7 @@ import {
   Calculator,
   ChevronDown,
 } from "lucide-react";
+import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
 import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
@@ -424,68 +425,12 @@ export function Dashboard({
 
               {/* Daily Prediction */}
               {predictionPeriod === "daily" && prediction && (
-                <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
-                    {getZodiacSymbol(profile.sunSign)}
-                  </div>
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">
-                          {getZodiacSymbol(profile.sunSign)}
-                        </span>
-                        <div>
-                          <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                            {getZodiacDisplay(profile.sunSign)}
-                          </CardTitle>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(
-                              prediction.current_date,
-                            ).toLocaleDateString("en-US", {
-                              weekday: "long",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={onRefreshPrediction}
-                        disabled={loading}
-                        className="text-accent hover:text-primary hover:bg-primary/10"
-                      >
-                        <RotateCw
-                          className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
-                        />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-5 relative z-10">
-                    <p className="text-base leading-relaxed text-foreground italic">
-                      "{prediction.description}"
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                          Lucky Number
-                        </p>
-                        <p className="text-3xl font-bold text-accent">
-                          {prediction.lucky_number}
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                          Power Color
-                        </p>
-                        <p className="text-3xl font-bold text-accent">
-                          {prediction.color}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <DailyHoroscopeCard
+                  prediction={prediction}
+                  sunSign={profile.sunSign}
+                  isLoading={loading}
+                  onRefresh={onRefreshPrediction}
+                />
               )}
 
               {/* Weekly & Monthly */}
