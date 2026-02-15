@@ -13,6 +13,7 @@ import {
   Calculator,
   ChevronDown,
   AlertCircle,
+  Sun,
 } from "lucide-react";
 import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
@@ -20,6 +21,7 @@ import { NumerologySection } from "@/features/numerology/components/NumerologySe
 import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
 import { MoonPhaseCard } from "@/features/moon-phase/components/MoonPhaseCard";
+import { BirthChartCard } from "@/features/birth-chart/components/BirthChartCard";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
@@ -76,6 +78,11 @@ export function Dashboard({
   moonPhaseLoading,
   onGetMoonPhase,
   onRefreshMoonPhase,
+  // Birth Chart
+  birthChartReading,
+  birthChartLoading,
+  onGetBirthChart,
+  onRefreshBirthChart,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
     | "prediction"
@@ -83,6 +90,7 @@ export function Dashboard({
     | "tarot"
     | "chinese-zodiac"
     | "moon-phase"
+    | "birth-chart"
     | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -103,6 +111,7 @@ export function Dashboard({
       | "tarot"
       | "chinese-zodiac"
       | "moon-phase"
+      | "birth-chart"
       | null,
   ) => {
     setActiveSection(section);
@@ -213,6 +222,25 @@ export function Dashboard({
       },
       isLoading: chineseZodiacLoading,
     },
+    ...(profile.advancedMode
+      ? [
+          {
+            id: "birth-chart" as const,
+            label: "Birth Chart",
+            loadingLabel: "Calculating...",
+            icon: Sun,
+            onClick: () => {
+              if (activeSection === "birth-chart") {
+                handleSectionChange(null);
+              } else {
+                onGetBirthChart();
+                handleSectionChange("birth-chart");
+              }
+            },
+            isLoading: birthChartLoading,
+          },
+        ]
+      : []),
   ];
 
   const activeSectionData = sections.find((s) => s.id === activeSection);
@@ -513,6 +541,17 @@ export function Dashboard({
                 chineseYear={chineseZodiacYear}
                 element={chineseZodiacElement}
                 isLoading={chineseZodiacLoading}
+              />
+            </div>
+          )}
+
+          {/* Birth Chart Section - Advanced Mode only */}
+          {activeSection === "birth-chart" && profile.advancedMode && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <BirthChartCard
+                reading={birthChartReading}
+                onRefresh={onRefreshBirthChart}
+                isRefreshing={birthChartLoading}
               />
             </div>
           )}
