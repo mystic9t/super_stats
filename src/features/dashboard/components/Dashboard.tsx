@@ -301,32 +301,85 @@ export function Dashboard({
             </CardHeader>
           </Card>
 
-          {/* Action Buttons - Desktop Grid Layout */}
-          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              return (
+          {/* Action Buttons - Desktop Single Row Layout */}
+          <div className="hidden sm:flex sm:flex-row gap-3 lg:gap-4">
+            {/* Visible tabs - show all on xl, first 4 on lg/md */}
+            {(sections.length <= 4 ? sections : sections.slice(0, 4)).map(
+              (section) => {
+                const Icon = section.icon;
+                return (
+                  <Button
+                    key={section.id}
+                    size="lg"
+                    onClick={section.onClick}
+                    variant={
+                      activeSection === section.id ? "default" : "outline"
+                    }
+                    disabled={section.isLoading}
+                    className={`relative overflow-hidden group h-16 lg:h-20 font-bold text-sm lg:text-base rounded-xl lg:rounded-2xl flex-1 transition-all duration-300 ${
+                      activeSection === section.id
+                        ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+                        : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <Icon className="h-4 w-4 lg:h-5 lg:w-5" />
+                      <span className="hidden sm:inline">
+                        {section.isLoading
+                          ? section.loadingLabel
+                          : section.label}
+                      </span>
+                    </div>
+                  </Button>
+                );
+              },
+            )}
+
+            {/* More dropdown for extra tabs (5th tab on screens smaller than xl) */}
+            {sections.length > 4 && (
+              <div className="relative flex-none">
                 <Button
-                  key={section.id}
                   size="lg"
-                  onClick={section.onClick}
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  disabled={section.isLoading}
-                  className={`relative overflow-hidden group h-20 font-bold text-base rounded-2xl transition-all duration-300 ${
-                    activeSection === section.id
-                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+                  variant="outline"
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  className={`h-16 lg:h-20 font-bold text-sm lg:text-base rounded-xl lg:rounded-2xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${
+                    showMobileMenu ? "border-amber-400" : ""
                   }`}
                 >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon className="h-5 w-5" />
-                    <span>
-                      {section.isLoading ? section.loadingLabel : section.label}
-                    </span>
+                  <div className="flex items-center gap-1">
+                    <span>More</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        showMobileMenu ? "rotate-180" : ""
+                      }`}
+                    />
                   </div>
                 </Button>
-              );
-            })}
+
+                {showMobileMenu && (
+                  <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
+                    {sections.slice(4).map((section) => {
+                      const Icon = section.icon;
+                      return (
+                        <Button
+                          key={section.id}
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            section.onClick();
+                            setShowMobileMenu(false);
+                          }}
+                          className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                        >
+                          <Icon className="h-4 w-4 mr-2" />
+                          {section.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Action Buttons - Mobile Single Row Layout */}
