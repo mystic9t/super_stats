@@ -127,6 +127,9 @@ export function Dashboard({
         case "monthly":
           if (!monthlyPrediction) onGetMonthlyPrediction();
           break;
+        case "moon":
+          onGetMoonPhase();
+          break;
       }
     }
   };
@@ -216,21 +219,6 @@ export function Dashboard({
         }
       },
       isLoading: chineseZodiacLoading,
-    },
-    {
-      id: "moon-phase" as const,
-      label: "Moon",
-      loadingLabel: "Calculating...",
-      icon: Moon,
-      onClick: () => {
-        if (activeSection === "moon-phase") {
-          handleSectionChange(null);
-        } else {
-          onGetMoonPhase();
-          handleSectionChange("moon-phase");
-        }
-      },
-      isLoading: moonPhaseLoading,
     },
   ];
 
@@ -404,23 +392,23 @@ export function Dashboard({
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4 sm:space-y-6">
-              {/* Period Selector */}
-              <div className="flex gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
-                {(["daily", "weekly", "monthly"] as PredictionPeriod[]).map(
-                  (period) => (
-                    <button
-                      key={period}
-                      onClick={() => handlePeriodChange(period)}
-                      className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold uppercase tracking-wide transition-all duration-300 ${
-                        predictionPeriod === period
-                          ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  ),
-                )}
+              {/* Period Selector - All 4 tabs in one row */}
+              <div className="flex gap-1 sm:gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
+                {(
+                  ["daily", "weekly", "monthly", "moon"] as PredictionPeriod[]
+                ).map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => handlePeriodChange(period)}
+                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap ${
+                      predictionPeriod === period
+                        ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {period === "moon" ? "🌙 Moon" : period}
+                  </button>
+                ))}
               </div>
 
               {/* Daily Prediction */}
@@ -482,12 +470,17 @@ export function Dashboard({
           {/* Chinese Zodiac Section */}
           {activeSection === "chinese-zodiac" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <ChineseZodiacCard profile={profile} />
+              <ChineseZodiacCard
+                profile={profile}
+                reading={chineseZodiacReading}
+                chineseYear={chineseZodiacYear}
+                isLoading={chineseZodiacLoading}
+              />
             </div>
           )}
 
-          {/* Moon Phase Section */}
-          {activeSection === "moon-phase" && (
+          {/* Moon Phase Section - now under Horoscope */}
+          {activeSection === "prediction" && predictionPeriod === "moon" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
               <MoonPhaseCard
                 moonData={moonPhaseData}

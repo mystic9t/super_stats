@@ -1,11 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { UserProfile, ChineseZodiacReading } from "@vibes/shared-types";
-import {
-  calculateChineseZodiac,
-  getChineseZodiacReading,
-} from "@vibes/shared-utils";
 import {
   Card,
   CardContent,
@@ -18,6 +13,9 @@ import { motion } from "framer-motion";
 
 interface ChineseZodiacCardProps {
   profile: UserProfile;
+  reading: ChineseZodiacReading | null;
+  chineseYear: string | null;
+  isLoading: boolean;
 }
 
 const containerVariants = {
@@ -55,40 +53,16 @@ const tagVariants = {
   },
 };
 
-/**
- * ChineseZodiacCard Component
- * Displays Chinese zodiac insights based on user profile
- */
-export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
-  const [reading, setReading] = useState<ChineseZodiacReading | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [chineseYear, setChineseYear] = useState<string>("");
-
-  useEffect(() => {
-    const fetchChineseZodiac = async () => {
-      setLoading(true);
-      try {
-        const chineseProfile = calculateChineseZodiac(
-          new Date(profile.dateOfBirth),
-        );
-        const zodiacReading = getChineseZodiacReading(chineseProfile.sign);
-        setReading(zodiacReading);
-        setChineseYear(chineseProfile.chineseYear);
-      } catch (error) {
-        console.error("Failed to fetch Chinese zodiac:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChineseZodiac();
-  }, [profile.dateOfBirth]);
-
+export function ChineseZodiacCard({
+  profile,
+  reading,
+  chineseYear,
+  isLoading,
+}: ChineseZodiacCardProps) {
   return (
     <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
       {/* Mystical background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating elements */}
         <motion.div
           className="absolute top-8 right-16 w-2 h-2 bg-orange-400 rounded-full"
           animate={{
@@ -114,21 +88,6 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
             delay: 0.5,
           }}
         />
-        <motion.div
-          className="absolute bottom-32 left-12 w-1 h-1 bg-primary rounded-full"
-          animate={{
-            opacity: [0.4, 0.9, 0.4],
-            scale: [1, 1.4, 1],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
-
-        {/* Decorative gradient orbs */}
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-orange-500/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-accent/5 rounded-full blur-3xl" />
       </div>
@@ -158,15 +117,17 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 0.6, type: "spring" }}
             >
-              {reading?.symbolEmoji}
+              {reading?.symbolEmoji || "🐉"}
             </motion.span>
             <div>
               <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                {reading?.title}
+                {reading?.title || "Chinese Zodiac"}
               </CardTitle>
               <CardDescription className="text-xs mt-1">
                 Year:{" "}
-                <span className="font-semibold text-accent">{chineseYear}</span>
+                <span className="font-semibold text-accent">
+                  {chineseYear || "..."}
+                </span>
               </CardDescription>
             </div>
           </div>
@@ -174,7 +135,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-5 relative z-10">
-        {loading ? (
+        {isLoading ? (
           <motion.div
             className="flex flex-col items-center justify-center py-12 space-y-4"
             initial={{ opacity: 0 }}
@@ -221,7 +182,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
                   Lucky Numbers
                 </p>
                 <div className="flex gap-2">
-                  {reading.luckyNumbers.map((num, index) => (
+                  {reading.luckyNumbers?.map((num, index) => (
                     <motion.span
                       key={num}
                       className="text-xl font-bold text-accent"
@@ -245,7 +206,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
                   Lucky Colors
                 </p>
                 <div className="flex gap-2 flex-wrap">
-                  {reading.luckyColors.map((color, index) => (
+                  {reading.luckyColors?.map((color, index) => (
                     <motion.span
                       key={color}
                       className="text-xs font-semibold text-accent"
@@ -275,7 +236,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
                   initial="hidden"
                   animate="visible"
                 >
-                  {reading.traits.map((trait, index) => (
+                  {reading.traits?.map((trait) => (
                     <motion.span
                       key={trait}
                       variants={tagVariants}
@@ -297,7 +258,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
                   initial="hidden"
                   animate="visible"
                 >
-                  {reading.compatibility.map((sign, index) => (
+                  {reading.compatibility?.map((sign) => (
                     <motion.span
                       key={sign}
                       variants={tagVariants}
@@ -326,7 +287,7 @@ export function ChineseZodiacCard({ profile }: ChineseZodiacCardProps) {
           </motion.div>
         ) : (
           <motion.div
-            className="text-center text-muted-foreground"
+            className="text-center text-muted-foreground py-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >

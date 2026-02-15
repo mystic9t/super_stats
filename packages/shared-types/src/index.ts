@@ -120,7 +120,7 @@ export interface TarotState {
   lastDrawDate: string | null; // YYYY-MM-DD format
 }
 
-export type PredictionPeriod = "daily" | "weekly" | "monthly";
+export type PredictionPeriod = "daily" | "weekly" | "monthly" | "moon";
 
 // Chinese Zodiac Types
 export enum ChineseZodiacSign {
