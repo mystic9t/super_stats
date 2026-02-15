@@ -10,6 +10,7 @@ import {
   useNumerology,
   useTarotReading,
   useChineseZodiac,
+  useMoonPhase,
 } from "@/hooks";
 import { tarotService } from "@/services";
 import { Header } from "@/components/Header";
@@ -67,11 +68,20 @@ export default function Home() {
   const {
     reading: chineseZodiacReading,
     chineseYear: chineseZodiacYear,
+    element: chineseZodiacElement,
     isLoading: chineseZodiacLoading,
     fetchReading: fetchChineseZodiac,
     refreshReading: refreshChineseZodiac,
     clear: clearChineseZodiac,
   } = useChineseZodiac();
+  const {
+    moonData,
+    moonZodiacSign,
+    rituals: moonPhaseRituals,
+    influence: moonPhaseInfluence,
+    isLoading: moonPhaseLoading,
+    refresh: refreshMoonPhase,
+  } = useMoonPhase(profile?.sunSign || null);
 
   useEffect(() => {
     setIsClient(true);
@@ -92,6 +102,18 @@ export default function Home() {
     clearTarot();
     clearChineseZodiac();
     toast.info("🌙 Profile cleared, fresh start!");
+  };
+
+  const handleGetMoonPhase = () => {
+    if (!profile) return;
+    refreshMoonPhase();
+    toast.success("🌙 Moon phase calculated!");
+  };
+
+  const handleRefreshMoonPhase = () => {
+    if (!profile) return;
+    refreshMoonPhase();
+    toast.success("🔄 Moon phase refreshed!");
   };
 
   const handleGetPrediction = async () => {
@@ -282,8 +304,16 @@ export default function Home() {
             chineseZodiacReading={chineseZodiacReading}
             chineseZodiacLoading={chineseZodiacLoading}
             chineseZodiacYear={chineseZodiacYear}
+            chineseZodiacElement={chineseZodiacElement}
             onGetChineseZodiac={handleGetChineseZodiac}
             onRefreshChineseZodiac={handleRefreshChineseZodiac}
+            moonPhaseData={moonData}
+            moonZodiacSign={moonZodiacSign}
+            moonPhaseRituals={moonPhaseRituals}
+            moonPhaseInfluence={moonPhaseInfluence}
+            moonPhaseLoading={moonPhaseLoading}
+            onGetMoonPhase={handleGetMoonPhase}
+            onRefreshMoonPhase={handleRefreshMoonPhase}
           />
         ) : (
           <OnboardingForm
