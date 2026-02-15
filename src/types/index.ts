@@ -58,6 +58,7 @@ export interface DashboardProps {
   chineseZodiacReading: ChineseZodiacReading | null;
   chineseZodiacLoading: boolean;
   chineseZodiacYear: string | null;
+  chineseZodiacElement: string | null;
   onGetChineseZodiac: () => void;
   onRefreshChineseZodiac: () => void;
   // Moon Phase
