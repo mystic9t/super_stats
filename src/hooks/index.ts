@@ -7,3 +7,4 @@ export { useTarotReading } from "./useTarotReading";
 export { useChineseZodiac } from "./useChineseZodiac";
 export { useLocalStorage } from "./useLocalStorage";
 export { useMoonPhase } from "./useMoonPhase";
+export { useBirthChart } from "./useBirthChart";

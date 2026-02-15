@@ -11,6 +11,7 @@ import {
   useTarotReading,
   useChineseZodiac,
   useMoonPhase,
+  useBirthChart,
 } from "@/hooks";
 import { tarotService } from "@/services";
 import { Header } from "@/components/Header";
@@ -84,6 +85,13 @@ export default function Home() {
     isLoading: moonPhaseLoading,
     refresh: refreshMoonPhase,
   } = useMoonPhase(profile?.sunSign || null);
+  const {
+    reading: birthChartReading,
+    isLoading: birthChartLoading,
+    fetchReading: fetchBirthChart,
+    refreshReading: refreshBirthChart,
+    clear: clearBirthChart,
+  } = useBirthChart();
 
   useEffect(() => {
     setIsClient(true);
@@ -103,6 +111,7 @@ export default function Home() {
     clearNumerology();
     clearTarot();
     clearChineseZodiac();
+    clearBirthChart();
     toast.info("🌙 Profile cleared, fresh start!");
   };
 
@@ -116,6 +125,26 @@ export default function Home() {
     if (!profile) return;
     refreshMoonPhase();
     toast.success("🔄 Moon phase refreshed!");
+  };
+
+  const handleGetBirthChart = async () => {
+    if (!profile || !profile.advancedMode) return;
+    try {
+      await fetchBirthChart(profile);
+      toast.success("🌟 Birth chart calculated!");
+    } catch (err) {
+      toast.error("Failed to calculate birth chart.");
+    }
+  };
+
+  const handleRefreshBirthChart = async () => {
+    if (!profile || !profile.advancedMode) return;
+    try {
+      await refreshBirthChart(profile);
+      toast.success("🔄 Birth chart refreshed!");
+    } catch (err) {
+      toast.error("Failed to refresh birth chart.");
+    }
   };
 
   const handleGetPrediction = async () => {
@@ -318,6 +347,10 @@ export default function Home() {
             moonPhaseLoading={moonPhaseLoading}
             onGetMoonPhase={handleGetMoonPhase}
             onRefreshMoonPhase={handleRefreshMoonPhase}
+            birthChartReading={birthChartReading}
+            birthChartLoading={birthChartLoading}
+            onGetBirthChart={handleGetBirthChart}
+            onRefreshBirthChart={handleRefreshBirthChart}
           />
         ) : (
           <OnboardingForm

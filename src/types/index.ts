@@ -7,6 +7,7 @@ import {
   NumerologyReading,
   ChineseZodiacReading,
   PredictionPeriod,
+  BirthChartReading,
 } from "@vibes/shared-types";
 
 // Component Props Interfaces
@@ -71,6 +72,11 @@ export interface DashboardProps {
   moonPhaseLoading: boolean;
   onGetMoonPhase: () => void;
   onRefreshMoonPhase: () => void;
+  // Birth Chart (Advanced Mode)
+  birthChartReading: BirthChartReading | null;
+  birthChartLoading: boolean;
+  onGetBirthChart: () => void;
+  onRefreshBirthChart: () => void;
 }
 
 export interface OnboardingFormProps {
