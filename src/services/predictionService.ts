@@ -7,18 +7,23 @@ import {
 import { apiClient } from "@vibes/api-client";
 import { ServiceResponse } from "@/types";
 
+interface PredictionWithFallback<T> {
+  data: T;
+  isFallback: boolean;
+}
+
 class PredictionService {
-  /**
-   * Fetch daily prediction for a zodiac sign for today's date
-   */
   async getDailyPrediction(
     sign: ZodiacSign,
-  ): Promise<ServiceResponse<DailyPrediction>> {
+  ): Promise<ServiceResponse<DailyPrediction> & { isFallback?: boolean }> {
     try {
-      // Send explicit date in YYYY-MM-DD format to avoid timezone issues
       const today = new Date().toISOString().split("T")[0];
-      const prediction = await apiClient.getDailyPrediction(sign, today);
-      return { success: true, data: prediction };
+      const result = await apiClient.getDailyPrediction(sign, today);
+      return {
+        success: true,
+        data: result.data,
+        isFallback: result.isFallback,
+      };
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to fetch prediction";
@@ -27,16 +32,17 @@ class PredictionService {
     }
   }
 
-  /**
-   * Fetch prediction for a specific date
-   */
   async getPredictionForDate(
     sign: ZodiacSign,
     date: string,
-  ): Promise<ServiceResponse<DailyPrediction>> {
+  ): Promise<ServiceResponse<DailyPrediction> & { isFallback?: boolean }> {
     try {
-      const prediction = await apiClient.getDailyPrediction(sign, date);
-      return { success: true, data: prediction };
+      const result = await apiClient.getDailyPrediction(sign, date);
+      return {
+        success: true,
+        data: result.data,
+        isFallback: result.isFallback,
+      };
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to fetch prediction";
@@ -45,15 +51,16 @@ class PredictionService {
     }
   }
 
-  /**
-   * Fetch weekly prediction for a zodiac sign
-   */
   async getWeeklyPrediction(
     sign: ZodiacSign,
-  ): Promise<ServiceResponse<WeeklyPrediction>> {
+  ): Promise<ServiceResponse<WeeklyPrediction> & { isFallback?: boolean }> {
     try {
-      const prediction = await apiClient.getWeeklyPrediction(sign);
-      return { success: true, data: prediction };
+      const result = await apiClient.getWeeklyPrediction(sign);
+      return {
+        success: true,
+        data: result.data,
+        isFallback: result.isFallback,
+      };
     } catch (error) {
       const message =
         error instanceof Error
@@ -64,9 +71,6 @@ class PredictionService {
     }
   }
 
-  /**
-   * Fetch monthly prediction for a zodiac sign
-   */
   async getMonthlyPrediction(
     sign: ZodiacSign,
   ): Promise<ServiceResponse<MonthlyPrediction>> {

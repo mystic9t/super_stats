@@ -111,6 +111,7 @@ export async function GET(request: Request) {
           success: true,
           data: prediction,
           timestamp: new Date(),
+          isFallback: false,
         });
       }
     }
@@ -138,6 +139,7 @@ export async function GET(request: Request) {
       success: true,
       data: prediction,
       timestamp: new Date(),
+      isFallback: true,
     });
   } catch (error: unknown) {
     console.error("Weekly prediction fetch error:", error);
