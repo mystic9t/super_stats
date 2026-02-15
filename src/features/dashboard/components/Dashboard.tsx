@@ -98,10 +98,14 @@ export function Dashboard({
 
   // Auto-switch to newly loaded content only on first load
   useEffect(() => {
-    if (prediction && !hasInteracted) {
+    if (hasInteracted) return;
+
+    if (profile.advancedMode && birthChartReading) {
+      setActiveSection("birth-chart");
+    } else if (prediction) {
       setActiveSection("prediction");
     }
-  }, [prediction, hasInteracted]);
+  }, [prediction, birthChartReading, hasInteracted, profile.advancedMode]);
 
   // Handle manual section changes
   const handleSectionChange = (
@@ -151,7 +155,7 @@ export function Dashboard({
   };
 
   // Define all sections
-  const sections = [
+  const standardSections = [
     {
       id: "prediction" as const,
       label: "Horoscope",
@@ -222,26 +226,32 @@ export function Dashboard({
       },
       isLoading: chineseZodiacLoading,
     },
-    ...(profile.advancedMode
-      ? [
-          {
-            id: "birth-chart" as const,
-            label: "Birth Chart",
-            loadingLabel: "Calculating...",
-            icon: Sun,
-            onClick: () => {
-              if (activeSection === "birth-chart") {
-                handleSectionChange(null);
-              } else {
-                onGetBirthChart();
-                handleSectionChange("birth-chart");
-              }
-            },
-            isLoading: birthChartLoading,
-          },
-        ]
-      : []),
   ];
+
+  const birthChartSection = profile.advancedMode
+    ? [
+        {
+          id: "birth-chart" as const,
+          label: "Birth Chart",
+          loadingLabel: "Calculating...",
+          icon: Sun,
+          onClick: () => {
+            if (activeSection === "birth-chart") {
+              handleSectionChange(null);
+            } else {
+              onGetBirthChart();
+              handleSectionChange("birth-chart");
+            }
+          },
+          isLoading: birthChartLoading,
+        },
+      ]
+    : [];
+
+  // Birth Chart first for advanced mode, standard order otherwise
+  const sections = profile.advancedMode
+    ? [...birthChartSection, ...standardSections]
+    : standardSections;
 
   const activeSectionData = sections.find((s) => s.id === activeSection);
   const inactiveSections = sections.filter((s) => s.id !== activeSection);

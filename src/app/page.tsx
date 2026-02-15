@@ -97,6 +97,13 @@ export default function Home() {
     setIsClient(true);
   }, []);
 
+  // Auto-fetch birth chart for advanced mode users
+  useEffect(() => {
+    if (profile?.advancedMode && !birthChartReading && !birthChartLoading) {
+      fetchBirthChart(profile);
+    }
+  }, [profile?.advancedMode]);
+
   const handleSaveProfile = async (newProfile: any) => {
     setProfile(newProfile);
     setIsEditing(false);
