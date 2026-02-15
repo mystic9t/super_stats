@@ -13,11 +13,12 @@ import {
   Calculator,
   ChevronDown,
 } from "lucide-react";
+import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
-import { MonthlyHoroscopeCard } from "@/features/predictions/components/MonthlyHoroscopeCard";
 import { NumerologySection } from "@/features/numerology/components/NumerologySection";
 import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
+import { MoonPhaseCard } from "@/features/moon-phase/components/MoonPhaseCard";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
@@ -40,11 +41,6 @@ export function Dashboard({
   weeklyLoading,
   onGetWeeklyPrediction,
   onRefreshWeeklyPrediction,
-  // Monthly prediction
-  monthlyPrediction,
-  monthlyLoading,
-  onGetMonthlyPrediction,
-  onRefreshMonthlyPrediction,
   // Period selection
   predictionPeriod,
   onPeriodChange,
@@ -68,9 +64,22 @@ export function Dashboard({
   chineseZodiacYear,
   onGetChineseZodiac,
   onRefreshChineseZodiac,
+  // Moon Phase
+  moonPhaseData,
+  moonZodiacSign,
+  moonPhaseRituals,
+  moonPhaseInfluence,
+  moonPhaseLoading,
+  onGetMoonPhase,
+  onRefreshMoonPhase,
 }: DashboardProps) {
   const [activeSection, setActiveSection] = useState<
-    "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null
+    | "prediction"
+    | "numerology"
+    | "tarot"
+    | "chinese-zodiac"
+    | "moon-phase"
+    | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -84,7 +93,13 @@ export function Dashboard({
 
   // Handle manual section changes
   const handleSectionChange = (
-    section: "prediction" | "numerology" | "tarot" | "chinese-zodiac" | null,
+    section:
+      | "prediction"
+      | "numerology"
+      | "tarot"
+      | "chinese-zodiac"
+      | "moon-phase"
+      | null,
   ) => {
     setActiveSection(section);
     setHasInteracted(true);
@@ -103,8 +118,8 @@ export function Dashboard({
         case "weekly":
           if (!weeklyPrediction) onGetWeeklyPrediction();
           break;
-        case "monthly":
-          if (!monthlyPrediction) onGetMonthlyPrediction();
+        case "moon":
+          onGetMoonPhase();
           break;
       }
     }
@@ -117,8 +132,6 @@ export function Dashboard({
         return loading;
       case "weekly":
         return weeklyLoading;
-      case "monthly":
-        return monthlyLoading;
       default:
         return loading;
     }
@@ -142,8 +155,8 @@ export function Dashboard({
             case "weekly":
               onGetWeeklyPrediction();
               break;
-            case "monthly":
-              onGetMonthlyPrediction();
+            case "moon":
+              onGetMoonPhase();
               break;
           }
           handleSectionChange("prediction");
@@ -368,20 +381,20 @@ export function Dashboard({
           {/* Horoscope Section */}
           {activeSection === "prediction" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4 sm:space-y-6">
-              {/* Period Selector */}
-              <div className="flex gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
-                {(["daily", "weekly", "monthly"] as PredictionPeriod[]).map(
+              {/* Period Selector - 3 tabs in one row */}
+              <div className="flex gap-1 sm:gap-2 p-1 bg-muted border border-border rounded-xl backdrop-blur-sm">
+                {(["daily", "weekly", "moon"] as PredictionPeriod[]).map(
                   (period) => (
                     <button
                       key={period}
                       onClick={() => handlePeriodChange(period)}
-                      className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold uppercase tracking-wide transition-all duration-300 ${
+                      className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap ${
                         predictionPeriod === period
                           ? "bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/50"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      {period}
+                      {period === "moon" ? "🌙 Moon" : period}
                     </button>
                   ),
                 )}
@@ -389,86 +402,21 @@ export function Dashboard({
 
               {/* Daily Prediction */}
               {predictionPeriod === "daily" && prediction && (
-                <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
-                    {getZodiacSymbol(profile.sunSign)}
-                  </div>
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">
-                          {getZodiacSymbol(profile.sunSign)}
-                        </span>
-                        <div>
-                          <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                            {getZodiacDisplay(profile.sunSign)}
-                          </CardTitle>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(
-                              prediction.current_date,
-                            ).toLocaleDateString("en-US", {
-                              weekday: "long",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={onRefreshPrediction}
-                        disabled={loading}
-                        className="text-accent hover:text-primary hover:bg-primary/10"
-                      >
-                        <RotateCw
-                          className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
-                        />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-5 relative z-10">
-                    <p className="text-base leading-relaxed text-foreground italic">
-                      "{prediction.description}"
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                          Lucky Number
-                        </p>
-                        <p className="text-3xl font-bold text-accent">
-                          {prediction.lucky_number}
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                          Power Color
-                        </p>
-                        <p className="text-3xl font-bold text-accent">
-                          {prediction.color}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <DailyHoroscopeCard
+                  prediction={prediction}
+                  sunSign={profile.sunSign}
+                  isLoading={loading}
+                  onRefresh={onRefreshPrediction}
+                />
               )}
 
-              {/* Weekly & Monthly */}
+              {/* Weekly */}
               {predictionPeriod === "weekly" && weeklyPrediction && (
                 <WeeklyHoroscopeCard
                   prediction={weeklyPrediction}
                   sunSign={profile.sunSign}
                   onRefresh={onRefreshWeeklyPrediction}
                   isRefreshing={weeklyLoading}
-                />
-              )}
-
-              {predictionPeriod === "monthly" && monthlyPrediction && (
-                <MonthlyHoroscopeCard
-                  prediction={monthlyPrediction}
-                  sunSign={profile.sunSign}
-                  onRefresh={onRefreshMonthlyPrediction}
-                  isRefreshing={monthlyLoading}
                 />
               )}
             </div>
@@ -502,7 +450,27 @@ export function Dashboard({
           {/* Chinese Zodiac Section */}
           {activeSection === "chinese-zodiac" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <ChineseZodiacCard profile={profile} />
+              <ChineseZodiacCard
+                profile={profile}
+                reading={chineseZodiacReading}
+                chineseYear={chineseZodiacYear}
+                isLoading={chineseZodiacLoading}
+              />
+            </div>
+          )}
+
+          {/* Moon Phase Section - now under Horoscope */}
+          {activeSection === "prediction" && predictionPeriod === "moon" && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <MoonPhaseCard
+                moonData={moonPhaseData}
+                moonZodiacSign={moonZodiacSign}
+                rituals={moonPhaseRituals}
+                influence={moonPhaseInfluence}
+                sunSign={profile.sunSign}
+                isLoading={moonPhaseLoading}
+                onRefresh={onRefreshMoonPhase}
+              />
             </div>
           )}
         </div>
