@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Pencil,
@@ -15,7 +9,6 @@ import {
   Sparkles,
   Star,
   Moon,
-  Calendar,
   RotateCw,
   Calculator,
   ChevronDown,
@@ -27,6 +20,7 @@ import { ChineseZodiacCard } from "@/features/ChineseZodiacCard";
 import { TarotReading } from "@/components/TarotReading";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
+import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
 
 /**
  * Dashboard Component
@@ -62,6 +56,9 @@ export function Dashboard({
   // Tarot
   tarotReading,
   tarotLoading,
+  tarotShuffling,
+  tarotRevealing,
+  tarotRevealedCards,
   canDrawTarot,
   onGetTarot,
   onRefreshTarot,
@@ -225,14 +222,6 @@ export function Dashboard({
                 <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
                   Welcome, {profile.name}! ✨
                 </CardTitle>
-                <CardDescription className="flex items-center gap-2 text-xs sm:text-sm">
-                  <span className="text-muted-foreground hidden sm:inline">
-                    Sun Sign:
-                  </span>
-                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-border font-semibold text-accent capitalize text-xs sm:text-sm">
-                    ♈ {profile.sunSign}
-                  </span>
-                </CardDescription>
               </div>
               <div className="flex gap-1 sm:gap-2">
                 <Button
@@ -400,17 +389,30 @@ export function Dashboard({
 
               {/* Daily Prediction */}
               {predictionPeriod === "daily" && prediction && (
-                <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
+                <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
+                    {getZodiacSymbol(profile.sunSign)}
+                  </div>
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <Calendar className="h-6 w-6 text-accent" />
-                        <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                          {new Date(prediction.current_date).toLocaleDateString(
-                            "en-US",
-                            { weekday: "long", month: "short", day: "numeric" },
-                          )}
-                        </CardTitle>
+                        <span className="text-2xl">
+                          {getZodiacSymbol(profile.sunSign)}
+                        </span>
+                        <div>
+                          <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                            {getZodiacDisplay(profile.sunSign)}
+                          </CardTitle>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(
+                              prediction.current_date,
+                            ).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
                       </div>
                       <Button
                         size="sm"
@@ -425,7 +427,7 @@ export function Dashboard({
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-5">
+                  <CardContent className="space-y-5 relative z-10">
                     <p className="text-base leading-relaxed text-foreground italic">
                       "{prediction.description}"
                     </p>
@@ -455,6 +457,7 @@ export function Dashboard({
               {predictionPeriod === "weekly" && weeklyPrediction && (
                 <WeeklyHoroscopeCard
                   prediction={weeklyPrediction}
+                  sunSign={profile.sunSign}
                   onRefresh={onRefreshWeeklyPrediction}
                   isRefreshing={weeklyLoading}
                 />
@@ -463,6 +466,7 @@ export function Dashboard({
               {predictionPeriod === "monthly" && monthlyPrediction && (
                 <MonthlyHoroscopeCard
                   prediction={monthlyPrediction}
+                  sunSign={profile.sunSign}
                   onRefresh={onRefreshMonthlyPrediction}
                   isRefreshing={monthlyLoading}
                 />
@@ -482,12 +486,15 @@ export function Dashboard({
           )}
 
           {/* Tarot Section */}
-          {tarotReading && activeSection === "tarot" && (
+          {activeSection === "tarot" && (tarotReading || tarotShuffling) && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
               <TarotReading
                 reading={tarotReading}
                 onRefresh={onRefreshTarot}
                 isRefreshing={tarotLoading}
+                isShuffling={tarotShuffling}
+                isRevealing={tarotRevealing}
+                revealedCards={tarotRevealedCards}
               />
             </div>
           )}

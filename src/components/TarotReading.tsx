@@ -2,6 +2,7 @@
 
 import { TarotReading as TarotReadingType } from "@vibes/shared-types";
 import { TarotCard } from "./TarotCard";
+import { TarotShuffling } from "./TarotShuffling";
 import {
   Card,
   CardContent,
@@ -13,16 +14,52 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, RotateCw, Wand2 } from "lucide-react";
 
 interface TarotReadingProps {
-  reading: TarotReadingType;
+  reading: TarotReadingType | null;
   onRefresh?: () => void;
   isRefreshing?: boolean;
+  isShuffling?: boolean;
+  isRevealing?: boolean;
+  revealedCards?: {
+    situation: boolean;
+    challenge: boolean;
+    outcome: boolean;
+  };
 }
 
 export function TarotReading({
   reading,
   onRefresh,
   isRefreshing,
+  isShuffling = false,
+  isRevealing = false,
+  revealedCards = { situation: true, challenge: true, outcome: true },
 }: TarotReadingProps) {
+  // Show shuffling animation when drawing (before reading exists)
+  if (isShuffling || !reading) {
+    return (
+      <Card className="border border-border shadow-2xl bg-gradient-to-br from-card via-card/95 to-card overflow-hidden relative">
+        <CardHeader className="relative z-10 text-center pb-4">
+          <div className="flex items-center justify-center gap-3">
+            <Wand2 className="h-5 w-5 text-accent animate-bounce" />
+            <CardTitle className="text-2xl font-bold">
+              <span className="bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
+                Your Cosmic Reading
+              </span>
+            </CardTitle>
+            <Wand2
+              className="h-5 w-5 text-primary animate-bounce"
+              style={{ animationDelay: "0.1s" }}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="relative z-10">
+          <TarotShuffling />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Destructure cards only after we know reading exists
   const [situation, challenge, outcome] = reading.cards;
 
   return (
@@ -95,13 +132,17 @@ export function TarotReading({
       </CardHeader>
 
       <CardContent className="relative z-10 space-y-4 pb-6 px-4">
-        {/* Card Spread Labels */}
+        {/* Card Spread with Animation */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
               Situation
             </span>
-            <TarotCard drawnCard={situation} />
+            <TarotCard
+              drawnCard={situation}
+              isRevealed={revealedCards.situation}
+              showBack={isRevealing && !revealedCards.situation}
+            />
           </div>
           <div className="hidden sm:flex text-primary/40">
             <Sparkles className="h-6 w-6" />
@@ -110,7 +151,11 @@ export function TarotReading({
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
               Challenge
             </span>
-            <TarotCard drawnCard={challenge} />
+            <TarotCard
+              drawnCard={challenge}
+              isRevealed={revealedCards.challenge}
+              showBack={isRevealing && !revealedCards.challenge}
+            />
           </div>
           <div className="hidden sm:flex text-accent/40">
             <Sparkles className="h-6 w-6" />
@@ -119,7 +164,11 @@ export function TarotReading({
             <span className="text-xs font-bold text-accent uppercase tracking-wider">
               Outcome
             </span>
-            <TarotCard drawnCard={outcome} />
+            <TarotCard
+              drawnCard={outcome}
+              isRevealed={revealedCards.outcome}
+              showBack={isRevealing && !revealedCards.outcome}
+            />
           </div>
         </div>
 

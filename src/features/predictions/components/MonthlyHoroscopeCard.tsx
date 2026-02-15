@@ -3,20 +3,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, RotateCw, Star, AlertTriangle } from "lucide-react";
-import { MonthlyPrediction } from "@vibes/shared-types";
+import { MonthlyPrediction, ZodiacSign } from "@vibes/shared-types";
+import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
 
 interface MonthlyHoroscopeCardProps {
   prediction: MonthlyPrediction;
+  sunSign: ZodiacSign;
   onRefresh: () => void;
   isRefreshing: boolean;
 }
 
 export function MonthlyHoroscopeCard({
   prediction,
+  sunSign,
   onRefresh,
   isRefreshing,
 }: MonthlyHoroscopeCardProps) {
-  // Parse standout and challenging days into arrays
+  const zodiacSymbol = getZodiacSymbol(sunSign);
+  const zodiacName = getZodiacDisplay(sunSign);
+
   const standoutDays = prediction.standout_days
     .split(",")
     .map((d) => d.trim())
@@ -27,14 +32,23 @@ export function MonthlyHoroscopeCard({
     .filter(Boolean);
 
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
+    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl">
+        {zodiacSymbol}
+      </div>
+
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Calendar className="h-6 w-6 text-primary" />
-            <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {prediction.month}
-            </CardTitle>
+            <span className="text-2xl">{zodiacSymbol}</span>
+            <div>
+              <CardTitle className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                {zodiacName}
+              </CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                {prediction.month}
+              </p>
+            </div>
           </div>
           <Button
             size="sm"
@@ -101,18 +115,28 @@ export function MonthlyHoroscopeCard({
 
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-border">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Lucky Number</p>
-            <p className="text-3xl font-bold text-primary">{prediction.lucky_number}</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Lucky Number
+            </p>
+            <p className="text-3xl font-bold text-primary">
+              {prediction.lucky_number}
+            </p>
           </div>
           <div className="p-4 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 border border-border">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Power Color</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Power Color
+            </p>
             <p className="text-3xl font-bold text-accent">{prediction.color}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-400/10 to-accent/10 border border-border">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Connection Energy</p>
-            <p className="text-lg font-bold text-cyan-400 capitalize">{prediction.compatibility}</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Connection Energy
+            </p>
+            <p className="text-lg font-bold text-cyan-400 capitalize">
+              {prediction.compatibility}
+            </p>
           </div>
         </div>
       </CardContent>

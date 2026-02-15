@@ -1,13 +1,20 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { DrawnCard } from "@vibes/shared-types";
 import { getPositionDescription } from "@vibes/shared-utils";
 
 interface TarotCardProps {
   drawnCard: DrawnCard;
+  isRevealed?: boolean;
+  showBack?: boolean;
 }
 
-export function TarotCard({ drawnCard }: TarotCardProps) {
+export function TarotCard({
+  drawnCard,
+  isRevealed = true,
+  showBack = false,
+}: TarotCardProps) {
   const { card, position, isReversed } = drawnCard;
   const positionInfo = getPositionDescription(position);
   const meaning = isReversed ? card.reversedMeaning : card.uprightMeaning;
@@ -38,17 +45,52 @@ export function TarotCard({ drawnCard }: TarotCardProps) {
         <div className="absolute bottom-1 left-1 w-3 h-3 border-b-2 border-l-2 border-amber-300 rounded-bl-sm" />
         <div className="absolute bottom-1 right-1 w-3 h-3 border-b-2 border-r-2 border-amber-300 rounded-br-sm" />
 
-        {/* Card Image */}
-        <div className="relative overflow-hidden rounded bg-slate-900">
-          <img
-            src={card.imageUrl}
-            alt={`${card.name}${isReversed ? " (Reversed)" : ""}`}
-            className="w-28 h-44 sm:w-32 sm:h-52 object-cover"
-            loading="lazy"
-          />
+        {/* Card with Flip Animation */}
+        <div
+          className="relative w-28 h-44 sm:w-32 sm:h-52"
+          style={{ perspective: "1000px" }}
+        >
+          <motion.div
+            className="relative w-full h-full"
+            style={{ transformStyle: "preserve-3d" }}
+            initial={{ rotateY: 180 }}
+            animate={{ rotateY: isRevealed ? 0 : 180 }}
+            transition={{
+              duration: 0.4,
+              ease: [0.4, 0, 0.2, 1],
+            }}
+          >
+            {/* Card Front */}
+            <div
+              className="absolute inset-0 overflow-hidden rounded bg-slate-900"
+              style={{ backfaceVisibility: "hidden" }}
+            >
+              <img
+                src={card.imageUrl}
+                alt={`${card.name}${isReversed ? " (Reversed)" : ""}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
 
-          {/* Subtle glow overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent pointer-events-none" />
+              {/* Subtle glow overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/20 to-transparent pointer-events-none" />
+            </div>
+
+            {/* Card Back */}
+            <div
+              className="absolute inset-0 rounded overflow-hidden"
+              style={{
+                backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+              }}
+            >
+              <img
+                src="/tarot/card_back.webp"
+                alt="Card back"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </motion.div>
         </div>
       </div>
 
