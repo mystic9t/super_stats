@@ -1,6 +1,10 @@
 "use client";
 
-import { UserProfile, ChineseZodiacReading } from "@vibes/shared-types";
+import {
+  UserProfile,
+  ChineseZodiacReading,
+  ChineseZodiacSign,
+} from "@vibes/shared-types";
 import {
   Card,
   CardContent,
@@ -15,6 +19,7 @@ interface ChineseZodiacCardProps {
   profile: UserProfile;
   reading: ChineseZodiacReading | null;
   chineseYear: string | null;
+  element: string | null;
   isLoading: boolean;
 }
 
@@ -53,16 +58,137 @@ const tagVariants = {
   },
 };
 
+// Get element color based on the specific element
+const getElementColor = (element: string | null): string => {
+  switch (element?.toLowerCase()) {
+    case "wood":
+      return "text-emerald-500";
+    case "fire":
+      return "text-red-500";
+    case "earth":
+      return "text-yellow-600";
+    case "metal":
+      return "text-slate-400";
+    case "water":
+      return "text-blue-500";
+    default:
+      return "text-primary";
+  }
+};
+
+// Get element bg color
+const getElementBgColor = (element: string | null): string => {
+  switch (element?.toLowerCase()) {
+    case "wood":
+      return "bg-emerald-500/20";
+    case "fire":
+      return "bg-red-500/20";
+    case "earth":
+      return "bg-yellow-600/20";
+    case "metal":
+      return "bg-slate-400/20";
+    case "water":
+      return "bg-blue-500/20";
+    default:
+      return "bg-primary/20";
+  }
+};
+
+// Get all zodiac emojis for the circle
+const ZODIAC_ORDER = [
+  { sign: ChineseZodiacSign.RAT, emoji: "🐭", position: 0 },
+  { sign: ChineseZodiacSign.OX, emoji: "🐂", position: 30 },
+  { sign: ChineseZodiacSign.TIGER, emoji: "🐯", position: 60 },
+  { sign: ChineseZodiacSign.RABBIT, emoji: "🐰", position: 90 },
+  { sign: ChineseZodiacSign.DRAGON, emoji: "🐉", position: 120 },
+  { sign: ChineseZodiacSign.SNAKE, emoji: "🐍", position: 150 },
+  { sign: ChineseZodiacSign.HORSE, emoji: "🐴", position: 180 },
+  { sign: ChineseZodiacSign.GOAT, emoji: "🐐", position: 210 },
+  { sign: ChineseZodiacSign.MONKEY, emoji: "🐵", position: 240 },
+  { sign: ChineseZodiacSign.ROOSTER, emoji: "🐓", position: 270 },
+  { sign: ChineseZodiacSign.DOG, emoji: "🐕", position: 300 },
+  { sign: ChineseZodiacSign.PIG, emoji: "🐷", position: 330 },
+];
+
 export function ChineseZodiacCard({
   profile,
   reading,
   chineseYear,
+  element,
   isLoading,
 }: ChineseZodiacCardProps) {
+  const elementColorClass = getElementColor(element);
+  const elementBgClass = getElementBgColor(element);
+
   return (
     <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
-      {/* Mystical background effects */}
+      {/* Zodiac Circle Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Outer circle with zodiac animals */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px]">
+          {/* Circle border */}
+          <div className="absolute inset-0 rounded-full border-2 border-border/30" />
+
+          {/* Zodiac emojis positioned in circle */}
+          {ZODIAC_ORDER.map((zodiac, index) => {
+            const angle = (zodiac.position - 90) * (Math.PI / 180); // Start from top
+            const radius = 220; // Distance from center
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            const isActive = reading?.sign === zodiac.sign;
+
+            return (
+              <motion.div
+                key={zodiac.sign}
+                className={`absolute text-xl transition-all duration-300 ${
+                  isActive ? "text-3xl scale-150 z-10" : "opacity-30 text-lg"
+                }`}
+                style={{
+                  left: `calc(50% + ${x}px)`,
+                  top: `calc(50% + ${y}px)`,
+                  transform: "translate(-50%, -50%)",
+                }}
+                animate={
+                  isActive
+                    ? {
+                        scale: [1.2, 1.4, 1.2],
+                        rotate: [0, 10, -10, 0],
+                      }
+                    : {}
+                }
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                {zodiac.emoji}
+              </motion.div>
+            );
+          })}
+
+          {/* Inner decorative circles */}
+          <div className="absolute inset-8 rounded-full border border-border/20" />
+          <div className="absolute inset-16 rounded-full border border-border/10" />
+
+          {/* Center element symbol */}
+          {element && (
+            <motion.div
+              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl ${elementColorClass}`}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+            >
+              {element === "Wood" && "🌳"}
+              {element === "Fire" && "🔥"}
+              {element === "Earth" && "🌍"}
+              {element === "Metal" && "⚜️"}
+              {element === "Water" && "💧"}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Floating stars */}
         <motion.div
           className="absolute top-8 right-16 w-2 h-2 bg-orange-400 rounded-full"
           animate={{
@@ -88,25 +214,7 @@ export function ChineseZodiacCard({
             delay: 0.5,
           }}
         />
-        <div className="absolute -top-20 -right-20 w-60 h-60 bg-orange-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-accent/5 rounded-full blur-3xl" />
       </div>
-
-      {/* Floating zodiac symbol */}
-      <motion.div
-        className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none text-6xl"
-        animate={{
-          y: [0, -10, 0],
-          rotate: [0, 5, 0],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        {reading?.symbolEmoji}
-      </motion.div>
 
       <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
@@ -124,7 +232,6 @@ export function ChineseZodiacCard({
                 {reading?.title || "Chinese Zodiac"}
               </CardTitle>
               <CardDescription className="text-xs mt-1">
-                Year:{" "}
                 <span className="font-semibold text-accent">
                   {chineseYear || "..."}
                 </span>
@@ -272,17 +379,30 @@ export function ChineseZodiacCard({
               </div>
             </motion.div>
 
-            {/* Element */}
+            {/* Element - Now showing the specific calculated element */}
             <motion.div
               variants={itemVariants}
-              className="p-3 rounded-lg bg-muted/50 border border-border relative overflow-hidden group"
+              className={`p-4 rounded-xl ${elementBgClass} border border-border relative overflow-hidden group`}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                Element
-              </p>
-              <p className="font-semibold text-foreground">{reading.element}</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                    Element
+                  </p>
+                  <p className={`font-bold text-lg ${elementColorClass}`}>
+                    {element || "Unknown"}
+                  </p>
+                </div>
+                <div className={`text-3xl ${elementColorClass} opacity-80`}>
+                  {element === "Wood" && "🌳"}
+                  {element === "Fire" && "🔥"}
+                  {element === "Earth" && "🌍"}
+                  {element === "Metal" && "⚜️"}
+                  {element === "Water" && "💧"}
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         ) : (

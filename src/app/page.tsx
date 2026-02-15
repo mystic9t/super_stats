@@ -68,6 +68,7 @@ export default function Home() {
   const {
     reading: chineseZodiacReading,
     chineseYear: chineseZodiacYear,
+    element: chineseZodiacElement,
     isLoading: chineseZodiacLoading,
     fetchReading: fetchChineseZodiac,
     refreshReading: refreshChineseZodiac,
@@ -303,6 +304,7 @@ export default function Home() {
             chineseZodiacReading={chineseZodiacReading}
             chineseZodiacLoading={chineseZodiacLoading}
             chineseZodiacYear={chineseZodiacYear}
+            chineseZodiacElement={chineseZodiacElement}
             onGetChineseZodiac={handleGetChineseZodiac}
             onRefreshChineseZodiac={handleRefreshChineseZodiac}
             moonPhaseData={moonData}
