@@ -217,8 +217,8 @@ export function Dashboard({
         <div className="flex-none space-y-3 sm:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* User Profile Card */}
           <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-4 pt-3 sm:pt-6 px-3 sm:px-6">
-              <div className="flex flex-col space-y-1 sm:space-y-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 sm:pb-1 pt-1 sm:pt-2 px-3 sm:px-6">
+              <div className="flex flex-col">
                 <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent">
                   Welcome, {profile.name}! ✨
                 </CardTitle>
