@@ -8,6 +8,11 @@ import {
   NumerologyPrediction,
 } from "@vibes/shared-types";
 
+interface PredictionWithFallback<T> {
+  data: T;
+  isFallback: boolean;
+}
+
 class ApiClient {
   private baseUrl: string;
 
@@ -39,31 +44,38 @@ class ApiClient {
   async getDailyPrediction(
     sign: ZodiacSign,
     date: string = "",
-  ): Promise<DailyPrediction> {
-    // Date should be in YYYY-MM-DD format, defaults to today
+  ): Promise<PredictionWithFallback<DailyPrediction>> {
     const dateParam = date || new Date().toISOString().split("T")[0];
 
-    const response = await this.request<ApiResponse<DailyPrediction>>(
-      `/api/predictions?sign=${sign}&date=${dateParam}`,
-    );
+    const response = await this.request<
+      ApiResponse<DailyPrediction> & { isFallback?: boolean }
+    >(`/api/predictions?sign=${sign}&date=${dateParam}`);
 
     if (!response.success || !response.data) {
       throw new Error(response.error || "Failed to fetch prediction");
     }
 
-    return response.data;
+    return {
+      data: response.data,
+      isFallback: response.isFallback ?? false,
+    };
   }
 
-  async getWeeklyPrediction(sign: ZodiacSign): Promise<WeeklyPrediction> {
-    const response = await this.request<ApiResponse<WeeklyPrediction>>(
-      `/api/predictions/weekly?sign=${sign}`,
-    );
+  async getWeeklyPrediction(
+    sign: ZodiacSign,
+  ): Promise<PredictionWithFallback<WeeklyPrediction>> {
+    const response = await this.request<
+      ApiResponse<WeeklyPrediction> & { isFallback?: boolean }
+    >(`/api/predictions/weekly?sign=${sign}`);
 
     if (!response.success || !response.data) {
       throw new Error(response.error || "Failed to fetch weekly prediction");
     }
 
-    return response.data;
+    return {
+      data: response.data,
+      isFallback: response.isFallback ?? false,
+    };
   }
 
   async getMonthlyPrediction(sign: ZodiacSign): Promise<MonthlyPrediction> {

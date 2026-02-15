@@ -12,6 +12,7 @@ import {
   RotateCw,
   Calculator,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
@@ -34,11 +35,13 @@ export function Dashboard({
   // Daily prediction
   prediction,
   loading,
+  error,
   onGetPrediction,
   onRefreshPrediction,
   // Weekly prediction
   weeklyPrediction,
   weeklyLoading,
+  weeklyError,
   onGetWeeklyPrediction,
   onRefreshWeeklyPrediction,
   // Period selection
@@ -411,6 +414,33 @@ export function Dashboard({
                 />
               )}
 
+              {/* Daily Error State */}
+              {predictionPeriod === "daily" &&
+                !prediction &&
+                !loading &&
+                error && (
+                  <Card className="border border-destructive/50 bg-destructive/5">
+                    <CardContent className="p-6 text-center">
+                      <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                      <h3 className="text-lg font-bold text-destructive mb-2">
+                        Unable to Load Horoscope
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        The cosmic energies are cloudy right now. Please try
+                        again.
+                      </p>
+                      <Button
+                        onClick={onRefreshPrediction}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <RotateCw className="h-4 w-4 mr-2" />
+                        Try Again
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
               {/* Weekly */}
               {predictionPeriod === "weekly" && weeklyPrediction && (
                 <WeeklyHoroscopeCard
@@ -420,6 +450,32 @@ export function Dashboard({
                   isRefreshing={weeklyLoading}
                 />
               )}
+
+              {/* Weekly Error State */}
+              {predictionPeriod === "weekly" &&
+                !weeklyPrediction &&
+                !weeklyLoading &&
+                weeklyError && (
+                  <Card className="border border-destructive/50 bg-destructive/5">
+                    <CardContent className="p-6 text-center">
+                      <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                      <h3 className="text-lg font-bold text-destructive mb-2">
+                        Unable to Load Weekly Horoscope
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        The stars are aligning. Please try again in a moment.
+                      </p>
+                      <Button
+                        onClick={onRefreshWeeklyPrediction}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <RotateCw className="h-4 w-4 mr-2" />
+                        Try Again
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
             </div>
           )}
 
