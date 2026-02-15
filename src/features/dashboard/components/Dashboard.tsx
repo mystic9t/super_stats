@@ -62,6 +62,7 @@ export function Dashboard({
   chineseZodiacReading,
   chineseZodiacLoading,
   chineseZodiacYear,
+  chineseZodiacElement,
   onGetChineseZodiac,
   onRefreshChineseZodiac,
   // Moon Phase
@@ -454,6 +455,7 @@ export function Dashboard({
                 profile={profile}
                 reading={chineseZodiacReading}
                 chineseYear={chineseZodiacYear}
+                element={chineseZodiacElement}
                 isLoading={chineseZodiacLoading}
               />
             </div>
