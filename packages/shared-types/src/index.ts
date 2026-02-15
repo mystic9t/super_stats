@@ -17,6 +17,11 @@ export interface UserProfile {
   name: string;
   dateOfBirth: Date;
   sunSign: ZodiacSign;
+  advancedMode?: boolean;
+  birthTime?: string; // HH:MM format
+  birthLocation?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface DailyPrediction {
@@ -193,4 +198,59 @@ export interface ZodiacMoonInfluence {
   influence: string;
   focus: string[];
   avoid: string[];
+}
+
+// Birth Chart Types
+export type Planet =
+  | "sun"
+  | "moon"
+  | "mercury"
+  | "venus"
+  | "mars"
+  | "jupiter"
+  | "saturn"
+  | "uranus"
+  | "neptune"
+  | "pluto";
+
+export interface PlanetPosition {
+  planet: Planet;
+  sign: ZodiacSign;
+  degree: number; // 0-29.99
+  minutes: number;
+  isRetrograde: boolean;
+  house?: number; // 1-12
+}
+
+export interface BirthChart {
+  sunSign: ZodiacSign;
+  moonSign: ZodiacSign;
+  risingSign: ZodiacSign;
+  mercurySign: ZodiacSign;
+  venusSign: ZodiacSign;
+  marsSign: ZodiacSign;
+  jupiterSign: ZodiacSign;
+  saturnSign: ZodiacSign;
+  uranusSign: ZodiacSign;
+  neptuneSign: ZodiacSign;
+  plutoSign: ZodiacSign;
+  planets: PlanetPosition[];
+  houses: Record<number, ZodiacSign>;
+  ascendantDegree: number;
+  midheavenDegree: number;
+}
+
+export interface HouseReading {
+  house: number;
+  sign: ZodiacSign;
+  meaning: string;
+  areas: string[];
+}
+
+export interface BirthChartReading {
+  chart: BirthChart;
+  interpretations: Record<Planet, string>;
+  houseMeanings: HouseReading[];
+  aspects: string[];
+  summary: string;
 }
