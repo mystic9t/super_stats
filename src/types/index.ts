@@ -44,6 +44,13 @@ export interface DashboardProps {
   // Tarot
   tarotReading: TarotReading | null;
   tarotLoading: boolean;
+  tarotShuffling: boolean;
+  tarotRevealing: boolean;
+  tarotRevealedCards: {
+    situation: boolean;
+    challenge: boolean;
+    outcome: boolean;
+  };
   canDrawTarot: boolean;
   onGetTarot: () => void;
   onRefreshTarot: () => void;
