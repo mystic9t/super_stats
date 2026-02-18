@@ -34,12 +34,17 @@ function AnimatedMoon({
   illumination: number;
 }) {
   // Calculate shadow position based on illumination
+  // The shadow overlay covers the dark portion of the moon
   const getShadowPosition = () => {
     if (phase.includes("waxing")) {
-      // Waxing: shadow on right side
-      return 100 - illumination;
+      // Waxing: illuminated portion grows from right edge
+      // Shadow is on the left, so clip from right to reveal shadow on left
+      // At 3% illumination: shadow covers 97% on left, thin crescent on right
+      return illumination;
     } else if (phase.includes("waning")) {
-      // Waning: shadow on left side
+      // Waning: illuminated portion shrinks from right edge
+      // Shadow is on the right, so clip from left to reveal shadow on right
+      // At 3% illumination: shadow covers 97% on right, thin crescent on left
       return illumination;
     } else if (phase === "full-moon") {
       return 0;
