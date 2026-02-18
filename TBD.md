@@ -27,7 +27,7 @@ Features that require paid APIs or services. Keeping track for when budget allow
   - Firebase Cloud Messaging (free tier available)
   - OneSignal
 
-## Premium Tarot Artwork
+## Premium Tarot Artwork - User Response : The artwork we are currently using is custom
 
 - **What:** Commission custom tarot card artwork instead of using public domain images
 - **Cost:** $50-200 per card illustration (22 Major Arcana = $1100-4400)

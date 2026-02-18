@@ -182,6 +182,8 @@ export function OnboardingForm({
               <button
                 type="button"
                 onClick={() => setAdvancedMode(!advancedMode)}
+                aria-pressed={advancedMode}
+                aria-label={`Advanced mode: ${advancedMode ? "enabled" : "disabled"}`}
                 className="w-full flex items-center justify-between p-3 rounded-lg border border-border bg-muted/50 hover:bg-muted transition-colors"
               >
                 <div className="flex items-center gap-2">

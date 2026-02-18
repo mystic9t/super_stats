@@ -115,7 +115,7 @@ export interface TarotState {
   lastDrawDate: string | null; // YYYY-MM-DD format
 }
 
-export type PredictionPeriod = "daily" | "weekly" | "moon";
+export type PredictionPeriod = "daily" | "weekly" | "moon" | "match";
 
 // Chinese Zodiac Types
 export enum ChineseZodiacSign {
@@ -243,4 +243,39 @@ export interface BirthChartReading {
   houseMeanings: HouseReading[];
   aspects: string[];
   summary: string;
+}
+
+// Zodiac Compatibility Types
+export interface CompatibilityScore {
+  overall: number; // 0-100
+  love: number; // 0-100
+  friendship: number; // 0-100
+  work: number; // 0-100
+}
+
+export interface CompatibilityReading {
+  sign1: ZodiacSign;
+  sign2: ZodiacSign;
+  scores: CompatibilityScore;
+  summary: string;
+  loveSummary: string;
+  friendshipSummary: string;
+  workSummary: string;
+  strengths: string[];
+  challenges: string[];
+  tip: string;
+}
+
+// Daily Affirmation Types
+export interface DailyAffirmation {
+  affirmation: string;
+  mantra: string;
+  cosmicTheme: string;
+  element: "fire" | "earth" | "air" | "water";
+  chakra: string;
+  color: string;
+  crystal: string;
+  journalPrompt: string;
+  date: string; // YYYY-MM-DD
+  sign: ZodiacSign;
 }

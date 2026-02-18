@@ -11,12 +11,14 @@ import {
   useChineseZodiac,
   useMoonPhase,
   useBirthChart,
+  useCompatibility,
+  useAffirmation,
 } from "@/hooks";
 import { tarotService } from "@/services";
 import { Header } from "@/components/Header";
 import { Dashboard } from "@/features/dashboard/components/Dashboard";
 import { OnboardingForm } from "@/features/auth/components/OnboardingForm";
-import { PredictionPeriod, UserProfile } from "@vibes/shared-types";
+import { PredictionPeriod, UserProfile, ZodiacSign } from "@vibes/shared-types";
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -84,6 +86,20 @@ export default function Home() {
     refreshReading: refreshBirthChart,
     clear: clearBirthChart,
   } = useBirthChart();
+  const {
+    reading: compatibilityReading,
+    partnerSign: compatibilityPartnerSign,
+    isLoading: compatibilityLoading,
+    fetchReading: fetchCompatibility,
+    clear: clearCompatibility,
+  } = useCompatibility();
+  const {
+    affirmation,
+    isLoading: affirmationLoading,
+    fetchAffirmation,
+    refreshAffirmation,
+    clear: clearAffirmation,
+  } = useAffirmation();
 
   // Use ref to track client-side mounting (SSR hydration fix)
   const mounted = useRef(false);
@@ -116,6 +132,8 @@ export default function Home() {
     clearTarot();
     clearChineseZodiac();
     clearBirthChart();
+    clearCompatibility();
+    clearAffirmation();
     toast.info("🌙 Profile cleared, fresh start!");
   };
 
@@ -260,6 +278,23 @@ export default function Home() {
     }
   };
 
+  const handleSelectCompatibilityPartner = (sign: ZodiacSign) => {
+    if (!profile) return;
+    fetchCompatibility(profile.sunSign, sign);
+  };
+
+  const handleGetAffirmation = () => {
+    if (!profile) return;
+    fetchAffirmation(profile.sunSign);
+    toast.success("✨ Your cosmic affirmation awaits!");
+  };
+
+  const handleRefreshAffirmation = () => {
+    if (!profile) return;
+    refreshAffirmation(profile.sunSign);
+    toast.success("🔄 Affirmation refreshed!");
+  };
+
   if (!isClient) return null;
 
   return (
@@ -331,6 +366,15 @@ export default function Home() {
             birthChartLoading={birthChartLoading}
             onGetBirthChart={handleGetBirthChart}
             onRefreshBirthChart={handleRefreshBirthChart}
+            compatibilityReading={compatibilityReading}
+            compatibilityPartnerSign={compatibilityPartnerSign}
+            compatibilityLoading={compatibilityLoading}
+            onSelectCompatibilityPartner={handleSelectCompatibilityPartner}
+            onClearCompatibility={clearCompatibility}
+            affirmation={affirmation}
+            affirmationLoading={affirmationLoading}
+            onGetAffirmation={handleGetAffirmation}
+            onRefreshAffirmation={handleRefreshAffirmation}
           />
         ) : (
           <OnboardingForm
