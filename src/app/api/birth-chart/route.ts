@@ -22,6 +22,16 @@ export async function POST(request: Request) {
     }
 
     const birthDate = new Date(profile.dateOfBirth);
+    if (isNaN(birthDate.getTime())) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid date of birth format",
+          timestamp: new Date(),
+        },
+        { status: 400 },
+      );
+    }
 
     const chart = calculateBirthChart(
       birthDate,

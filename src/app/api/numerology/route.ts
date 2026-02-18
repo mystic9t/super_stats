@@ -30,6 +30,28 @@ export async function GET(request: Request) {
 
   try {
     const dateOfBirth = new Date(birthdate);
+    if (isNaN(dateOfBirth.getTime())) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid birthdate format",
+          timestamp: new Date(),
+        },
+        { status: 400 },
+      );
+    }
+
+    if (dateOfBirth > new Date()) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Birthdate cannot be in the future",
+          timestamp: new Date(),
+        },
+        { status: 400 },
+      );
+    }
+
     const currentYear = new Date().getFullYear();
 
     // Calculate all 6 numerology numbers

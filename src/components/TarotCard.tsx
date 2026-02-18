@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { DrawnCard } from "@vibes/shared-types";
@@ -20,6 +21,7 @@ export function TarotCard({
   const positionInfo = getPositionDescription(position);
   const meaning = isReversed ? card.reversedMeaning : card.uprightMeaning;
   const shouldShowBack = showBack || !isRevealed;
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="flex flex-col items-center gap-3 group">
@@ -68,11 +70,12 @@ export function TarotCard({
               style={{ backfaceVisibility: "hidden" }}
             >
               <Image
-                src={card.imageUrl}
+                src={imgError ? "/tarot/card_back.webp" : card.imageUrl}
                 alt={`${card.name}${isReversed ? " (Reversed)" : ""}`}
                 fill
                 className="object-cover"
                 loading="lazy"
+                onError={() => setImgError(true)}
               />
 
               {/* Subtle glow overlay */}
