@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  ApiResponse,
-  NumerologyReading,
-  NumerologyNumber,
-} from "@vibes/shared-types";
+import { ApiResponse, NumerologyReading } from "@vibes/shared-types";
 import {
   getMeaning,
   calculateLifePathNumber,

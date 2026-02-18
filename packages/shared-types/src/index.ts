@@ -44,16 +44,6 @@ export interface WeeklyPrediction {
   mood: string;
 }
 
-export interface MonthlyPrediction {
-  month: string;
-  description: string;
-  standout_days: string;
-  challenging_days: string;
-  compatibility: string;
-  lucky_number: number;
-  color: string;
-}
-
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;

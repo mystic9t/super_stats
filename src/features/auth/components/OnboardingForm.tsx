@@ -13,15 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Sparkles,
-  Star,
-  Clock,
-  MapPin,
-  Settings2,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Sparkles, Star, Clock, MapPin, Settings2 } from "lucide-react";
 import { OnboardingFormProps } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 

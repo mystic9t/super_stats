@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Pencil,
   RotateCcw,
-  Sparkles,
   Star,
   Moon,
   RotateCw,
@@ -14,6 +13,7 @@ import {
   ChevronDown,
   AlertCircle,
   Sun,
+  Rabbit,
 } from "lucide-react";
 import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
@@ -24,7 +24,199 @@ import { MoonPhaseCard } from "@/features/moon-phase/components/MoonPhaseCard";
 import { BirthChartCard } from "@/features/birth-chart/components/BirthChartCard";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
-import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
+
+interface Section {
+  id:
+    | "prediction"
+    | "numerology"
+    | "tarot"
+    | "chinese-zodiac"
+    | "moon-phase"
+    | "birth-chart";
+  label: string;
+  loadingLabel: string;
+  icon: React.ComponentType<{ className?: string }>;
+  onClick: () => void;
+  isLoading: boolean;
+}
+
+function SectionButton({
+  section,
+  isActive,
+}: {
+  section: Section;
+  isActive: boolean;
+}) {
+  const Icon = section.icon;
+  return (
+    <Button
+      size="lg"
+      onClick={section.onClick}
+      variant={isActive ? "default" : "outline"}
+      disabled={section.isLoading}
+      className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
+        isActive
+          ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
+          : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+      }`}
+    >
+      <div className="flex items-center justify-center gap-2">
+        <Icon className="h-4 w-4" />
+        <span>{section.isLoading ? section.loadingLabel : section.label}</span>
+      </div>
+    </Button>
+  );
+}
+
+function SectionDropdown({
+  sections,
+  visibleSections,
+  activeSection,
+  onSectionClick,
+}: {
+  sections: Section[];
+  visibleSections: Section[];
+  activeSection: string | null;
+  onSectionClick: (section: Section) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative flex-none">
+      <Button
+        size="lg"
+        variant="outline"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${isOpen ? "border-amber-400" : ""}`}
+      >
+        <div className="flex items-center gap-1">
+          <span>More</span>
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
+        </div>
+      </Button>
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
+          {sections.slice(visibleSections.length).map((section) => {
+            const Icon = section.icon;
+            return (
+              <Button
+                key={section.id}
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  onSectionClick(section);
+                  setIsOpen(false);
+                }}
+                className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+              >
+                <Icon className="h-4 w-4 mr-2" />
+                {section.label}
+              </Button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileSectionButtons({
+  sections,
+  activeSection,
+  onSectionClick,
+  isPredictionLoading,
+}: {
+  sections: Section[];
+  activeSection: string | null;
+  onSectionClick: (section: Section) => void;
+  isPredictionLoading: () => boolean;
+}) {
+  const [showMenu, setShowMenu] = useState(false);
+  const activeSectionData = sections.find((s) => s.id === activeSection);
+  const inactiveSections = sections.filter((s) => s.id !== activeSection);
+
+  return (
+    <div className="flex sm:hidden gap-3">
+      {activeSectionData ? (
+        <Button
+          size="lg"
+          onClick={() => onSectionClick(activeSectionData)}
+          variant="default"
+          disabled={activeSectionData.isLoading}
+          className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <activeSectionData.icon className="h-4 w-4" />
+            <span>
+              {activeSectionData.isLoading
+                ? activeSectionData.loadingLabel
+                : activeSectionData.label}
+            </span>
+          </div>
+        </Button>
+      ) : (
+        <Button
+          size="lg"
+          onClick={() => onSectionClick(sections[0])}
+          variant="default"
+          disabled={isPredictionLoading()}
+          className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <Star className="h-4 w-4" />
+            <span>{isPredictionLoading() ? "Divining..." : "Horoscope"}</span>
+          </div>
+        </Button>
+      )}
+
+      <div className="flex-1 relative">
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => setShowMenu(!showMenu)}
+          className="w-full h-14 font-bold text-xs rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
+        >
+          <div className="flex flex-col items-center gap-0.5">
+            <span>More</span>
+            <ChevronDown
+              className={`h-3 w-3 transition-transform ${showMenu ? "rotate-180" : ""}`}
+            />
+          </div>
+        </Button>
+
+        {showMenu && (
+          <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 w-40 max-w-[calc(100vw-2rem)]">
+            {(activeSection ? inactiveSections : sections.slice(1)).map(
+              (section) => {
+                const Icon = section.icon;
+                return (
+                  <Button
+                    key={section.id}
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      onSectionClick(section);
+                      setShowMenu(false);
+                    }}
+                    disabled={section.isLoading}
+                    className="w-full justify-start gap-2 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-500 px-2"
+                  >
+                    <Icon className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-xs truncate overflow-hidden">
+                      {section.isLoading ? section.loadingLabel : section.label}
+                    </span>
+                  </Button>
+                );
+              },
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Dashboard Component
@@ -60,7 +252,9 @@ export function Dashboard({
   tarotShuffling,
   tarotRevealing,
   tarotRevealedCards,
-  canDrawTarot,
+  // canDrawTarot is intentionally not used in this component
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canDrawTarot: _canDrawTarot,
   onGetTarot,
   onRefreshTarot,
   // Chinese Zodiac
@@ -69,7 +263,9 @@ export function Dashboard({
   chineseZodiacYear,
   chineseZodiacElement,
   onGetChineseZodiac,
-  onRefreshChineseZodiac,
+  // onRefreshChineseZodiac is intentionally not used in this component
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onRefreshChineseZodiac: _onRefreshChineseZodiac,
   // Moon Phase
   moonPhaseData,
   moonZodiacSign,
@@ -101,9 +297,13 @@ export function Dashboard({
     if (hasInteracted) return;
 
     if (profile.advancedMode && birthChartReading) {
-      setActiveSection("birth-chart");
+      startTransition(() => {
+        setActiveSection("birth-chart");
+      });
     } else if (prediction) {
-      setActiveSection("prediction");
+      startTransition(() => {
+        setActiveSection("prediction");
+      });
     }
   }, [prediction, birthChartReading, hasInteracted, profile.advancedMode]);
 
@@ -215,7 +415,7 @@ export function Dashboard({
       id: "chinese-zodiac" as const,
       label: "Zodiac",
       loadingLabel: "Divining...",
-      icon: Star,
+      icon: Rabbit,
       onClick: () => {
         if (activeSection === "chinese-zodiac") {
           handleSectionChange(null);
@@ -303,316 +503,75 @@ export function Dashboard({
 
           {/* Action Buttons - Desktop Layout */}
 
-          {/* XL: 5 tabs equally sized */}
+          {/* Desktop Layout */}
           <div className="hidden xl:flex xl:flex-row gap-3">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              return (
-                <Button
-                  key={section.id}
-                  size="lg"
-                  onClick={section.onClick}
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  disabled={section.isLoading}
-                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
-                    activeSection === section.id
-                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>
-                      {section.isLoading ? section.loadingLabel : section.label}
-                    </span>
-                  </div>
-                </Button>
-              );
-            })}
+            {sections.map((section) => (
+              <SectionButton
+                key={section.id}
+                section={section}
+                isActive={activeSection === section.id}
+              />
+            ))}
           </div>
 
           {/* LG: 4 tabs + More */}
           <div className="hidden lg:flex xl:hidden gap-3">
-            {sections.slice(0, 4).map((section) => {
-              const Icon = section.icon;
-              return (
-                <Button
-                  key={section.id}
-                  size="lg"
-                  onClick={section.onClick}
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  disabled={section.isLoading}
-                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
-                    activeSection === section.id
-                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>
-                      {section.isLoading ? section.loadingLabel : section.label}
-                    </span>
-                  </div>
-                </Button>
-              );
-            })}
-            <div className="relative flex-none">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
-              >
-                <div className="flex items-center gap-1">
-                  <span>More</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
-                  />
-                </div>
-              </Button>
-              {showMobileMenu && (
-                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
-                  {sections.slice(4).map((section) => {
-                    const Icon = section.icon;
-                    return (
-                      <Button
-                        key={section.id}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          section.onClick();
-                          setShowMobileMenu(false);
-                        }}
-                        className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-                      >
-                        <Icon className="h-4 w-4 mr-2" />
-                        {section.label}
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            {sections.slice(0, 4).map((section) => (
+              <SectionButton
+                key={section.id}
+                section={section}
+                isActive={activeSection === section.id}
+              />
+            ))}
+            <SectionDropdown
+              sections={sections}
+              visibleSections={sections.slice(0, 4)}
+              activeSection={activeSection}
+              onSectionClick={(s) => s.onClick()}
+            />
           </div>
 
           {/* MD: 3 tabs + More */}
           <div className="hidden md:flex lg:hidden gap-3">
-            {sections.slice(0, 3).map((section) => {
-              const Icon = section.icon;
-              return (
-                <Button
-                  key={section.id}
-                  size="lg"
-                  onClick={section.onClick}
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  disabled={section.isLoading}
-                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
-                    activeSection === section.id
-                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>
-                      {section.isLoading ? section.loadingLabel : section.label}
-                    </span>
-                  </div>
-                </Button>
-              );
-            })}
-            <div className="relative flex-none">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
-              >
-                <div className="flex items-center gap-1">
-                  <span>More</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
-                  />
-                </div>
-              </Button>
-              {showMobileMenu && (
-                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
-                  {sections.slice(3).map((section) => {
-                    const Icon = section.icon;
-                    return (
-                      <Button
-                        key={section.id}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          section.onClick();
-                          setShowMobileMenu(false);
-                        }}
-                        className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-                      >
-                        <Icon className="h-4 w-4 mr-2" />
-                        {section.label}
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            {sections.slice(0, 3).map((section) => (
+              <SectionButton
+                key={section.id}
+                section={section}
+                isActive={activeSection === section.id}
+              />
+            ))}
+            <SectionDropdown
+              sections={sections}
+              visibleSections={sections.slice(0, 3)}
+              activeSection={activeSection}
+              onSectionClick={(s) => s.onClick()}
+            />
           </div>
 
           {/* SM: 2 tabs + More */}
           <div className="hidden sm:flex md:hidden gap-3">
-            {sections.slice(0, 2).map((section) => {
-              const Icon = section.icon;
-              return (
-                <Button
-                  key={section.id}
-                  size="lg"
-                  onClick={section.onClick}
-                  variant={activeSection === section.id ? "default" : "outline"}
-                  disabled={section.isLoading}
-                  className={`relative overflow-hidden group h-16 font-bold text-sm rounded-xl flex-1 transition-all duration-300 ${
-                    activeSection === section.id
-                      ? "bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50 scale-105"
-                      : "bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>
-                      {section.isLoading ? section.loadingLabel : section.label}
-                    </span>
-                  </div>
-                </Button>
-              );
-            })}
-            <div className="relative flex-none">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={`h-16 font-bold text-sm rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 ${showMobileMenu ? "border-amber-400" : ""}`}
-              >
-                <div className="flex items-center gap-1">
-                  <span>More</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${showMobileMenu ? "rotate-180" : ""}`}
-                  />
-                </div>
-              </Button>
-              {showMobileMenu && (
-                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 min-w-40">
-                  {sections.slice(2).map((section) => {
-                    const Icon = section.icon;
-                    return (
-                      <Button
-                        key={section.id}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          section.onClick();
-                          setShowMobileMenu(false);
-                        }}
-                        className="w-full justify-start text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-                      >
-                        <Icon className="h-4 w-4 mr-2" />
-                        {section.label}
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            {sections.slice(0, 2).map((section) => (
+              <SectionButton
+                key={section.id}
+                section={section}
+                isActive={activeSection === section.id}
+              />
+            ))}
+            <SectionDropdown
+              sections={sections}
+              visibleSections={sections.slice(0, 2)}
+              activeSection={activeSection}
+              onSectionClick={(s) => s.onClick()}
+            />
           </div>
 
-          {/* Action Buttons - Mobile Single Row Layout */}
-          <div className="flex sm:hidden gap-3">
-            {/* Active Button - Takes 3/4 width */}
-            {activeSectionData ? (
-              <Button
-                size="lg"
-                onClick={activeSectionData.onClick}
-                variant="default"
-                disabled={activeSectionData.isLoading}
-                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <activeSectionData.icon className="h-4 w-4" />
-                  <span>
-                    {activeSectionData.isLoading
-                      ? activeSectionData.loadingLabel
-                      : activeSectionData.label}
-                  </span>
-                </div>
-              </Button>
-            ) : (
-              <Button
-                size="lg"
-                onClick={() => handleSectionChange("prediction")}
-                variant="default"
-                disabled={isPredictionLoading()}
-                className="flex-[3] relative overflow-hidden group h-14 font-bold text-sm rounded-xl transition-all duration-300 bg-gradient-to-r from-accent to-amber-500 text-background shadow-lg shadow-accent/50"
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Star className="h-4 w-4" />
-                  <span>
-                    {isPredictionLoading() ? "Divining..." : "Horoscope"}
-                  </span>
-                </div>
-              </Button>
-            )}
-
-            {/* More Button - Takes 1/4 width */}
-            <div className="flex-1 relative">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="w-full h-14 font-bold text-xs rounded-xl bg-muted border-2 border-border text-amber-600 dark:text-amber-400 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20"
-              >
-                <div className="flex flex-col items-center gap-0.5">
-                  <span>More</span>
-                  <ChevronDown
-                    className={`h-3 w-3 transition-transform ${
-                      showMobileMenu ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </Button>
-
-              {/* Dropdown Menu */}
-              {showMobileMenu && (
-                <div className="absolute top-full right-0 mt-2 p-2 bg-card border-2 border-border rounded-xl shadow-xl z-50 space-y-1 w-40 max-w-[calc(100vw-2rem)]">
-                  {(activeSection ? inactiveSections : sections.slice(1)).map(
-                    (section) => {
-                      const Icon = section.icon;
-                      return (
-                        <Button
-                          key={section.id}
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            section.onClick();
-                            setShowMobileMenu(false);
-                          }}
-                          disabled={section.isLoading}
-                          className="w-full justify-start gap-2 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-500 px-2"
-                        >
-                          <Icon className="h-4 w-4 flex-shrink-0" />
-                          <span className="text-xs truncate overflow-hidden">
-                            {section.isLoading
-                              ? section.loadingLabel
-                              : section.label}
-                          </span>
-                        </Button>
-                      );
-                    },
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Mobile Layout */}
+          <MobileSectionButtons
+            sections={sections}
+            activeSection={activeSection}
+            onSectionClick={(section) => section.onClick()}
+            isPredictionLoading={isPredictionLoading}
+          />
         </div>
 
         {/* Scrollable Content Area */}
@@ -743,7 +702,6 @@ export function Dashboard({
           {activeSection === "chinese-zodiac" && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
               <ChineseZodiacCard
-                profile={profile}
                 reading={chineseZodiacReading}
                 chineseYear={chineseZodiacYear}
                 element={chineseZodiacElement}

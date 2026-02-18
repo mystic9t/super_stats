@@ -2,7 +2,6 @@ import {
   ZodiacSign,
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   ApiResponse,
   HealthCheckResponse,
   NumerologyPrediction,
@@ -76,18 +75,6 @@ class ApiClient {
       data: response.data,
       isFallback: response.isFallback ?? false,
     };
-  }
-
-  async getMonthlyPrediction(sign: ZodiacSign): Promise<MonthlyPrediction> {
-    const response = await this.request<ApiResponse<MonthlyPrediction>>(
-      `/api/predictions/monthly?sign=${sign}`,
-    );
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || "Failed to fetch monthly prediction");
-    }
-
-    return response.data;
   }
 
   async getNumerologyPrediction(

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   MoonPhaseData,
   ZodiacSign,
@@ -138,12 +138,6 @@ export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
 
     setIsLoading(false);
   }, [sunSign, calculateAndCache, loadFromCache]);
-
-  useEffect(() => {
-    if (sunSign) {
-      refresh();
-    }
-  }, [sunSign, refresh]);
 
   return {
     moonData,

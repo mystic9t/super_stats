@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  UserProfile,
-  ChineseZodiacReading,
-  ChineseZodiacSign,
-} from "@vibes/shared-types";
+import { ChineseZodiacReading, ChineseZodiacSign } from "@vibes/shared-types";
 import {
   Card,
   CardContent,
@@ -16,7 +12,6 @@ import { Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ChineseZodiacCardProps {
-  profile: UserProfile;
   reading: ChineseZodiacReading | null;
   chineseYear: string | null;
   element: string | null;
@@ -111,7 +106,6 @@ const ZODIAC_ORDER = [
 ];
 
 export function ChineseZodiacCard({
-  profile,
   reading,
   chineseYear,
   element,
@@ -130,7 +124,7 @@ export function ChineseZodiacCard({
           <div className="absolute inset-0 rounded-full border-2 border-border/30" />
 
           {/* Zodiac emojis positioned in circle */}
-          {ZODIAC_ORDER.map((zodiac, index) => {
+          {ZODIAC_ORDER.map((zodiac) => {
             const angle = (zodiac.position - 90) * (Math.PI / 180); // Start from top
             const radius = 220; // Distance from center
             const x = Math.cos(angle) * radius;
@@ -270,7 +264,7 @@ export function ChineseZodiacCard({
               variants={itemVariants}
               className="text-base leading-relaxed text-foreground italic"
             >
-              "{reading.description}"
+              &ldquo;{reading.description}&rdquo;
             </motion.p>
 
             {/* Lucky Numbers and Colors */}
