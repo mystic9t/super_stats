@@ -24,7 +24,8 @@ interface MoonPhaseCardProps {
 
 /**
  * Animated Moon Phase Visualizer
- * Shows a realistic moon based on current illumination
+ * Uses SVG mask with ellipse for astronomically correct crescent rendering
+ * The terminator (edge between light/dark) is an ellipse whose width varies with phase
  */
 function AnimatedMoon({
   phase,
@@ -33,29 +34,81 @@ function AnimatedMoon({
   phase: string;
   illumination: number;
 }) {
-  // Calculate shadow position based on illumination
-  // The shadow overlay covers the dark portion of the moon
-  const getShadowPosition = () => {
-    if (phase.includes("waxing")) {
-      // Waxing: illuminated portion grows from right edge
-      // Shadow is on the left, so clip from right to reveal shadow on left
-      // At 3% illumination: shadow covers 97% on left, thin crescent on right
-      return illumination;
-    } else if (phase.includes("waning")) {
-      // Waning: illuminated portion shrinks from right edge
-      // Shadow is on the right, so clip from left to reveal shadow on right
-      // At 3% illumination: shadow covers 97% on right, thin crescent on left
-      return illumination;
-    } else if (phase === "full-moon") {
-      return 0;
-    } else {
-      return 100;
-    }
-  };
-
-  const shadowPosition = getShadowPosition();
   const isWaxing = phase.includes("waxing");
   const isWaning = phase.includes("waning");
+  const isNewMoon = phase === "new-moon";
+  const isFullMoon = phase === "full-moon";
+  const isFirstQuarter = phase === "first-quarter";
+  const isLastQuarter = phase === "last-quarter";
+
+  const size = 100;
+  const center = size / 2;
+  const radius = size / 2;
+
+  // Calculate ellipse rx (horizontal radius) for the terminator
+  // The ellipse creates the curved edge between light and dark
+  let ellipseRx: number;
+  let leftFill: string;
+  let rightFill: string;
+  let ellipseFill: string;
+
+  if (isNewMoon) {
+    ellipseRx = radius;
+    leftFill = "black";
+    rightFill = "black";
+    ellipseFill = "black";
+  } else if (isFullMoon) {
+    ellipseRx = 0;
+    leftFill = "white";
+    rightFill = "white";
+    ellipseFill = "white";
+  } else if (isWaxing) {
+    // Waxing: lit portion on right, grows over time
+    if (illumination <= 50) {
+      // Waxing Crescent: thin lit sliver on right
+      ellipseRx = radius * (1 - illumination / 50);
+      leftFill = "black";
+      rightFill = "white";
+      ellipseFill = "black";
+    } else {
+      // Waxing Gibbous: mostly lit, small dark on left
+      ellipseRx = radius * ((illumination - 50) / 50);
+      leftFill = "black";
+      rightFill = "white";
+      ellipseFill = "white";
+    }
+  } else if (isWaning) {
+    // Waning: lit portion on left, shrinks over time
+    if (illumination <= 50) {
+      // Waning Crescent: thin lit sliver on left
+      ellipseRx = radius * (1 - illumination / 50);
+      leftFill = "white";
+      rightFill = "black";
+      ellipseFill = "black";
+    } else {
+      // Waning Gibbous: mostly lit, small dark on right
+      ellipseRx = radius * ((illumination - 50) / 50);
+      leftFill = "white";
+      rightFill = "black";
+      ellipseFill = "white";
+    }
+  } else if (isFirstQuarter) {
+    ellipseRx = 0;
+    leftFill = "black";
+    rightFill = "white";
+    ellipseFill = "white";
+  } else if (isLastQuarter) {
+    ellipseRx = 0;
+    leftFill = "white";
+    rightFill = "black";
+    ellipseFill = "white";
+  } else {
+    // Fallback
+    ellipseRx = radius * (illumination / 100);
+    leftFill = "black";
+    rightFill = "white";
+    ellipseFill = "white";
+  }
 
   return (
     <div className="relative w-32 h-32 mx-auto">
@@ -73,31 +126,57 @@ function AnimatedMoon({
         }}
       />
 
-      {/* Moon base */}
-      <div className="relative w-full h-full rounded-full bg-gradient-to-br from-slate-100 to-slate-300 overflow-hidden shadow-2xl shadow-amber-500/20">
-        {/* Moon texture */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-4 left-8 w-4 h-4 rounded-full bg-slate-400/50" />
-          <div className="absolute bottom-6 right-6 w-6 h-6 rounded-full bg-slate-400/40" />
-          <div className="absolute top-1/2 left-1/4 w-3 h-3 rounded-full bg-slate-400/30" />
-        </div>
+      {/* Moon SVG with mask for proper curved terminator */}
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="w-full h-full drop-shadow-2xl"
+        style={{ filter: "drop-shadow(0 0 20px rgba(245, 158, 11, 0.2))" }}
+      >
+        <defs>
+          <radialGradient id="moonSurface" cx="30%" cy="30%">
+            <stop offset="0%" stopColor="#f8fafc" />
+            <stop offset="50%" stopColor="#e2e8f0" />
+            <stop offset="100%" stopColor="#cbd5e1" />
+          </radialGradient>
+          <mask id="moonMask">
+            <rect x="0" y="0" width={center} height={size} fill={leftFill} />
+            <rect
+              x={center}
+              y="0"
+              width={center}
+              height={size}
+              fill={rightFill}
+            />
+            <ellipse
+              cx={center}
+              cy={center}
+              rx={ellipseRx}
+              ry={radius}
+              fill={ellipseFill}
+            />
+          </mask>
+        </defs>
 
-        {/* Shadow overlay */}
-        <motion.div
-          className="absolute inset-0 bg-slate-900"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: (100 - illumination) / 100 }}
-          style={{
-            clipPath: isWaxing
-              ? `inset(0 ${shadowPosition}% 0 0)`
-              : isWaning
-                ? `inset(0 0 0 ${shadowPosition}%)`
-                : phase === "new-moon"
-                  ? "inset(0)"
-                  : "inset(100%)",
-          }}
+        {/* Dark background */}
+        <circle cx={center} cy={center} r={radius - 1} fill="#1e293b" />
+
+        {/* Lit moon surface with mask */}
+        <circle
+          cx={center}
+          cy={center}
+          r={radius - 1}
+          fill="url(#moonSurface)"
+          mask="url(#moonMask)"
         />
-      </div>
+
+        {/* Moon craters - only on lit portion */}
+        <g mask="url(#moonMask)" opacity="0.2">
+          <circle cx={center + 15} cy={center - 18} r="5" fill="#64748b" />
+          <circle cx={center - 18} cy={center + 18} r="7" fill="#64748b" />
+          <circle cx={center + 8} cy={center + 22} r="4" fill="#64748b" />
+          <circle cx={center - 22} cy={center - 8} r="4" fill="#64748b" />
+        </g>
+      </svg>
     </div>
   );
 }
