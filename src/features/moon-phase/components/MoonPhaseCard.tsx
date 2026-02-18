@@ -2,18 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RotateCw, Sparkles, Moon, Calendar, Clock } from "lucide-react";
+import { RotateCw, Sparkles, Moon, Calendar } from "lucide-react";
 import {
   MoonPhaseData,
   MoonRitual,
   ZodiacMoonInfluence,
   ZodiacSign,
 } from "@vibes/shared-types";
-import {
-  getMoonZodiacSign,
-  getZodiacDisplay,
-  getZodiacSymbol,
-} from "@vibes/shared-utils";
+import { getZodiacDisplay, getZodiacSymbol } from "@vibes/shared-utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface MoonPhaseCardProps {

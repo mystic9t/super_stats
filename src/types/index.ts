@@ -2,12 +2,14 @@ import {
   UserProfile,
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   TarotReading,
   NumerologyReading,
   ChineseZodiacReading,
+  CompatibilityReading,
+  DailyAffirmation,
   PredictionPeriod,
   BirthChartReading,
+  ZodiacSign,
 } from "@vibes/shared-types";
 
 // Component Props Interfaces
@@ -31,11 +33,6 @@ export interface DashboardProps {
   weeklyError: string | null;
   onGetWeeklyPrediction: () => void;
   onRefreshWeeklyPrediction: () => void;
-  // Monthly prediction
-  monthlyPrediction: MonthlyPrediction | null;
-  monthlyLoading: boolean;
-  onGetMonthlyPrediction: () => void;
-  onRefreshMonthlyPrediction: () => void;
   // Period selection
   predictionPeriod: PredictionPeriod;
   onPeriodChange: (period: PredictionPeriod) => void;
@@ -77,6 +74,17 @@ export interface DashboardProps {
   birthChartLoading: boolean;
   onGetBirthChart: () => void;
   onRefreshBirthChart: () => void;
+  // Compatibility
+  compatibilityReading: CompatibilityReading | null;
+  compatibilityPartnerSign: ZodiacSign | null;
+  compatibilityLoading: boolean;
+  onSelectCompatibilityPartner: (sign: ZodiacSign) => void;
+  onClearCompatibility: () => void;
+  // Affirmation
+  affirmation: DailyAffirmation | null;
+  affirmationLoading: boolean;
+  onGetAffirmation: () => void;
+  onRefreshAffirmation: () => void;
 }
 
 export interface OnboardingFormProps {

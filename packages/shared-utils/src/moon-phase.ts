@@ -1,9 +1,4 @@
-import {
-  MoonPhase,
-  MoonPhaseData,
-  ZodiacSign,
-  ZodiacMoonInfluence,
-} from "@vibes/shared-types";
+import { MoonPhase, MoonPhaseData, ZodiacSign } from "@vibes/shared-types";
 
 /**
  * Calculate moon phase for a given date
@@ -98,7 +93,6 @@ export function calculateMoonPhase(date: Date = new Date()): MoonPhaseData {
 export function getMoonZodiacSign(date: Date = new Date()): ZodiacSign {
   // Known reference: Moon was in Cancer on January 1, 2000
   const referenceDate = new Date("2000-01-01T00:00:00Z");
-  const moonInCancer = ZodiacSign.CANCER;
 
   const daysSinceRef =
     (date.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24);

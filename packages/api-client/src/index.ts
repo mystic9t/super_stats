@@ -2,7 +2,6 @@ import {
   ZodiacSign,
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   ApiResponse,
   HealthCheckResponse,
   NumerologyPrediction,
@@ -13,32 +12,51 @@ interface PredictionWithFallback<T> {
   isFallback: boolean;
 }
 
+const DEFAULT_TIMEOUT_MS = 15_000; // 15 seconds
+
 class ApiClient {
   private baseUrl: string;
+  private timeoutMs: number;
 
-  constructor(baseUrl: string = "") {
+  constructor(baseUrl: string = "", timeoutMs: number = DEFAULT_TIMEOUT_MS) {
     this.baseUrl = baseUrl;
+    this.timeoutMs = timeoutMs;
   }
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`,
-      );
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `HTTP ${response.status}: ${response.statusText}`,
+        );
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error(
+          `Request to ${endpoint} timed out after ${this.timeoutMs}ms`,
+        );
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    return response.json();
   }
 
   async getDailyPrediction(
@@ -76,18 +94,6 @@ class ApiClient {
       data: response.data,
       isFallback: response.isFallback ?? false,
     };
-  }
-
-  async getMonthlyPrediction(sign: ZodiacSign): Promise<MonthlyPrediction> {
-    const response = await this.request<ApiResponse<MonthlyPrediction>>(
-      `/api/predictions/monthly?sign=${sign}`,
-    );
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || "Failed to fetch monthly prediction");
-    }
-
-    return response.data;
   }
 
   async getNumerologyPrediction(
