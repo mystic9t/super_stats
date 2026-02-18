@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   MoonPhaseData,
   ZodiacSign,
@@ -22,16 +22,16 @@ interface UseMoonPhaseReturn {
 }
 
 const CACHE_KEY = "moon-phase-cache";
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour cache
 
 interface MoonPhaseCache {
   data: MoonPhaseData;
   moonZodiac: ZodiacSign;
-  timestamp: number;
+  date: string; // YYYY-MM-DD format
 }
 
 /**
  * Hook to get current moon phase data and personalized rituals
+ * Auto-fetches on mount and updates daily
  */
 export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
   const [moonData, setMoonData] = useState<MoonPhaseData | null>(null);
@@ -40,16 +40,19 @@ export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
   const [influence, setInfluence] = useState<ZodiacMoonInfluence | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Get today's date string for cache validation
+  const getTodayString = () => new Date().toISOString().split("T")[0];
+
   const calculateAndCache = useCallback(() => {
     const now = new Date();
     const data = calculateMoonPhase(now);
     const moonZodiac = getMoonZodiacSign(now);
 
-    // Cache the results
+    // Cache with date for daily refresh
     const cache: MoonPhaseCache = {
       data,
       moonZodiac,
-      timestamp: now.getTime(),
+      date: getTodayString(),
     };
 
     try {
@@ -86,10 +89,9 @@ export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
         };
       };
 
-      // Check if cache is still valid
-      const now = Date.now();
-      if (now - parsed.timestamp > CACHE_DURATION) {
-        return null;
+      // Check if cache is from today
+      if (parsed.date !== getTodayString()) {
+        return null; // Cache is stale (different day)
       }
 
       return {
@@ -117,10 +119,13 @@ export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
       setMoonZodiacSign(cached.moonZodiac);
 
       if (sunSign) {
-        const rituals = getMoonRituals(cached.data.phase, sunSign);
-        const influence = getZodiacMoonInfluence(cached.data.phase, sunSign);
-        setRituals(rituals);
-        setInfluence(influence);
+        const moonRituals = getMoonRituals(cached.data.phase, sunSign);
+        const moonInfluence = getZodiacMoonInfluence(
+          cached.data.phase,
+          sunSign,
+        );
+        setRituals(moonRituals);
+        setInfluence(moonInfluence);
       }
     } else {
       // Calculate fresh data
@@ -129,15 +134,22 @@ export function useMoonPhase(sunSign: ZodiacSign | null): UseMoonPhaseReturn {
       setMoonZodiacSign(moonZodiac);
 
       if (sunSign) {
-        const rituals = getMoonRituals(data.phase, sunSign);
-        const influence = getZodiacMoonInfluence(data.phase, sunSign);
-        setRituals(rituals);
-        setInfluence(influence);
+        const moonRituals = getMoonRituals(data.phase, sunSign);
+        const moonInfluence = getZodiacMoonInfluence(data.phase, sunSign);
+        setRituals(moonRituals);
+        setInfluence(moonInfluence);
       }
     }
 
     setIsLoading(false);
   }, [sunSign, calculateAndCache, loadFromCache]);
+
+  // Auto-fetch on mount when sunSign is available
+  useEffect(() => {
+    if (sunSign) {
+      refresh();
+    }
+  }, [sunSign, refresh]);
 
   return {
     moonData,
