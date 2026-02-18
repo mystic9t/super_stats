@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { type WeeklyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { generateWeeklyHoroscope } from "@vibes/shared-utils";
 
+const VALID_SIGNS = new Set(Object.values(ZodiacSign));
+
 function getCurrentWeekStr(): string {
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -21,16 +23,29 @@ export async function GET(request: Request) {
     );
   }
 
+  if (!VALID_SIGNS.has(sign.toLowerCase() as ZodiacSign)) {
+    return NextResponse.json(
+      { success: false, error: "Invalid zodiac sign", timestamp: new Date() },
+      { status: 400 },
+    );
+  }
+
   try {
     const externalUrl = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/weekly?sign=${sign.toLowerCase()}`;
     console.log("[Weekly Prediction] Fetching from:", externalUrl);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
 
     const response = await fetch(externalUrl, {
       headers: {
         Accept: "application/json",
         "User-Agent": "Vibes-App/1.0",
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     console.log(
       "[Weekly Prediction] Response status:",

@@ -40,10 +40,35 @@ export function OnboardingForm({
     initialData?.birthLocation || "",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const validateForm = (): string | null => {
+    if (!name.trim()) return "Name is required";
+    if (name.trim().length < 2) return "Name must be at least 2 characters";
+    if (name.trim().length > 50) return "Name must be 50 characters or less";
+    if (!dob) return "Date of birth is required";
+
+    const date = new Date(dob);
+    if (isNaN(date.getTime())) return "Invalid date of birth";
+
+    const today = new Date();
+    if (date > today) return "Date of birth cannot be in the future";
+
+    const minDate = new Date(today.getFullYear() - 150, 0, 1);
+    if (date < minDate) return "Please enter a valid date of birth";
+
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !dob) return;
+    setValidationError(null);
+
+    const error = validateForm();
+    if (error) {
+      setValidationError(error);
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -119,7 +144,10 @@ export function OnboardingForm({
                 id="name"
                 placeholder="Star Gazer"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setValidationError(null);
+                }}
                 className="h-11 text-base bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
                 required
                 disabled={isSubmitting}
@@ -138,7 +166,11 @@ export function OnboardingForm({
                 id="dob"
                 type="date"
                 value={dob}
-                onChange={(e) => setDob(e.target.value)}
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  setValidationError(null);
+                }}
+                max={new Date().toISOString().split("T")[0]}
                 className="h-11 text-base bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
                 required
                 disabled={isSubmitting}
@@ -231,6 +263,13 @@ export function OnboardingForm({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Validation Error */}
+            {validationError && (
+              <p className="text-sm text-red-500 text-center font-medium">
+                {validationError}
+              </p>
+            )}
 
             <Button
               type="submit"
