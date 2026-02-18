@@ -468,4 +468,4 @@ function generateAspects(chart: BirthChart): string[] {
   return aspects.slice(0, 5);
 }
 
-export { getZodiacDisplay, getZodiacSymbol, normalizeDegree };
+export { getZodiacDisplay, getZodiacSymbol };

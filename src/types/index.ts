@@ -13,10 +13,6 @@ import {
 } from "@vibes/shared-types";
 
 // Component Props Interfaces
-export interface NumerologyCardProps {
-  profile: UserProfile;
-}
-
 export interface DashboardProps {
   profile: UserProfile;
   onClear: () => void;
@@ -98,23 +94,4 @@ export interface ServiceResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-}
-
-export interface ProfileContextType {
-  profile: UserProfile | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface PredictionContextType {
-  prediction: DailyPrediction | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface TarotContextType {
-  reading: TarotReading | null;
-  isLoading: boolean;
-  canDraw: boolean;
-  error: string | null;
 }

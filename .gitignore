@@ -28,5 +28,15 @@ uv.lock
 .opencode/
 .claude/
 
+# AI Agent docs
+AGENTS.md
+HEARTBEAT/
+
+# Automation scripts
+*.ps1
+
+# Telemetry
+telemetry-id
+
 # Raw tarot assets (source images)
 tarot_assets_raw/

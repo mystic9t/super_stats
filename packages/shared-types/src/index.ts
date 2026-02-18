@@ -56,10 +56,6 @@ export interface PredictionRequest {
   day?: "yesterday" | "today" | "tomorrow";
 }
 
-export interface HealthCheckResponse {
-  status: string;
-}
-
 export interface NumerologyNumber {
   number: number;
   title: string;
@@ -75,14 +71,6 @@ export interface NumerologyReading {
   birthday: NumerologyNumber;
   personalYear: NumerologyNumber;
   currentYear: number;
-}
-
-// Legacy interface for backward compatibility
-export interface NumerologyPrediction {
-  lifePath: number;
-  destiny: number;
-  lifePathMeaning: string;
-  destinyMeaning: string;
 }
 
 // Tarot Types

@@ -3,8 +3,6 @@ import {
   DailyPrediction,
   WeeklyPrediction,
   ApiResponse,
-  HealthCheckResponse,
-  NumerologyPrediction,
 } from "@vibes/shared-types";
 
 interface PredictionWithFallback<T> {
@@ -94,26 +92,6 @@ class ApiClient {
       data: response.data,
       isFallback: response.isFallback ?? false,
     };
-  }
-
-  async getNumerologyPrediction(
-    lifePath: number,
-    destiny: number,
-  ): Promise<NumerologyPrediction> {
-    const response = await this.request<ApiResponse<NumerologyPrediction>>(
-      `/api/numerology?lifePath=${lifePath}&destiny=${destiny}`,
-    );
-
-    if (!response.success || !response.data) {
-      throw new Error(
-        response.error || "Failed to fetch numerology prediction",
-      );
-    }
-    return response.data;
-  }
-
-  async healthCheck(): Promise<HealthCheckResponse> {
-    return await this.request<HealthCheckResponse>("/health");
   }
 }
 
