@@ -115,7 +115,23 @@ function isRetrograde(planet: Planet, jd: number): boolean {
     return elongation > 120 && elongation < 240;
   }
 
-  return Math.random() < 0.2;
+  // For outer planets (uranus, neptune, pluto), use a simplified deterministic check
+  // based on their orbital position relative to the sun
+  // These planets are retrograde when they're near opposition (180° from sun)
+  const t = (jd - 2451545.0) / 36525;
+  const sunLon = normalizeDegree(280.4664567 + 360007.6982779 * t);
+
+  const outerPositions: Record<string, number> = {
+    uranus: normalizeDegree(314.055 + 428.4669 * t),
+    neptune: normalizeDegree(304.349 + 218.4862 * t),
+    pluto: normalizeDegree(238.929 + 145.2078 * t),
+  };
+
+  const planetLon = outerPositions[planet];
+  const elongation = normalizeDegree(planetLon - sunLon);
+
+  // Planets are retrograde when near opposition (around 180° from sun)
+  return elongation > 150 && elongation < 210;
 }
 
 export function calculateBirthChart(
@@ -124,7 +140,7 @@ export function calculateBirthChart(
   latitude?: number,
   longitude?: number,
 ): BirthChart {
-  let birthDateTime = new Date(birthDate);
+  const birthDateTime = new Date(birthDate);
   if (birthTime) {
     const [hours, minutes] = birthTime.split(":").map(Number);
     birthDateTime.setHours(hours, minutes, 0, 0);
@@ -150,11 +166,12 @@ export function calculateBirthChart(
   }
 
   const lat = latitude ?? 0;
-  const ascendant = calculateAscendant(jd, lat);
+  const lon = longitude;
+  const ascendant = calculateAscendant(jd, lat, lon);
   const { sign: risingSign, degree: ascendantDegree } =
     degreeToZodiac(ascendant);
 
-  const midheaven = calculateMidheaven(jd);
+  const midheaven = calculateMidheaven(jd, lon);
   const { degree: midheavenDegree } = degreeToZodiac(midheaven);
 
   const houses = calculateHouses(ascendant);
@@ -178,11 +195,23 @@ export function calculateBirthChart(
   };
 }
 
-function calculateAscendant(jd: number, latitude: number): number {
+function calculateAscendant(
+  jd: number,
+  latitude: number,
+  longitude?: number,
+): number {
   const t = (jd - 2451545.0) / 36525;
-  const lst = normalizeDegree(
+
+  // Greenwich Mean Sidereal Time
+  let lst = normalizeDegree(
     280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t * t,
   );
+
+  // Apply observer's longitude (east is positive, west is negative)
+  // This gives us the Local Sidereal Time
+  if (longitude !== undefined) {
+    lst = normalizeDegree(lst + longitude);
+  }
 
   const obliquity = 23.439 - 0.0000004 * (jd - 2451545.0);
   const latRad = (latitude * Math.PI) / 180;
@@ -197,11 +226,18 @@ function calculateAscendant(jd: number, latitude: number): number {
   return normalizeDegree((ascendant * 180) / Math.PI);
 }
 
-function calculateMidheaven(jd: number): number {
+function calculateMidheaven(jd: number, longitude?: number): number {
   const t = (jd - 2451545.0) / 36525;
-  const lst = normalizeDegree(
+
+  // Greenwich Mean Sidereal Time
+  let lst = normalizeDegree(
     280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t * t,
   );
+
+  // Apply observer's longitude for local sidereal time
+  if (longitude !== undefined) {
+    lst = normalizeDegree(lst + longitude);
+  }
 
   const obliquity = 23.439 - 0.0000004 * (jd - 2451545.0);
   const oblRad = (obliquity * Math.PI) / 180;

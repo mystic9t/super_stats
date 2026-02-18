@@ -1,13 +1,9 @@
-'use client';
+"use client";
 
-import { Sparkles } from 'lucide-react';
-import { ThemeToggle } from './theme-toggle';
+import { Sparkles } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 
-interface HeaderProps {
-  onOpenMenu?: () => void;
-}
-
-export function Header({ onOpenMenu }: HeaderProps) {
+export function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md border-b border-border bg-background/80">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -19,9 +15,7 @@ export function Header({ onOpenMenu }: HeaderProps) {
             </div>
           </div>
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-foreground">
-              Vibes
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">Vibes</h1>
             <p className="text-xs text-muted-foreground">Your cosmic guide</p>
           </div>
         </div>

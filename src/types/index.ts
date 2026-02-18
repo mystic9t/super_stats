@@ -2,7 +2,6 @@ import {
   UserProfile,
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   TarotReading,
   NumerologyReading,
   ChineseZodiacReading,
@@ -31,11 +30,6 @@ export interface DashboardProps {
   weeklyError: string | null;
   onGetWeeklyPrediction: () => void;
   onRefreshWeeklyPrediction: () => void;
-  // Monthly prediction
-  monthlyPrediction: MonthlyPrediction | null;
-  monthlyLoading: boolean;
-  onGetMonthlyPrediction: () => void;
-  onRefreshMonthlyPrediction: () => void;
   // Period selection
   predictionPeriod: PredictionPeriod;
   onPeriodChange: (period: PredictionPeriod) => void;

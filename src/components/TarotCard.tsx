@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { DrawnCard } from "@vibes/shared-types";
 import { getPositionDescription } from "@vibes/shared-utils";
 
@@ -18,6 +19,7 @@ export function TarotCard({
   const { card, position, isReversed } = drawnCard;
   const positionInfo = getPositionDescription(position);
   const meaning = isReversed ? card.reversedMeaning : card.uprightMeaning;
+  const shouldShowBack = showBack || !isRevealed;
 
   return (
     <div className="flex flex-col items-center gap-3 group">
@@ -54,7 +56,7 @@ export function TarotCard({
             className="relative w-full h-full"
             style={{ transformStyle: "preserve-3d" }}
             initial={{ rotateY: 180 }}
-            animate={{ rotateY: isRevealed ? 0 : 180 }}
+            animate={{ rotateY: shouldShowBack ? 180 : 0 }}
             transition={{
               duration: 0.4,
               ease: [0.4, 0, 0.2, 1],
@@ -65,10 +67,11 @@ export function TarotCard({
               className="absolute inset-0 overflow-hidden rounded bg-slate-900"
               style={{ backfaceVisibility: "hidden" }}
             >
-              <img
+              <Image
                 src={card.imageUrl}
                 alt={`${card.name}${isReversed ? " (Reversed)" : ""}`}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
                 loading="lazy"
               />
 
@@ -84,10 +87,11 @@ export function TarotCard({
                 transform: "rotateY(180deg)",
               }}
             >
-              <img
+              <Image
                 src="/tarot/card_back.webp"
                 alt="Card back"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           </motion.div>
