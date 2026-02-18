@@ -5,8 +5,11 @@ import {
   TarotReading,
   NumerologyReading,
   ChineseZodiacReading,
+  CompatibilityReading,
+  DailyAffirmation,
   PredictionPeriod,
   BirthChartReading,
+  ZodiacSign,
 } from "@vibes/shared-types";
 
 // Component Props Interfaces
@@ -71,6 +74,17 @@ export interface DashboardProps {
   birthChartLoading: boolean;
   onGetBirthChart: () => void;
   onRefreshBirthChart: () => void;
+  // Compatibility
+  compatibilityReading: CompatibilityReading | null;
+  compatibilityPartnerSign: ZodiacSign | null;
+  compatibilityLoading: boolean;
+  onSelectCompatibilityPartner: (sign: ZodiacSign) => void;
+  onClearCompatibility: () => void;
+  // Affirmation
+  affirmation: DailyAffirmation | null;
+  affirmationLoading: boolean;
+  onGetAffirmation: () => void;
+  onRefreshAffirmation: () => void;
 }
 
 export interface OnboardingFormProps {
