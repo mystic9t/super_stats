@@ -83,28 +83,6 @@ class TarotService {
       return { success: false, error: message };
     }
   }
-
-  /**
-   * Force refresh tarot reading - overrides 24hr limit and resets timer
-   */
-  refreshTarotCards(profile: UserProfile): ServiceResponse<TarotReading> {
-    try {
-      // Force a new draw regardless of time limit
-      const reading = forcePerformTarotDraw(profile);
-      if (!reading) {
-        return { success: false, error: "Failed to refresh tarot cards" };
-      }
-
-      return { success: true, data: reading };
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to refresh tarot cards";
-      console.error("Tarot Service Error:", message);
-      return { success: false, error: message };
-    }
-  }
 }
 
 export const tarotService = new TarotService();

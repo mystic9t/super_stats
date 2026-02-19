@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { UserProfile } from '@vibes/shared-types';
-import { profileService } from '@/services';
+import { useEffect, useState, startTransition } from "react";
+import { UserProfile } from "@vibes/shared-types";
+import { profileService } from "@/services";
 
 interface UseUserProfileReturn {
   profile: UserProfile | null;
@@ -23,11 +23,17 @@ export function useUserProfile(): UseUserProfileReturn {
   useEffect(() => {
     const result = profileService.loadProfile();
     if (result.success) {
-      setProfileState(result.data || null);
+      startTransition(() => {
+        setProfileState(result.data || null);
+      });
     } else {
-      setError(result.error || null);
+      startTransition(() => {
+        setError(result.error || null);
+      });
     }
-    setIsLoading(false);
+    startTransition(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const setProfile = (newProfile: UserProfile) => {

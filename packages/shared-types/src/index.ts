@@ -44,16 +44,6 @@ export interface WeeklyPrediction {
   mood: string;
 }
 
-export interface MonthlyPrediction {
-  month: string;
-  description: string;
-  standout_days: string;
-  challenging_days: string;
-  compatibility: string;
-  lucky_number: number;
-  color: string;
-}
-
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -64,10 +54,6 @@ export interface ApiResponse<T = unknown> {
 export interface PredictionRequest {
   sign: ZodiacSign;
   day?: "yesterday" | "today" | "tomorrow";
-}
-
-export interface HealthCheckResponse {
-  status: string;
 }
 
 export interface NumerologyNumber {
@@ -85,14 +71,6 @@ export interface NumerologyReading {
   birthday: NumerologyNumber;
   personalYear: NumerologyNumber;
   currentYear: number;
-}
-
-// Legacy interface for backward compatibility
-export interface NumerologyPrediction {
-  lifePath: number;
-  destiny: number;
-  lifePathMeaning: string;
-  destinyMeaning: string;
 }
 
 // Tarot Types
@@ -125,7 +103,7 @@ export interface TarotState {
   lastDrawDate: string | null; // YYYY-MM-DD format
 }
 
-export type PredictionPeriod = "daily" | "weekly" | "moon";
+export type PredictionPeriod = "daily" | "weekly" | "moon" | "match";
 
 // Chinese Zodiac Types
 export enum ChineseZodiacSign {
@@ -253,4 +231,39 @@ export interface BirthChartReading {
   houseMeanings: HouseReading[];
   aspects: string[];
   summary: string;
+}
+
+// Zodiac Compatibility Types
+export interface CompatibilityScore {
+  overall: number; // 0-100
+  love: number; // 0-100
+  friendship: number; // 0-100
+  work: number; // 0-100
+}
+
+export interface CompatibilityReading {
+  sign1: ZodiacSign;
+  sign2: ZodiacSign;
+  scores: CompatibilityScore;
+  summary: string;
+  loveSummary: string;
+  friendshipSummary: string;
+  workSummary: string;
+  strengths: string[];
+  challenges: string[];
+  tip: string;
+}
+
+// Daily Affirmation Types
+export interface DailyAffirmation {
+  affirmation: string;
+  mantra: string;
+  cosmicTheme: string;
+  element: "fire" | "earth" | "air" | "water";
+  chakra: string;
+  color: string;
+  crystal: string;
+  journalPrompt: string;
+  date: string; // YYYY-MM-DD
+  sign: ZodiacSign;
 }

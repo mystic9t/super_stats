@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { type WeeklyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { generateWeeklyHoroscope } from "@vibes/shared-utils";
+import {
+  EXTERNAL_API_TIMEOUT_MS,
+  LUCKY_COLORS,
+  ZODIAC_NAMES,
+  MOODS,
+  seedHash,
+} from "../constants";
+
+const VALID_SIGNS = new Set(Object.values(ZodiacSign));
 
 function getCurrentWeekStr(): string {
   const now = new Date();
@@ -21,90 +30,45 @@ export async function GET(request: Request) {
     );
   }
 
+  if (!VALID_SIGNS.has(sign.toLowerCase() as ZodiacSign)) {
+    return NextResponse.json(
+      { success: false, error: "Invalid zodiac sign", timestamp: new Date() },
+      { status: 400 },
+    );
+  }
+
   try {
     const externalUrl = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/weekly?sign=${sign.toLowerCase()}`;
-    console.log("[Weekly Prediction] Fetching from:", externalUrl);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      EXTERNAL_API_TIMEOUT_MS,
+    );
 
     const response = await fetch(externalUrl, {
       headers: {
         Accept: "application/json",
         "User-Agent": "Vibes-App/1.0",
       },
+      signal: controller.signal,
     });
 
-    console.log(
-      "[Weekly Prediction] Response status:",
-      response.status,
-      response.statusText,
-    );
+    clearTimeout(timeoutId);
 
     if (response.ok) {
       const data = await response.json();
-      console.log(
-        "[Weekly Prediction] Received data:",
-        JSON.stringify(data).substring(0, 200),
-      );
 
       if (data?.data?.horoscope_data) {
-        const seedStr = `${data.data.week}-${sign}`;
-        let hash = 0;
-        for (let i = 0; i < seedStr.length; i++) {
-          hash = seedStr.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const seed = Math.abs(hash);
-
-        const colors = [
-          "Red",
-          "Blue",
-          "Green",
-          "Yellow",
-          "Orange",
-          "Purple",
-          "Pink",
-          "White",
-          "Gold",
-          "Silver",
-          "Indigo",
-          "Emerald",
-          "Turquoise",
-          "Ruby",
-        ];
-        const compatibility = [
-          "Aries",
-          "Taurus",
-          "Gemini",
-          "Cancer",
-          "Leo",
-          "Virgo",
-          "Libra",
-          "Scorpio",
-          "Sagittarius",
-          "Capricorn",
-          "Aquarius",
-          "Pisces",
-        ];
-        const moods = [
-          "Optimistic",
-          "Reflective",
-          "Energetic",
-          "Calm",
-          "Creative",
-          "Focused",
-          "Adventurous",
-          "Grounded",
-          "Passionate",
-          "Thoughtful",
-          "Social",
-          "Independent",
-        ];
+        const seed = seedHash(`${data.data.week}-${sign}`);
 
         const prediction: WeeklyPrediction = {
           week: data.data.week,
           description: data.data.horoscope_data,
-          compatibility: compatibility[seed % compatibility.length],
+          compatibility: ZODIAC_NAMES[seed % ZODIAC_NAMES.length],
           lucky_number: (seed % 9) + 1,
-          color: colors[seed % colors.length],
-          mood: moods[seed % moods.length],
+          color: LUCKY_COLORS[seed % LUCKY_COLORS.length],
+          mood: MOODS[seed % MOODS.length],
         };
 
         return NextResponse.json({
@@ -115,10 +79,6 @@ export async function GET(request: Request) {
         });
       }
     }
-
-    console.log(
-      "[Weekly Prediction] External API failed, using fallback generator",
-    );
 
     const weekStr = getCurrentWeekStr();
     const generated = generateWeeklyHoroscope(

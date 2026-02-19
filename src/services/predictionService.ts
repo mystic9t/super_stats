@@ -1,16 +1,10 @@
 import {
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   ZodiacSign,
 } from "@vibes/shared-types";
 import { apiClient } from "@vibes/api-client";
 import { ServiceResponse } from "@/types";
-
-interface PredictionWithFallback<T> {
-  data: T;
-  isFallback: boolean;
-}
 
 class PredictionService {
   async getDailyPrediction(
@@ -67,22 +61,6 @@ class PredictionService {
           ? error.message
           : "Failed to fetch weekly prediction";
       console.error("Weekly Prediction Service Error:", message);
-      return { success: false, error: message };
-    }
-  }
-
-  async getMonthlyPrediction(
-    sign: ZodiacSign,
-  ): Promise<ServiceResponse<MonthlyPrediction>> {
-    try {
-      const prediction = await apiClient.getMonthlyPrediction(sign);
-      return { success: true, data: prediction };
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch monthly prediction";
-      console.error("Monthly Prediction Service Error:", message);
       return { success: false, error: message };
     }
   }

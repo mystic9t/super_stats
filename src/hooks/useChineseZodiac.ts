@@ -11,6 +11,7 @@ interface UseChineseZodiacReturn {
   chineseYear: string | null;
   element: string | null;
   isLoading: boolean;
+  error: string | null;
   fetchReading: (profile: UserProfile) => Promise<void>;
   refreshReading: (profile: UserProfile) => Promise<void>;
   clear: () => void;
@@ -21,9 +22,11 @@ export function useChineseZodiac(): UseChineseZodiacReturn {
   const [chineseYear, setChineseYear] = useState<string | null>(null);
   const [element, setElement] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchReading = useCallback(async (profile: UserProfile) => {
     setIsLoading(true);
+    setError(null);
     try {
       const chineseProfile = calculateChineseZodiac(
         new Date(profile.dateOfBirth),
@@ -32,8 +35,13 @@ export function useChineseZodiac(): UseChineseZodiacReturn {
       setReading(zodiacReading);
       setChineseYear(chineseProfile.chineseYear);
       setElement(chineseProfile.element); // Use the calculated specific element
-    } catch (error) {
-      console.error("Failed to fetch Chinese zodiac:", error);
+    } catch (err) {
+      console.error("Failed to fetch Chinese zodiac:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to calculate Chinese zodiac",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +58,7 @@ export function useChineseZodiac(): UseChineseZodiacReturn {
     setReading(null);
     setChineseYear(null);
     setElement(null);
+    setError(null);
   }, []);
 
   return {
@@ -57,6 +66,7 @@ export function useChineseZodiac(): UseChineseZodiacReturn {
     chineseYear,
     element,
     isLoading,
+    error,
     fetchReading,
     refreshReading,
     clear,

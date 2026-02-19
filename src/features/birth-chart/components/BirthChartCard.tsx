@@ -136,7 +136,7 @@ export function BirthChartCard({
     );
   }
 
-  const { chart, interpretations, houseMeanings, aspects, summary } = reading;
+  const { chart, interpretations, aspects, summary } = reading;
 
   return (
     <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
@@ -275,7 +275,7 @@ export function BirthChartCard({
                       {getZodiacSymbol(pos.sign)} {getZodiacDisplay(pos.sign)}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {pos.degree.toFixed(0)}°{pos.minutes}'
+                      {pos.degree.toFixed(0)}°{pos.minutes}&apos;
                     </span>
                     {expandedPlanet === pos.planet ? (
                       <ChevronUp className="h-4 w-4 text-muted-foreground" />
