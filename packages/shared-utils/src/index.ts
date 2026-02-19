@@ -8,6 +8,8 @@ export * from "./moon-phase";
 export * from "./moon-rituals";
 export * from "./horoscope-generator";
 export * from "./birth-chart";
+export * from "./compatibility";
+export * from "./affirmation";
 
 // Basic Numerology Utils
 export const calculateLifePathNumber = (date: Date): number => {

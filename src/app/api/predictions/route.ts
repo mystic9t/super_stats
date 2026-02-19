@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { type DailyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { generateDailyHoroscope } from "@vibes/shared-utils";
+import {
+  EXTERNAL_API_TIMEOUT_MS,
+  LUCKY_COLORS,
+  ZODIAC_NAMES,
+  LUCKY_TIMES,
+  MOODS,
+  seedHash,
+} from "./constants";
 
-interface DailyPredictionResponse {
-  success: boolean;
-  data?: DailyPrediction & { isFallback?: boolean };
-  error?: string;
-  timestamp: Date;
-  isFallback?: boolean;
-}
+const VALID_SIGNS = new Set(Object.values(ZodiacSign));
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -22,7 +24,14 @@ export async function GET(request: Request) {
     );
   }
 
-  if (!date) {
+  if (!VALID_SIGNS.has(sign.toLowerCase() as ZodiacSign)) {
+    return NextResponse.json(
+      { success: false, error: "Invalid zodiac sign", timestamp: new Date() },
+      { status: 400 },
+    );
+  }
+
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return NextResponse.json(
       {
         success: false,
@@ -35,75 +44,37 @@ export async function GET(request: Request) {
 
   try {
     const externalUrl = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign.toLowerCase()}&date=${date}`;
-    console.log("[Daily Prediction] Fetching from:", externalUrl);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      EXTERNAL_API_TIMEOUT_MS,
+    );
 
     const response = await fetch(externalUrl, {
       headers: {
         Accept: "application/json",
         "User-Agent": "Vibes-App/1.0",
       },
+      signal: controller.signal,
     });
 
-    console.log(
-      "[Daily Prediction] Response status:",
-      response.status,
-      response.statusText,
-    );
+    clearTimeout(timeoutId);
 
     if (response.ok) {
       const data = await response.json();
-      console.log(
-        "[Daily Prediction] Received data:",
-        JSON.stringify(data).substring(0, 200),
-      );
 
       if (data?.data?.horoscope_data) {
-        const seedStr = `${data.data.date}-${sign}`;
-        let hash = 0;
-        for (let i = 0; i < seedStr.length; i++) {
-          hash = seedStr.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const seed = Math.abs(hash);
-
-        const colors = [
-          "Red",
-          "Blue",
-          "Green",
-          "Yellow",
-          "Orange",
-          "Purple",
-          "Pink",
-          "White",
-          "Gold",
-          "Silver",
-          "Indigo",
-          "Emerald",
-          "Turquoise",
-          "Ruby",
-        ];
-        const compatibility = [
-          "Aries",
-          "Taurus",
-          "Gemini",
-          "Cancer",
-          "Leo",
-          "Virgo",
-          "Libra",
-          "Scorpio",
-          "Sagittarius",
-          "Capricorn",
-          "Aquarius",
-          "Pisces",
-        ];
+        const seed = seedHash(`${data.data.date}-${sign}`);
 
         const prediction: DailyPrediction = {
           current_date: data.data.date,
           description: data.data.horoscope_data,
-          compatibility: compatibility[seed % compatibility.length],
+          compatibility: ZODIAC_NAMES[seed % ZODIAC_NAMES.length],
           lucky_number: (seed % 9) + 1,
-          lucky_time: "12:00 PM",
-          color: colors[seed % colors.length],
-          mood: "Optimistic",
+          lucky_time: LUCKY_TIMES[(seed >> 4) % LUCKY_TIMES.length],
+          color: LUCKY_COLORS[seed % LUCKY_COLORS.length],
+          mood: MOODS[(seed >> 2) % MOODS.length],
           date_range: [data.data.date],
         };
 
@@ -115,10 +86,6 @@ export async function GET(request: Request) {
         });
       }
     }
-
-    console.log(
-      "[Daily Prediction] External API failed, using fallback generator",
-    );
 
     const generated = generateDailyHoroscope(
       sign.toUpperCase() as ZodiacSign,

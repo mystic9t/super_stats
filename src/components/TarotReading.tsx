@@ -185,7 +185,7 @@ export function TarotReading({
             ✨ Your Message
           </h3>
           <p className="text-sm text-foreground leading-relaxed text-center italic">
-            "{reading.summary}"
+            &ldquo;{reading.summary}&rdquo;
           </p>
         </div>
 

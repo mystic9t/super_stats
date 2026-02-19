@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useMemo } from "react";
 
 const TOTAL_CARDS = 22;
@@ -76,10 +77,11 @@ export function TarotShuffling() {
               delay: card.delay,
             }}
           >
-            <img
+            <Image
               src="/tarot/card_back.webp"
               alt="Card back"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </motion.div>
         ))}

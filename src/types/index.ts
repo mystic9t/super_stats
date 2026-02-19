@@ -2,19 +2,17 @@ import {
   UserProfile,
   DailyPrediction,
   WeeklyPrediction,
-  MonthlyPrediction,
   TarotReading,
   NumerologyReading,
   ChineseZodiacReading,
+  CompatibilityReading,
+  DailyAffirmation,
   PredictionPeriod,
   BirthChartReading,
+  ZodiacSign,
 } from "@vibes/shared-types";
 
 // Component Props Interfaces
-export interface NumerologyCardProps {
-  profile: UserProfile;
-}
-
 export interface DashboardProps {
   profile: UserProfile;
   onClear: () => void;
@@ -31,11 +29,6 @@ export interface DashboardProps {
   weeklyError: string | null;
   onGetWeeklyPrediction: () => void;
   onRefreshWeeklyPrediction: () => void;
-  // Monthly prediction
-  monthlyPrediction: MonthlyPrediction | null;
-  monthlyLoading: boolean;
-  onGetMonthlyPrediction: () => void;
-  onRefreshMonthlyPrediction: () => void;
   // Period selection
   predictionPeriod: PredictionPeriod;
   onPeriodChange: (period: PredictionPeriod) => void;
@@ -77,6 +70,17 @@ export interface DashboardProps {
   birthChartLoading: boolean;
   onGetBirthChart: () => void;
   onRefreshBirthChart: () => void;
+  // Compatibility
+  compatibilityReading: CompatibilityReading | null;
+  compatibilityPartnerSign: ZodiacSign | null;
+  compatibilityLoading: boolean;
+  onSelectCompatibilityPartner: (sign: ZodiacSign) => void;
+  onClearCompatibility: () => void;
+  // Affirmation
+  affirmation: DailyAffirmation | null;
+  affirmationLoading: boolean;
+  onGetAffirmation: () => void;
+  onRefreshAffirmation: () => void;
 }
 
 export interface OnboardingFormProps {
@@ -90,23 +94,4 @@ export interface ServiceResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-}
-
-export interface ProfileContextType {
-  profile: UserProfile | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface PredictionContextType {
-  prediction: DailyPrediction | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface TarotContextType {
-  reading: TarotReading | null;
-  isLoading: boolean;
-  canDraw: boolean;
-  error: string | null;
 }

@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, startTransition } from "react";
 import { Toaster, toast } from "sonner";
 import {
   useUserProfile,
   useDailyPrediction,
   useWeeklyPrediction,
-  useMonthlyPrediction,
   useNumerology,
   useTarotReading,
   useChineseZodiac,
   useMoonPhase,
   useBirthChart,
+  useCompatibility,
+  useAffirmation,
 } from "@/hooks";
 import { tarotService } from "@/services";
 import { Header } from "@/components/Header";
 import { Dashboard } from "@/features/dashboard/components/Dashboard";
 import { OnboardingForm } from "@/features/auth/components/OnboardingForm";
-import { PredictionPeriod } from "@vibes/shared-types";
+import { PredictionPeriod, UserProfile, ZodiacSign } from "@vibes/shared-types";
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -43,13 +44,6 @@ export default function Home() {
     refreshPrediction: refreshWeeklyPrediction,
     clear: clearWeeklyPrediction,
   } = useWeeklyPrediction();
-  const {
-    prediction: monthlyPrediction,
-    isLoading: monthlyLoading,
-    fetchPrediction: fetchMonthlyPrediction,
-    refreshPrediction: refreshMonthlyPrediction,
-    clear: clearMonthlyPrediction,
-  } = useMonthlyPrediction();
   const {
     reading: tarotReading,
     isDrawing: tarotLoading,
@@ -92,19 +86,39 @@ export default function Home() {
     refreshReading: refreshBirthChart,
     clear: clearBirthChart,
   } = useBirthChart();
+  const {
+    reading: compatibilityReading,
+    partnerSign: compatibilityPartnerSign,
+    isLoading: compatibilityLoading,
+    fetchReading: fetchCompatibility,
+    clear: clearCompatibility,
+  } = useCompatibility();
+  const {
+    affirmation,
+    isLoading: affirmationLoading,
+    fetchAffirmation,
+    refreshAffirmation,
+    clear: clearAffirmation,
+  } = useAffirmation();
 
+  // Use ref to track client-side mounting (SSR hydration fix)
+  const mounted = useRef(false);
   useEffect(() => {
-    setIsClient(true);
+    mounted.current = true;
+    startTransition(() => {
+      setIsClient(true);
+    });
   }, []);
 
   // Auto-fetch birth chart for advanced mode users
   useEffect(() => {
+    if (!mounted.current) return;
     if (profile?.advancedMode && !birthChartReading && !birthChartLoading) {
       fetchBirthChart(profile);
     }
-  }, [profile?.advancedMode]);
+  }, [profile, birthChartReading, birthChartLoading, fetchBirthChart]);
 
-  const handleSaveProfile = async (newProfile: any) => {
+  const handleSaveProfile = async (newProfile: UserProfile) => {
     setProfile(newProfile);
     setIsEditing(false);
     toast.success(profile ? "✨ Profile updated!" : "🌟 Welcome to Vibes!");
@@ -114,11 +128,12 @@ export default function Home() {
     clearProfile();
     clearPrediction();
     clearWeeklyPrediction();
-    clearMonthlyPrediction();
     clearNumerology();
     clearTarot();
     clearChineseZodiac();
     clearBirthChart();
+    clearCompatibility();
+    clearAffirmation();
     toast.info("🌙 Profile cleared, fresh start!");
   };
 
@@ -139,7 +154,7 @@ export default function Home() {
     try {
       await fetchBirthChart(profile);
       toast.success("🌟 Birth chart calculated!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to calculate birth chart.");
     }
   };
@@ -149,7 +164,7 @@ export default function Home() {
     try {
       await refreshBirthChart(profile);
       toast.success("🔄 Birth chart refreshed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to refresh birth chart.");
     }
   };
@@ -159,7 +174,7 @@ export default function Home() {
     try {
       await fetchPrediction(profile.sunSign);
       toast.success("⭐ Stars aligned!");
-    } catch (err) {
+    } catch {
       toast.error("☁️ Cloudy skies... try again later.");
     }
   };
@@ -169,7 +184,7 @@ export default function Home() {
     try {
       await refreshPrediction(profile.sunSign);
       toast.success("🔄 Prediction refreshed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to refresh prediction.");
     }
   };
@@ -179,7 +194,7 @@ export default function Home() {
     try {
       await fetchWeeklyPrediction(profile.sunSign);
       toast.success("📅 Weekly forecast ready!");
-    } catch (err) {
+    } catch {
       toast.error("Cloudy skies for the week... try again later.");
     }
   };
@@ -189,28 +204,8 @@ export default function Home() {
     try {
       await refreshWeeklyPrediction(profile.sunSign);
       toast.success("🔄 Weekly prediction refreshed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to refresh weekly prediction.");
-    }
-  };
-
-  const handleGetMonthlyPrediction = async () => {
-    if (!profile) return;
-    try {
-      await fetchMonthlyPrediction(profile.sunSign);
-      toast.success("📊 Monthly forecast ready!");
-    } catch (err) {
-      toast.error("Cloudy skies for the month... try again later.");
-    }
-  };
-
-  const handleRefreshMonthlyPrediction = async () => {
-    if (!profile) return;
-    try {
-      await refreshMonthlyPrediction(profile.sunSign);
-      toast.success("🔄 Monthly prediction refreshed!");
-    } catch (err) {
-      toast.error("Failed to refresh monthly prediction.");
     }
   };
 
@@ -219,7 +214,7 @@ export default function Home() {
     try {
       await fetchNumerology(profile);
       toast.success("🔢 Your cosmic numbers revealed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to calculate numerology.");
     }
   };
@@ -229,7 +224,7 @@ export default function Home() {
     try {
       await refreshNumerology(profile);
       toast.success("🔄 Numerology refreshed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to refresh numerology.");
     }
   };
@@ -239,7 +234,7 @@ export default function Home() {
     try {
       await refreshCards(profile);
       toast.success("🃏 Cards redrawn!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to redraw cards.");
     }
   };
@@ -268,7 +263,7 @@ export default function Home() {
     try {
       await fetchChineseZodiac(profile);
       toast.success("Chinese zodiac revealed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch Chinese zodiac.");
     }
   };
@@ -278,9 +273,26 @@ export default function Home() {
     try {
       await refreshChineseZodiac(profile);
       toast.success("Chinese zodiac refreshed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to refresh Chinese zodiac.");
     }
+  };
+
+  const handleSelectCompatibilityPartner = (sign: ZodiacSign) => {
+    if (!profile) return;
+    fetchCompatibility(profile.sunSign, sign);
+  };
+
+  const handleGetAffirmation = () => {
+    if (!profile) return;
+    fetchAffirmation(profile.sunSign);
+    toast.success("✨ Your cosmic affirmation awaits!");
+  };
+
+  const handleRefreshAffirmation = () => {
+    if (!profile) return;
+    refreshAffirmation(profile.sunSign);
+    toast.success("🔄 Affirmation refreshed!");
   };
 
   if (!isClient) return null;
@@ -322,10 +334,6 @@ export default function Home() {
             weeklyError={weeklyError}
             onGetWeeklyPrediction={handleGetWeeklyPrediction}
             onRefreshWeeklyPrediction={handleRefreshWeeklyPrediction}
-            monthlyPrediction={monthlyPrediction}
-            monthlyLoading={monthlyLoading}
-            onGetMonthlyPrediction={handleGetMonthlyPrediction}
-            onRefreshMonthlyPrediction={handleRefreshMonthlyPrediction}
             predictionPeriod={predictionPeriod}
             onPeriodChange={setPredictionPeriod}
             onEdit={() => setIsEditing(true)}
@@ -358,6 +366,15 @@ export default function Home() {
             birthChartLoading={birthChartLoading}
             onGetBirthChart={handleGetBirthChart}
             onRefreshBirthChart={handleRefreshBirthChart}
+            compatibilityReading={compatibilityReading}
+            compatibilityPartnerSign={compatibilityPartnerSign}
+            compatibilityLoading={compatibilityLoading}
+            onSelectCompatibilityPartner={handleSelectCompatibilityPartner}
+            onClearCompatibility={clearCompatibility}
+            affirmation={affirmation}
+            affirmationLoading={affirmationLoading}
+            onGetAffirmation={handleGetAffirmation}
+            onRefreshAffirmation={handleRefreshAffirmation}
           />
         ) : (
           <OnboardingForm

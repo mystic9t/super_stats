@@ -12,8 +12,6 @@ export function getMoonRituals(
   phase: MoonPhase,
   sunSign: ZodiacSign,
 ): MoonRitual[] {
-  const rituals: MoonRitual[] = [];
-
   // Base rituals for each moon phase
   const baseRituals: Record<MoonPhase, MoonRitual[]> = {
     [MoonPhase.NEW_MOON]: [
@@ -633,24 +631,4 @@ export function getZodiacMoonInfluence(
       avoid: ["Resistance", "Overthinking", "Fear"],
     }
   );
-}
-
-/**
- * Get zodiac element
- */
-function getZodiacElement(sign: ZodiacSign): string {
-  const fireSigns = [ZodiacSign.ARIES, ZodiacSign.LEO, ZodiacSign.SAGITTARIUS];
-  const earthSigns = [
-    ZodiacSign.TAURUS,
-    ZodiacSign.VIRGO,
-    ZodiacSign.CAPRICORN,
-  ];
-  const airSigns = [ZodiacSign.GEMINI, ZodiacSign.LIBRA, ZodiacSign.AQUARIUS];
-  const waterSigns = [ZodiacSign.CANCER, ZodiacSign.SCORPIO, ZodiacSign.PISCES];
-
-  if (fireSigns.includes(sign)) return "fire";
-  if (earthSigns.includes(sign)) return "earth";
-  if (airSigns.includes(sign)) return "air";
-  if (waterSigns.includes(sign)) return "water";
-  return "unknown";
 }

@@ -162,7 +162,7 @@ export function DailyHoroscopeCard({
             variants={itemVariants}
             className="text-base leading-relaxed text-foreground italic"
           >
-            "{prediction.description}"
+            &ldquo;{prediction.description}&rdquo;
           </motion.p>
 
           {/* Lucky Number & Color */}
