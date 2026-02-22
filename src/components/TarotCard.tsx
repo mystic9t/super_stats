@@ -10,12 +10,14 @@ interface TarotCardProps {
   drawnCard: DrawnCard;
   isRevealed?: boolean;
   showBack?: boolean;
+  onClick?: () => void;
 }
 
 export function TarotCard({
   drawnCard,
   isRevealed = true,
   showBack = false,
+  onClick,
 }: TarotCardProps) {
   const { card, position, isReversed } = drawnCard;
   const positionInfo = getPositionDescription(position);
@@ -24,7 +26,18 @@ export function TarotCard({
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="flex flex-col items-center gap-3 group">
+    <div
+      className="flex flex-col items-center gap-3 group"
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
       {/* Position Description */}
       <div className="text-center">
         <p className="text-xs text-slate-400 max-w-[140px]">
@@ -41,6 +54,7 @@ export function TarotCard({
           group-hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]
           transition-all duration-300
           ${isReversed ? "rotate-180" : ""}
+          ${onClick ? "cursor-pointer hover:scale-105" : ""}
         `}
       >
         {/* Decorative corner ornaments */}

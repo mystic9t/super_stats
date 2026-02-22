@@ -21,6 +21,7 @@ import {
   Sun,
   Rabbit,
   Sparkles,
+  Settings,
 } from "lucide-react";
 import { DailyHoroscopeCard } from "@/features/predictions/components/DailyHoroscopeCard";
 import { WeeklyHoroscopeCard } from "@/features/predictions/components/WeeklyHoroscopeCard";
@@ -31,6 +32,8 @@ import { MoonPhaseCard } from "@/features/moon-phase/components/MoonPhaseCard";
 import { BirthChartCard } from "@/features/birth-chart/components/BirthChartCard";
 import { CompatibilityCard } from "@/features/compatibility/components/CompatibilityCard";
 import { AffirmationCard } from "@/features/affirmation/components/AffirmationCard";
+import { DataExportImport } from "@/components/DataExportImport";
+import { ProfileSwitcher } from "@/components/ProfileSwitcher";
 import { DashboardProps } from "@/types";
 import { PredictionPeriod } from "@vibes/shared-types";
 
@@ -42,7 +45,8 @@ interface Section {
     | "chinese-zodiac"
     | "moon-phase"
     | "birth-chart"
-    | "affirmation";
+    | "affirmation"
+    | "settings";
   label: string;
   loadingLabel: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -239,6 +243,8 @@ export function Dashboard({
   profile,
   onClear,
   onEdit,
+  onAddProfile,
+  onProfileSwitch,
   // Daily prediction
   prediction,
   loading,
@@ -312,6 +318,7 @@ export function Dashboard({
     | "moon-phase"
     | "birth-chart"
     | "affirmation"
+    | "settings"
     | null
   >(null);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -335,6 +342,7 @@ export function Dashboard({
       | "moon-phase"
       | "birth-chart"
       | "affirmation"
+      | "settings"
       | null,
   ) => {
     setActiveSection(section);
@@ -470,6 +478,20 @@ export function Dashboard({
         },
         isLoading: chineseZodiacLoading,
       },
+      {
+        id: "settings" as const,
+        label: "Settings",
+        loadingLabel: "Loading...",
+        icon: Settings,
+        onClick: () => {
+          if (activeSection === "settings") {
+            handleSectionChange(null);
+          } else {
+            handleSectionChange("settings");
+          }
+        },
+        isLoading: false,
+      },
     ],
     [
       activeSection,
@@ -563,6 +585,11 @@ export function Dashboard({
                 </p>
               </div>
               <div className="flex gap-1 sm:gap-2">
+                <ProfileSwitcher
+                  onAddProfile={onAddProfile}
+                  onProfileSwitch={onProfileSwitch}
+                  currentProfileName={profile.name}
+                />
                 <Button
                   variant="ghost"
                   size="icon"
@@ -797,6 +824,7 @@ export function Dashboard({
                 isShuffling={tarotShuffling}
                 isRevealing={tarotRevealing}
                 revealedCards={tarotRevealedCards}
+                profile={profile}
               />
             </div>
           )}
@@ -861,6 +889,13 @@ export function Dashboard({
                 isLoading={compatibilityLoading}
                 onSelectPartner={onSelectCompatibilityPartner}
               />
+            </div>
+          )}
+
+          {/* Settings Section - Backup & Restore */}
+          {activeSection === "settings" && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <DataExportImport />
             </div>
           )}
         </div>

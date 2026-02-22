@@ -1,39 +1,70 @@
 # Vibes ✨
 
-_Your daily dose of cosmic guidance._
+Your personal cosmic guidance dashboard. Built for us, deployed to the world.
 
 ---
 
-## What is Vibes?
+## What's This?
 
-Vibes is your personal space for spiritual insights. Pull a tarot card, discover your numbers, read your horoscope—all in one beautifully calm place.
+A Next.js app that serves up daily horoscopes, tarot readings, numerology, birth charts, moon phases, Chinese zodiac, compatibility checks, and affirmations. Basically, if it involves the stars, we've probably got it.
 
-No accounts. No noise. Just vibes.
-
----
-
-## What You'll Find
-
-**Tarot Readings**  
-Three-card spreads for clarity. One reading per day—make it count.
-
-**Numerology**  
-Your Life Path and Destiny numbers, decoded from your birth date.
-
-**Daily Horoscopes**  
-Personalized predictions based on your zodiac sign.
-
-**Your Profile, Saved**  
-Your birthday and preferences stay with you. Come back anytime.
+**No accounts. No databases. Just vibes and localStorage.**
 
 ---
 
-## The Vibe
+## Features
 
-Vibes is designed to feel like a breath of fresh air. Dark mode that's actually dark. Smooth animations. No clutter. No ads. No account required.
-
-Just you and the cosmos.
+| Feature              | What It Does                                     |
+| :------------------- | :----------------------------------------------- |
+| **Tarot**            | Three-card daily spread with shuffling animation |
+| **Numerology**       | Life Path & Destiny from your birthday           |
+| **Daily Horoscope**  | Personalized based on your zodiac                |
+| **Weekly Horoscope** | 7-day forecast                                   |
+| **Birth Chart**      | Visual wheel with sun, moon, rising              |
+| **Moon Phase**       | Current phase, rituals, zodiac transit           |
+| **Chinese Zodiac**   | Animal + element + traits                        |
+| **Compatibility**    | Love match between signs                         |
+| **Affirmations**     | Daily cosmic boost                               |
+| **Multi-profile**    | Switch between friends/family                    |
+| **Data Export**      | JSON backup/restore                              |
+| **Share as Image**   | Download readings as PNG                         |
+| **PWA**              | Add to home screen                               |
 
 ---
 
-_Made with intention._
+## The Look
+
+Dark mode first. Smooth animations. Clean UI powered by shadcn/ui. We care about the experience.
+
+---
+
+## Tech
+
+- Next.js 16 (App Router)
+- Bun
+- Tailwind CSS
+- shadcn/ui + Radix
+- Framer Motion
+- Lucide React
+- localStorage for persistence
+
+---
+
+## Running Locally
+
+```bash
+bun install
+bun dev
+```
+
+---
+
+## Branching
+
+- `dev` — main development
+- `master` — production
+- PRs auto-deploy to Vercel previews
+
+---
+
+**Built with intention.** 🌙

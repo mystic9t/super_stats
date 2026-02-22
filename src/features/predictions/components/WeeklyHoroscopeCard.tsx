@@ -1,11 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, RotateCw, Sparkles, Star } from "lucide-react";
 import { WeeklyPrediction, ZodiacSign } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
 import { motion } from "framer-motion";
+import { ShareButton } from "@/components/ShareButton";
 
 interface WeeklyHoroscopeCardProps {
   prediction: WeeklyPrediction;
@@ -45,9 +47,13 @@ export function WeeklyHoroscopeCard({
 }: WeeklyHoroscopeCardProps) {
   const zodiacSymbol = getZodiacSymbol(sunSign);
   const zodiacName = getZodiacDisplay(sunSign);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+    >
       {/* Mystical background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating stars */}
@@ -132,18 +138,29 @@ export function WeeklyHoroscopeCard({
               </p>
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="text-accent hover:text-primary hover:bg-primary/10"
-            title="Refresh weekly prediction"
-          >
-            <RotateCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            {cardRef.current && (
+              <ShareButton
+                targetRef={cardRef}
+                filename={`weekly-horoscope-${sunSign}-${prediction.week}.png`}
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
+              />
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="text-accent hover:text-primary hover:bg-primary/10"
+              title="Refresh weekly prediction"
+            >
+              <RotateCw
+                className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 

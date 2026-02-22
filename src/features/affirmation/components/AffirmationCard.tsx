@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/ShareButton";
 import {
   Sparkles,
   RotateCw,
@@ -65,6 +67,8 @@ export function AffirmationCard({
   isLoading,
   onRefresh,
 }: AffirmationCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   if (!affirmation) {
     return (
       <Card className="border border-border bg-card/95 backdrop-blur-xl">
@@ -90,7 +94,10 @@ export function AffirmationCard({
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+        <Card
+          ref={cardRef}
+          className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+        >
           {/* Floating element particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div
@@ -118,18 +125,29 @@ export function AffirmationCard({
                 </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onRefresh}
-              disabled={isLoading}
-              className="text-accent hover:text-amber-400 hover:bg-amber-500/10 h-8 w-8"
-              aria-label="Refresh affirmation"
-            >
-              <RotateCw
-                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-              />
-            </Button>
+            <div className="flex items-center gap-1">
+              {cardRef.current && (
+                <ShareButton
+                  targetRef={cardRef}
+                  filename={`affirmation-${affirmation.date}.png`}
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                />
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onRefresh}
+                disabled={isLoading}
+                className="text-accent hover:text-amber-400 hover:bg-amber-500/10 h-8 w-8"
+                aria-label="Refresh affirmation"
+              >
+                <RotateCw
+                  className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                />
+              </Button>
+            </div>
           </CardHeader>
 
           <CardContent className="relative space-y-4 px-4 sm:px-6 pb-6">

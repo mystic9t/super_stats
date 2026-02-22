@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { ChineseZodiacReading, ChineseZodiacSign } from "@vibes/shared-types";
 import {
   Card,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { ShareButton } from "@/components/ShareButton";
 
 interface ChineseZodiacCardProps {
   reading: ChineseZodiacReading | null;
@@ -113,9 +115,13 @@ export function ChineseZodiacCard({
 }: ChineseZodiacCardProps) {
   const elementColorClass = getElementColor(element);
   const elementBgClass = getElementBgColor(element);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+    >
       {/* Zodiac Circle Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Outer circle with zodiac animals */}
@@ -232,6 +238,15 @@ export function ChineseZodiacCard({
               </CardDescription>
             </div>
           </div>
+          {cardRef.current && reading && (
+            <ShareButton
+              targetRef={cardRef}
+              filename={`chinese-zodiac-${reading.sign}.png`}
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+            />
+          )}
         </div>
       </CardHeader>
 
