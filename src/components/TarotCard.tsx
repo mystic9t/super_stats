@@ -29,6 +29,12 @@ export function TarotCard({
     <div
       className="flex flex-col items-center gap-3 group"
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >

@@ -65,7 +65,7 @@ export function ShareButton({
       toast.error("Failed to generate image");
       setTimeout(() => setStatus("idle"), 2000);
     }
-  }, [targetRef, filename, toast]);
+  }, [targetRef, filename]);
 
   return (
     <Button

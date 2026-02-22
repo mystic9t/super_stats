@@ -11,12 +11,16 @@ export interface VibesExportData {
   exportedAt: string;
   data: {
     profile?: string; // stored as serialized JSON string
+    profiles?: Record<string, string>; // profile_id -> serialized JSON
+    profilesList?: string; // JSON array of profile IDs
+    activeProfileId?: string;
     predictions?: Record<string, string>; // key -> serialized JSON
     weeklyPredictions?: Record<string, string>;
     numerology?: Record<string, string>;
     birthCharts?: Record<string, string>;
     moonPhase?: string;
-    tarot?: string;
+    tarot?: string; // legacy single-user tarot
+    tarotProfiles?: Record<string, string>; // per-profile tarot keys
   };
 }
 
@@ -29,12 +33,14 @@ function getAllVibesKeys(): string[] {
   const vibesKeys: string[] = [];
   const prefixes = [
     "vibes-",
+    "vibes-user-profile_profile_", // new multi-profile format
     "prediction-cache-",
     "weekly-prediction-cache-",
     "numerology-cache_",
     "birth-chart-cache-",
     "moon-phase-cache",
-    "vibes_tarot",
+    "vibes_tarot", // legacy tarot key
+    "vibes_tarot_", // per-profile tarot keys
   ];
 
   for (let i = 0; i < window.localStorage.length; i++) {
@@ -71,6 +77,16 @@ export function exportAllData(): VibesExportData {
 
       if (key === "vibes-user-profile") {
         exportData.data.profile = serialized;
+      } else if (key.startsWith("vibes-user-profile_profile_")) {
+        const profileId = key.replace("vibes-user-profile_profile_", "");
+        if (!exportData.data.profiles) {
+          exportData.data.profiles = {};
+        }
+        exportData.data.profiles[profileId] = serialized;
+      } else if (key === "vibes-profiles-list") {
+        exportData.data.profilesList = serialized;
+      } else if (key === "vibes-active-profile-id") {
+        exportData.data.activeProfileId = serialized;
       } else if (key.startsWith("prediction-cache-")) {
         if (!exportData.data.predictions) {
           exportData.data.predictions = {};
@@ -95,6 +111,11 @@ export function exportAllData(): VibesExportData {
         exportData.data.moonPhase = serialized;
       } else if (key === "vibes_tarot") {
         exportData.data.tarot = serialized;
+      } else if (key.startsWith("vibes_tarot_") && key !== "vibes_tarot") {
+        if (!exportData.data.tarotProfiles) {
+          exportData.data.tarotProfiles = {};
+        }
+        exportData.data.tarotProfiles[key] = serialized;
       }
     } catch (e) {
       console.warn(`Failed to parse localStorage key: ${key}`, e);
@@ -134,9 +155,36 @@ export function importData(importData: VibesExportData): number {
 
   let imported = 0;
 
-  // Import profile
+  // Import legacy single profile (for backward compatibility)
   if (importData.data.profile) {
     window.localStorage.setItem("vibes-user-profile", importData.data.profile);
+    imported++;
+  }
+
+  // Import multi-profile data (new format)
+  if (importData.data.profiles) {
+    for (const [profileId, value] of Object.entries(importData.data.profiles)) {
+      const key = `vibes-user-profile_profile_${profileId}`;
+      window.localStorage.setItem(key, value);
+      imported++;
+    }
+  }
+
+  // Import profiles list
+  if (importData.data.profilesList) {
+    window.localStorage.setItem(
+      "vibes-profiles-list",
+      importData.data.profilesList,
+    );
+    imported++;
+  }
+
+  // Import active profile ID
+  if (importData.data.activeProfileId) {
+    window.localStorage.setItem(
+      "vibes-active-profile-id",
+      importData.data.activeProfileId,
+    );
     imported++;
   }
 
@@ -180,10 +228,18 @@ export function importData(importData: VibesExportData): number {
     imported++;
   }
 
-  // Import tarot
+  // Import tarot (legacy)
   if (importData.data.tarot) {
     window.localStorage.setItem("vibes_tarot", importData.data.tarot);
     imported++;
+  }
+
+  // Import per-profile tarot
+  if (importData.data.tarotProfiles) {
+    for (const [key, value] of Object.entries(importData.data.tarotProfiles)) {
+      window.localStorage.setItem(key, value);
+      imported++;
+    }
   }
 
   return imported;
