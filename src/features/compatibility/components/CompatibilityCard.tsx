@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import {
 import { ZodiacSign, CompatibilityReading } from "@vibes/shared-types";
 import { getZodiacSymbol, getZodiacDisplay } from "@vibes/shared-utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { ShareButton } from "@/components/ShareButton";
 
 interface CompatibilityCardProps {
   userSign: ZodiacSign;
@@ -126,9 +128,13 @@ export function CompatibilityCard({
 }: CompatibilityCardProps) {
   const userSymbol = getZodiacSymbol(userSign);
   const userName = getZodiacDisplay(userSign);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+    >
       {/* Background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-pink-500/5 rounded-full blur-3xl" />
@@ -160,7 +166,7 @@ export function CompatibilityCard({
           >
             {userSymbol}
           </motion.span>
-          <div>
+          <div className="flex-1">
             <CardTitle className="text-xl bg-gradient-to-r from-pink-500 to-accent bg-clip-text text-transparent">
               {userName} Compatibility
             </CardTitle>
@@ -168,6 +174,15 @@ export function CompatibilityCard({
               Select a sign to check your cosmic connection
             </p>
           </div>
+          {cardRef.current && reading && partnerSign && (
+            <ShareButton
+              targetRef={cardRef}
+              filename={`compatibility-${userSign}-${partnerSign}.png`}
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+            />
+          )}
         </div>
       </CardHeader>
 

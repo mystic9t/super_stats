@@ -17,6 +17,8 @@ export interface DashboardProps {
   profile: UserProfile;
   onClear: () => void;
   onEdit: () => void;
+  onAddProfile: () => void;
+  onProfileSwitch: () => void;
   // Daily prediction
   prediction: DailyPrediction | null;
   loading: boolean;

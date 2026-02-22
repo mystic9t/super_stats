@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { NumerologyReading, NumerologyNumber } from "@vibes/shared-types";
 import { motion, AnimatePresence } from "framer-motion";
+import { ShareButton } from "@/components/ShareButton";
 
 interface NumerologySectionProps {
   reading: NumerologyReading | null;
@@ -67,6 +68,8 @@ export function NumerologySection({
     birthday: false,
     personalYear: false,
   });
+
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const toggleSection = (section: SectionKey) => {
     setExpandedSections((prev) => ({
@@ -173,7 +176,10 @@ export function NumerologySection({
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+          <Card
+            ref={cardRef}
+            className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+          >
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <motion.div
@@ -191,17 +197,28 @@ export function NumerologySection({
             </div>
 
             <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <motion.div
-                  className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Calculator className="h-6 w-6 text-primary" />
-                </motion.div>
-                <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Numerology Insights
-                </span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-3">
+                  <motion.div
+                    className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <Calculator className="h-6 w-6 text-primary" />
+                  </motion.div>
+                  <span className="text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    Numerology Insights
+                  </span>
+                </CardTitle>
+                {cardRef.current && (
+                  <ShareButton
+                    targetRef={cardRef}
+                    filename={`numerology-insights.png`}
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-foreground"
+                  />
+                )}
+              </div>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
               {isRefreshing ? (

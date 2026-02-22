@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,8 @@ import {
 import { BirthChartReading, ZodiacSign, Planet } from "@vibes/shared-types";
 import { getZodiacDisplay, getZodiacSymbol } from "@vibes/shared-utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { BirthChartWheel } from "./BirthChartWheel";
+import { ShareButton } from "@/components/ShareButton";
 
 interface BirthChartCardProps {
   reading: BirthChartReading | null;
@@ -76,6 +78,7 @@ export function BirthChartCard({
   isRefreshing,
 }: BirthChartCardProps) {
   const [expandedPlanet, setExpandedPlanet] = useState<Planet | null>("sun");
+  const cardRef = useRef<HTMLDivElement>(null);
 
   if (!reading) {
     return (
@@ -139,7 +142,10 @@ export function BirthChartCard({
   const { chart, interpretations, aspects, summary } = reading;
 
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden relative"
+    >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-12 right-12 w-1.5 h-1.5 bg-primary rounded-full"
@@ -172,22 +178,44 @@ export function BirthChartCard({
               Your Birth Chart
             </span>
           </CardTitle>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="text-primary hover:text-accent hover:bg-accent/10"
-            title="Refresh birth chart"
-          >
-            <RotateCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            {cardRef.current && (
+              <ShareButton
+                targetRef={cardRef}
+                filename={`birth-chart-${chart.sunSign}.png`}
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
+              />
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="text-primary hover:text-accent hover:bg-accent/10"
+              title="Refresh birth chart"
+            >
+              <RotateCw
+                className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
       <CardContent className="relative z-10 space-y-6">
+        {/* Birth Chart Wheel Visualizer */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex justify-center"
+        >
+          <BirthChartWheel reading={reading} />
+        </motion.div>
+
+        {/* Quick stats row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

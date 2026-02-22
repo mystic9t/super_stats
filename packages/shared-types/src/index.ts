@@ -101,6 +101,8 @@ export interface TarotReading {
 export interface TarotState {
   lastReading: TarotReading | null;
   lastDrawDate: string | null; // YYYY-MM-DD format
+  history: TarotReading[]; // Last 7 days of readings
+  favorites: number[]; // Array of card IDs marked as favorites
 }
 
 export type PredictionPeriod = "daily" | "weekly" | "moon" | "match";

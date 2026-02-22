@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RotateCw, Sparkles, Moon, Calendar } from "lucide-react";
@@ -11,6 +12,7 @@ import {
 } from "@vibes/shared-types";
 import { getZodiacDisplay, getZodiacSymbol } from "@vibes/shared-utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { ShareButton } from "@/components/ShareButton";
 
 interface MoonPhaseCardProps {
   moonData: MoonPhaseData | null;
@@ -219,8 +221,13 @@ export function MoonPhaseCard({
     });
   };
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Card className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden"
+    >
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -234,17 +241,28 @@ export function MoonPhaseCard({
               </p>
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onRefresh}
-            disabled={isLoading}
-            className="text-accent hover:text-primary hover:bg-primary/10"
-          >
-            <RotateCw
-              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            {cardRef.current && moonData && (
+              <ShareButton
+                targetRef={cardRef}
+                filename={`moon-phase-${moonData.phase}.png`}
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
+              />
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="text-accent hover:text-primary hover:bg-primary/10"
+            >
+              <RotateCw
+                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+              />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 

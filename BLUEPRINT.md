@@ -12,7 +12,7 @@
 
 **Core Philosophy:** No accounts. No noise. Just vibes. Dark mode by default, smooth animations, no clutter, no ads.
 
-**Current State:** Feature-complete MVP with 8 core features implemented. Data persisted via localStorage only.
+**Current State:** Feature-complete MVP with all 8 core features plus 7 enhancements implemented. Data persisted via localStorage only. PWA-enabled for mobile installation.
 
 ---
 
@@ -143,7 +143,7 @@ All types defined in `packages/shared-types/src/index.ts`:
 
 > Priority order based on user value, feasibility, and product differentiation.
 
-### 1. Birth Chart Visualizer (Priority: HIGH)
+### 1. Birth Chart Visualizer (Priority: HIGH) — ✅ COMPLETE
 
 **What:** Visual wheel/circle display of birth chart instead of text-only.
 
@@ -153,7 +153,7 @@ All types defined in `packages/shared-types/src/index.ts`:
 - Interactive: hover for details
   **Why:** Birth charts are text-heavy; visualization dramatically improves UX and shareability.
 
-### 2. Data Export/Import (Priority: HIGH)
+### 2. Data Export/Import (Priority: HIGH) — ✅ COMPLETE
 
 **What:** Allow users to backup and restore their profile and readings.
 
@@ -162,7 +162,7 @@ All types defined in `packages/shared-types/src/index.ts`:
 - One-click "download my vibes" button
   **Why:** Users fear losing data; this builds trust and enables future migration.
 
-### 3. Tarot Card Detail View (Priority: MEDIUM)
+### 3. Tarot Card Detail View (Priority: MEDIUM) — ✅ COMPLETE
 
 **What:** Expanded card view with full meanings and history.
 
@@ -171,7 +171,7 @@ All types defined in `packages/shared-types/src/index.ts`:
 - Save favorite cards to a collection
   **Why:** Increases engagement time and provides deeper value.
 
-### 4. Rising Sign Calculator (Priority: MEDIUM)
+### 4. Rising Sign Calculator (Priority: MEDIUM) — ✅ COMPLETE
 
 **What:** Calculate and display rising sign (Ascendant) based on birth time/location.
 
@@ -180,7 +180,7 @@ All types defined in `packages/shared-types/src/index.ts`:
 - If no birth time, show placeholder in UI
   **Why:** Birth charts without rising sign are incomplete; this is high-value for advanced users.
 
-### 5. Reading Share as Image (Priority: MEDIUM)
+### 5. Reading Share as Image (Priority: MEDIUM) — ✅ COMPLETE
 
 **What:** Generate shareable image of any reading.
 
@@ -188,6 +188,15 @@ All types defined in `packages/shared-types/src/index.ts`:
 - Create "Share" button on each card/section
 - Generate beautiful image with cosmic branding
   **Why:** Social sharing = free organic growth; users love sharing spiritual insights.
+
+---
+
+## Additional Features Implemented
+
+- **Multiple Save Profiles** — Create and switch between multiple user profiles
+- **PWA Support** — Installable web app with offline caching
+- **Tarot History** — View past 7 days of readings
+- **Favorites Collection** — Save favorite tarot cards
 
 ---
 

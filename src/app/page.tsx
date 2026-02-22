@@ -337,6 +337,15 @@ export default function Home() {
             predictionPeriod={predictionPeriod}
             onPeriodChange={setPredictionPeriod}
             onEdit={() => setIsEditing(true)}
+            onAddProfile={() => {
+              // Clear profile and go to onboarding to create a new one
+              handleClear();
+              setIsEditing(true);
+            }}
+            onProfileSwitch={() => {
+              // Profile switch triggers page reload in ProfileSwitcher
+              // This handler satisfies the prop requirement
+            }}
             numerologyReading={numerologyReading}
             numerologyLoading={numerologyLoading}
             onGetNumerology={handleGetNumerology}

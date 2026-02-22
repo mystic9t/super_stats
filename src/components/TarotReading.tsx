@@ -1,8 +1,16 @@
 "use client";
 
-import { TarotReading as TarotReadingType } from "@vibes/shared-types";
+import { useState, useRef } from "react";
+import {
+  TarotReading as TarotReadingType,
+  UserProfile,
+  DrawnCard,
+} from "@vibes/shared-types";
 import { TarotCard } from "./TarotCard";
+import { TarotCardDetail } from "./TarotCardDetail";
+import { TarotHistory } from "./TarotHistory";
 import { TarotShuffling } from "./TarotShuffling";
+import { ShareButton } from "./ShareButton";
 import {
   Card,
   CardContent,
@@ -11,7 +19,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, RotateCw, Wand2 } from "lucide-react";
+import { Sparkles, RotateCw, Wand2, History } from "lucide-react";
 
 interface TarotReadingProps {
   reading: TarotReadingType | null;
@@ -24,6 +32,7 @@ interface TarotReadingProps {
     challenge: boolean;
     outcome: boolean;
   };
+  profile?: UserProfile | null;
 }
 
 export function TarotReading({
@@ -33,7 +42,12 @@ export function TarotReading({
   isShuffling = false,
   isRevealing = false,
   revealedCards = { situation: true, challenge: true, outcome: true },
+  profile = null,
 }: TarotReadingProps) {
+  const [selectedCard, setSelectedCard] = useState<DrawnCard | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
   // Show shuffling animation when drawing (before reading exists)
   if (isShuffling || !reading) {
     return (
@@ -63,7 +77,10 @@ export function TarotReading({
   const [situation, challenge, outcome] = reading.cards;
 
   return (
-    <Card className="border border-border shadow-2xl bg-gradient-to-br from-card via-card/95 to-card overflow-hidden relative">
+    <Card
+      ref={cardRef}
+      className="border border-border shadow-2xl bg-gradient-to-br from-card via-card/95 to-card overflow-hidden relative"
+    >
       {/* Mystical background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}
@@ -113,21 +130,32 @@ export function TarotReading({
             })}{" "}
             ✨
           </CardDescription>
-          {onRefresh && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onRefresh}
-              disabled={isRefreshing}
-              className="text-accent hover:text-amber-500 hover:border-amber-400 hover:bg-amber-500/10 transition-colors flex items-center gap-1.5 text-xs"
-              title="Redraw cards"
-            >
-              <RotateCw
-                className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+          <div className="flex items-center gap-2">
+            {cardRef.current && (
+              <ShareButton
+                targetRef={cardRef}
+                filename={`tarot-reading-${new Date(reading.date).toISOString().split("T")[0]}.png`}
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-foreground"
               />
-              <span>Redraw</span>
-            </Button>
-          )}
+            )}
+            {onRefresh && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className="text-accent hover:text-amber-500 hover:border-amber-400 hover:bg-amber-500/10 transition-colors flex items-center gap-1.5 text-xs"
+                title="Redraw cards"
+              >
+                <RotateCw
+                  className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+                />
+                <span>Redraw</span>
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
 
@@ -142,6 +170,7 @@ export function TarotReading({
               drawnCard={situation}
               isRevealed={revealedCards.situation}
               showBack={isRevealing && !revealedCards.situation}
+              onClick={() => setSelectedCard(situation)}
             />
           </div>
           <div className="hidden sm:flex text-primary/40">
@@ -155,6 +184,7 @@ export function TarotReading({
               drawnCard={challenge}
               isRevealed={revealedCards.challenge}
               showBack={isRevealing && !revealedCards.challenge}
+              onClick={() => setSelectedCard(challenge)}
             />
           </div>
           <div className="hidden sm:flex text-accent/40">
@@ -168,8 +198,16 @@ export function TarotReading({
               drawnCard={outcome}
               isRevealed={revealedCards.outcome}
               showBack={isRevealing && !revealedCards.outcome}
+              onClick={() => setSelectedCard(outcome)}
             />
           </div>
+        </div>
+
+        {/* Card Detail Hint */}
+        <div className="text-center">
+          <p className="text-xs text-slate-500">
+            Tap any card to see full details
+          </p>
         </div>
 
         {/* Divider */}
@@ -189,6 +227,22 @@ export function TarotReading({
           </p>
         </div>
 
+        {/* History Toggle */}
+        {profile && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowHistory(!showHistory)}
+            className="w-full border-border text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          >
+            <History className="h-4 w-4 mr-2" />
+            {showHistory ? "Hide" : "View"} Past Readings
+          </Button>
+        )}
+
+        {/* History Section */}
+        {showHistory && profile && <TarotHistory profile={profile} />}
+
         {/* Guidance */}
         <div className="text-center px-3 py-3 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-border">
           <p className="text-xs text-muted-foreground">
@@ -196,6 +250,16 @@ export function TarotReading({
           </p>
         </div>
       </CardContent>
+
+      {/* Card Detail Modal */}
+      {selectedCard && (
+        <TarotCardDetail
+          drawnCard={selectedCard}
+          isOpen={!!selectedCard}
+          onClose={() => setSelectedCard(null)}
+          profile={profile}
+        />
+      )}
     </Card>
   );
 }

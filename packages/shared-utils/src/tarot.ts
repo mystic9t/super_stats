@@ -124,20 +124,32 @@ export const createTarotReading = (): TarotReading => {
  */
 export const getTarotState = (profile: UserProfile): TarotState => {
   if (typeof window === "undefined") {
-    return { lastReading: null, lastDrawDate: null };
+    return {
+      lastReading: null,
+      lastDrawDate: null,
+      history: [],
+      favorites: [],
+    };
   }
 
   try {
     const key = getUserKey(profile);
     const stored = localStorage.getItem(key);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure backward compatibility - add missing fields
+      return {
+        lastReading: parsed.lastReading || null,
+        lastDrawDate: parsed.lastDrawDate || null,
+        history: parsed.history || [],
+        favorites: parsed.favorites || [],
+      };
     }
   } catch (error) {
     console.error("Error reading tarot state:", error);
   }
 
-  return { lastReading: null, lastDrawDate: null };
+  return { lastReading: null, lastDrawDate: null, history: [], favorites: [] };
 };
 
 /**
@@ -177,9 +189,16 @@ export const performTarotDraw = (profile: UserProfile): TarotReading | null => {
   }
 
   const reading = createTarotReading();
+  const currentState = getTarotState(profile);
+
+  // Add reading to history (keep last 7)
+  const newHistory = [reading, ...currentState.history].slice(0, 7);
+
   const state: TarotState = {
     lastReading: reading,
     lastDrawDate: reading.date,
+    history: newHistory,
+    favorites: currentState.favorites || [],
   };
 
   saveTarotState(state, profile);
@@ -193,9 +212,16 @@ export const forcePerformTarotDraw = (
   profile: UserProfile,
 ): TarotReading | null => {
   const reading = createTarotReading();
+  const currentState = getTarotState(profile);
+
+  // Add reading to history (keep last 7)
+  const newHistory = [reading, ...currentState.history].slice(0, 7);
+
   const state: TarotState = {
     lastReading: reading,
     lastDrawDate: reading.date,
+    history: newHistory,
+    favorites: currentState.favorites || [],
   };
 
   saveTarotState(state, profile);
@@ -224,4 +250,59 @@ export const clearTarotState = (profile: UserProfile): void => {
   if (typeof window === "undefined") return;
   const key = getUserKey(profile);
   localStorage.removeItem(key);
+};
+
+/**
+ * Get reading history (last 7 days)
+ */
+export const getReadingHistory = (profile: UserProfile): TarotReading[] => {
+  const state = getTarotState(profile);
+  return state.history || [];
+};
+
+/**
+ * Get favorite card IDs
+ */
+export const getFavoriteCards = (profile: UserProfile): number[] => {
+  const state = getTarotState(profile);
+  return state.favorites || [];
+};
+
+/**
+ * Check if a card is favorited
+ */
+export const isCardFavorited = (
+  profile: UserProfile,
+  cardId: number,
+): boolean => {
+  const state = getTarotState(profile);
+  return (state.favorites || []).includes(cardId);
+};
+
+/**
+ * Toggle a card's favorite status
+ */
+export const toggleFavoriteCard = (
+  profile: UserProfile,
+  cardId: number,
+): boolean => {
+  const state = getTarotState(profile);
+  const favorites = state.favorites || [];
+
+  const isFavorited = favorites.includes(cardId);
+  let newFavorites: number[];
+
+  if (isFavorited) {
+    newFavorites = favorites.filter((id) => id !== cardId);
+  } else {
+    newFavorites = [...favorites, cardId];
+  }
+
+  const newState: TarotState = {
+    ...state,
+    favorites: newFavorites,
+  };
+
+  saveTarotState(newState, profile);
+  return !isFavorited;
 };
